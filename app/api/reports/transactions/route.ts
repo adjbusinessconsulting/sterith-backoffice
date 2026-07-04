@@ -7,8 +7,7 @@ export async function GET(req: NextRequest) {
   const session = await getServerSession(authOptions);
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const businessId = session.user.businessId;
-  if (!businessId) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  const { storeId } = session.user;
   const { searchParams } = new URL(req.url);
   const dateParam = searchParams.get("date");
 
@@ -17,17 +16,14 @@ export async function GET(req: NextRequest) {
   const dateEnd = new Date(dateStart);
   dateEnd.setHours(23, 59, 59, 999);
 
-  const transactions = await db.transaction.findMany({
+  const sales = await db.sale.findMany({
     where: {
-      businessId,
+      storeId,
       createdAt: { gte: dateStart, lte: dateEnd },
-    },
-    include: {
-      kasir: { select: { name: true } },
     },
     orderBy: { createdAt: "desc" },
     take: 100,
   });
 
-  return NextResponse.json(transactions);
+  return NextResponse.json(sales);
 }

@@ -7,20 +7,18 @@ export async function GET(req: NextRequest) {
   const session = await getServerSession(authOptions);
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const businessId = session.user.businessId;
-  if (!businessId) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  const { storeId } = session.user;
   const { searchParams } = new URL(req.url);
   const type = searchParams.get("type");
   const limit = parseInt(searchParams.get("limit") ?? "50");
 
   const movements = await db.stockMovement.findMany({
     where: {
-      businessId,
-      ...(type ? { type: type as "MASUK" | "TRANSFER" | "TERJUAL" | "RUSAK" | "OPNAME" } : {}),
+      storeId,
+      ...(type ? { type } : {}),
     },
     include: {
       product: { select: { name: true, sku: true } },
-      byUser: { select: { name: true } },
     },
     orderBy: { createdAt: "desc" },
     take: limit,

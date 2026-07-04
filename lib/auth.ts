@@ -1,22 +1,21 @@
 import type { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import bcrypt from "bcryptjs";
 import { db } from "@/lib/prisma";
 
 declare module "next-auth" {
   interface Session {
     user: {
-      id: string;
+      id: string;        // auth.users UUID
       name?: string | null;
       email?: string | null;
       role: string;
-      businessId: string | null;  // null for MASTER_ADMIN
+      storeId: string;
     };
   }
   interface User {
     id: string;
     role: string;
-    businessId: string | null;
+    storeId: string;
   }
 }
 
@@ -24,7 +23,7 @@ declare module "next-auth/jwt" {
   interface JWT {
     id: string;
     role: string;
-    businessId: string | null;
+    storeId: string;
   }
 }
 
@@ -41,27 +40,38 @@ export const authOptions: NextAuthOptions = {
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) return null;
 
-        const user = await db.user.findUnique({
-          where: { email: credentials.email },
+        // Verify against Supabase Auth — same credentials as the POS owner login
+        const res = await fetch(
+          `${process.env.SUPABASE_URL}/auth/v1/token?grant_type=password`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              apikey: process.env.SUPABASE_ANON_KEY ?? "",
+            },
+            body: JSON.stringify({
+              email: credentials.email,
+              password: credentials.password,
+            }),
+          }
+        );
+
+        if (!res.ok) return null;
+        const { user } = await res.json() as { user: { id: string; email: string } };
+        if (!user?.id) return null;
+
+        // Look up their store
+        const store = await db.store.findFirst({
+          where: { ownerId: user.id },
         });
-
-        if (!user || !user.passwordH) return null;
-        if (user.role === "KASIR") return null;       // POS-only, not allowed here
-        if (user.deletedAt) return null;
-
-        const valid = await bcrypt.compare(credentials.password, user.passwordH);
-        if (!valid) return null;
-
-        // MASTER_ADMIN logs into Master Office, not Backoffice.
-        // Block them here so they don't accidentally land in a single-business view.
-        if (user.role === "MASTER_ADMIN") return null;
+        if (!store) return null;
 
         return {
           id: user.id,
-          name: user.name,
-          email: user.email ?? "",
-          role: user.role,
-          businessId: user.businessId,
+          name: credentials.email.split("@")[0],
+          email: user.email,
+          role: "OWNER",
+          storeId: store.id,
         };
       },
     }),
@@ -71,14 +81,14 @@ export const authOptions: NextAuthOptions = {
       if (user) {
         token.id = user.id;
         token.role = user.role;
-        token.businessId = user.businessId;
+        token.storeId = user.storeId;
       }
       return token;
     },
     async session({ session, token }) {
       session.user.id = token.id;
       session.user.role = token.role;
-      session.user.businessId = token.businessId;
+      session.user.storeId = token.storeId;
       return session;
     },
   },

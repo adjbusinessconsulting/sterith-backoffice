@@ -7,18 +7,17 @@ export async function GET() {
   const session = await getServerSession(authOptions);
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const businessId = session.user.businessId;
-  if (!businessId) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  const { storeId } = session.user;
   const todayStart = new Date();
   todayStart.setHours(0, 0, 0, 0);
 
-  const [transactions, cashEntries] = await Promise.all([
-    db.transaction.findMany({ where: { businessId, createdAt: { gte: todayStart } } }),
-    db.cashDrawer.findMany({ where: { businessId, createdAt: { gte: todayStart } } }),
+  const [sales, cashEntries] = await Promise.all([
+    db.sale.findMany({ where: { storeId, createdAt: { gte: todayStart } } }),
+    db.cashDrawer.findMany({ where: { storeId, createdAt: { gte: todayStart } } }),
   ]);
 
-  const totalOmzet = transactions.reduce((s, t) => s + t.total, 0);
-  const transaksi = transactions.length;
+  const totalOmzet = sales.reduce((s, t) => s + t.total, 0);
+  const transaksi = sales.length;
   const rataRata = transaksi > 0 ? Math.round(totalOmzet / transaksi) : 0;
 
   const kasukEntries = cashEntries.filter(e => ["IN", "AUTO_SALES", "OPEN"].includes(e.entryType));

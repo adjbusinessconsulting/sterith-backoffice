@@ -8,225 +8,198 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
-// ─── Enums ───────────────────────────────────────────────────────────────────
+// ─── Existing POS tables ──────────────────────────────────────────────────────
+// DO NOT drop or rename existing columns — only additions via migration.
 
-enum Tier {
-  FREE
-  STANDARD
-  PREMIUM
+// stores.owner_id → auth.users.id (Supabase Auth manages owner credentials)
+model Store {
+  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name      String
+  address   String?
+  phone     String?
+  ownerId   String    @map("owner_id") @db.Uuid
+  tier      String    @default("FREE")
+  status    String    @default("active")
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  // Added by Backoffice migration
+  clientCode String?   @unique @map("client_code")
+  syncedAt   DateTime? @map("synced_at") @db.Timestamptz(6)
+
+  products       Product[]
+  sales          Sale[]
+  cashiers       Cashier[]
+  shifts         Shift[]
+  stockMovements StockMovement[]
+  opnames        Opname[]
+  cashDrawers    CashDrawer[]
+  activityLogs   ActivityLog[]
+
+  @@map("stores")
 }
 
-enum Role {
-  MASTER_ADMIN   // Sterith operator — no businessId, accesses Master Office only
-  OWNER          // Business owner — manages Backoffice + POS
-  MANAJER        // Manager — Backoffice (limited) + POS
-  KASIR          // Cashier — POS only, PIN auth
-}
-
-enum MvmtType {
-  MASUK
-  TRANSFER
-  TERJUAL
-  RUSAK
-  OPNAME
-}
-
-enum Location {
-  WAREHOUSE
-  STORE
-}
-
-enum OpnameStatus {
-  DRAFT
-  PENDING
-  APPROVED
-}
-
-enum PayMethod {
-  TUNAI
-  QRIS
-  DEBIT
-  EWALLET
-  TRANSFER
-}
-
-enum CashType {
-  OPEN
-  IN
-  OUT
-  AUTO_SALES
-  CLOSE
-}
-
-enum ActivityType {
-  BUSINESS_CREATED
-  TIER_CHANGED
-  KASIR_ADDED
-  PAYMENT_RECEIVED
-  SYNC_RESTORED
-  SYNC_FAILED
-  SUPPORT_CONTACTED
-}
-
-// ─── Core ────────────────────────────────────────────────────────────────────
-
-// One row per client business. Shared by POS, Backoffice, and Master Office.
-model Business {
-  id          String    @id @default(cuid())
-  clientCode  String?   @unique  // Master Office display ID, e.g. "PLU-001"
-  name        String
-  location    String
-  phone       String?             // WhatsApp number shown in Master Office
-  tier        Tier      @default(FREE)
-  syncedAt    DateTime?           // last successful POS sync; drives sync-health dot
-  createdAt   DateTime  @default(now())
-
-  users        User[]
-  products     Product[]
-  shifts       Shift[]
-  movements    StockMovement[]
-  opnames      Opname[]
-  transactions Transaction[]
-  cashDrawer   CashDrawer[]
-  activityLogs ActivityLog[]
-}
-
-// Unified user table for all three apps.
-//   MASTER_ADMIN → businessId null, email+password auth, Master Office only
-//   OWNER/MANAJER → businessId set, email+password auth, Backoffice + POS
-//   KASIR → businessId set, PIN auth, POS only
-model User {
-  id         String    @id @default(cuid())
-  businessId String?
-  business   Business? @relation(fields: [businessId], references: [id])
-  name       String
-  role       Role
-  email      String?   @unique
-  passwordH  String?
-  pinHash    String?
-  createdAt  DateTime  @default(now())
-  deletedAt  DateTime?
-
-  movements    StockMovement[] @relation("MovementByUser")
-  transactions Transaction[]   @relation("TransactionKasir")
-  cashEntries  CashDrawer[]    @relation("CashByUser")
-  activityLogs ActivityLog[]
-}
-
-// ─── Inventory ───────────────────────────────────────────────────────────────
-
+// products.id is text in the existing POS (not UUID)
 model Product {
-  id           String    @id @default(cuid())
-  businessId   String
-  business     Business  @relation(fields: [businessId], references: [id])
-  sku          String
-  name         String
-  unit         String
-  category     String
-  price        Int
-  threshold    Int       @default(10)
-  photoUrl     String?
-  warehouseQty Int       @default(0)
-  storeQty     Int       @default(0)
-  soldToday    Int       @default(0)  // reset daily by POS or cron
-  createdAt    DateTime  @default(now())
-  deletedAt    DateTime?
+  id          String   @id
+  storeId     String   @map("store_id") @db.Uuid
+  store       Store    @relation(fields: [storeId], references: [id])
+  name        String
+  monogram    String?
+  emoji       String?
+  category    String
+  unit        String
+  price       Int
+  stock       Int      @default(0)  // POS field — kept for POS compat
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
 
-  movements    StockMovement[]
+  // Added by Backoffice migration
+  sku          String?
+  threshold    Int      @default(10)
+  warehouseQty Int      @default(0) @map("warehouse_qty")
+  storeQty     Int      @default(0) @map("store_qty")
+  soldToday    Int      @default(0) @map("sold_today")
+  photoUrl     String?  @map("photo_url")
+  deletedAt    DateTime? @map("deleted_at") @db.Timestamptz(6)
 
-  @@unique([businessId, sku])
+  saleItems  SaleItem[]
+  movements  StockMovement[]
+
+  @@map("products")
 }
+
+model Sale {
+  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  storeId       String   @map("store_id") @db.Uuid
+  store         Store    @relation(fields: [storeId], references: [id])
+  trxId         String   @map("trx_id")
+  cashierId     String   @map("cashier_id")
+  cashierName   String   @map("cashier_name")
+  shift         Int?
+  total         Int
+  paymentMethod String   @map("payment_method")
+  cashReceived  Int?     @map("cash_received")
+  changeAmount  Int?     @map("change_amount")
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  items SaleItem[]
+
+  @@map("sales")
+}
+
+model SaleItem {
+  id          String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  saleId      String  @map("sale_id") @db.Uuid
+  sale        Sale    @relation(fields: [saleId], references: [id])
+  productId   String  @map("product_id")
+  product     Product @relation(fields: [productId], references: [id])
+  productName String  @map("product_name")
+  price       Int
+  qty         Int
+  subtotal    Int
+
+  @@map("sale_items")
+}
+
+model Cashier {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  storeId   String   @map("store_id") @db.Uuid
+  store     Store    @relation(fields: [storeId], references: [id])
+  name      String?
+  initials  String
+  role      String   @default("kasir")  // kasir | manajer
+  pin       String
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  @@map("cashiers")
+}
+
+// ─── New Backoffice tables ────────────────────────────────────────────────────
 
 model Shift {
-  id         String   @id @default(cuid())
-  businessId String
-  business   Business @relation(fields: [businessId], references: [id])
-  name       String
-  startTime  String   // "06:00"
-  endTime    String   // "14:00"
-  assignedId String?
+  id                String  @id @default(cuid())
+  storeId           String  @map("store_id") @db.Uuid
+  store             Store   @relation(fields: [storeId], references: [id])
+  name              String
+  startTime         String  @map("start_time")
+  endTime           String  @map("end_time")
+  assignedCashierId String? @map("assigned_cashier_id")
+
+  @@map("shifts")
 }
 
+// type: MASUK | TRANSFER | TERJUAL | RUSAK | OPNAME
+// fromLoc / toLoc: WAREHOUSE | STORE
 model StockMovement {
-  id         String    @id @default(cuid())
-  businessId String
-  business   Business  @relation(fields: [businessId], references: [id])
-  type       MvmtType
-  productId  String
-  product    Product   @relation(fields: [productId], references: [id])
-  qty        Int
-  fromLoc    Location?
-  toLoc      Location?
-  byUserId   String
-  byUser     User      @relation("MovementByUser", fields: [byUserId], references: [id])
-  meta       Json?
-  createdAt  DateTime  @default(now())
+  id        String   @id @default(cuid())
+  storeId   String   @map("store_id") @db.Uuid
+  store     Store    @relation(fields: [storeId], references: [id])
+  type      String
+  productId String   @map("product_id")
+  product   Product  @relation(fields: [productId], references: [id])
+  qty       Int
+  fromLoc   String?  @map("from_loc")
+  toLoc     String?  @map("to_loc")
+  byUserId  String   @map("by_user_id")  // auth.users UUID or cashier id
+  meta      Json?
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  @@map("stock_movements")
 }
 
+// status: DRAFT | PENDING | APPROVED
+// location: WAREHOUSE | STORE
 model Opname {
-  id           String       @id @default(cuid())
-  businessId   String
-  business     Business     @relation(fields: [businessId], references: [id])
-  location     Location
-  status       OpnameStatus @default(DRAFT)
-  createdById  String
-  approvedById String?
-  createdAt    DateTime     @default(now())
-  approvedAt   DateTime?
+  id           String      @id @default(cuid())
+  storeId      String      @map("store_id") @db.Uuid
+  store        Store       @relation(fields: [storeId], references: [id])
+  location     String
+  status       String      @default("DRAFT")
+  createdById  String      @map("created_by_id")
+  approvedById String?     @map("approved_by_id")
+  createdAt    DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
+  approvedAt   DateTime?   @map("approved_at") @db.Timestamptz(6)
   lines        OpnameLine[]
+
+  @@map("opnames")
 }
 
 model OpnameLine {
   id          String @id @default(cuid())
-  opnameId    String
+  opnameId    String @map("opname_id")
   opname      Opname @relation(fields: [opnameId], references: [id])
-  productId   String
-  systemQty   Int
-  physicalQty Int
+  productId   String @map("product_id")
+  systemQty   Int    @map("system_qty")
+  physicalQty Int    @map("physical_qty")
+
+  @@map("opname_lines")
 }
 
-// ─── Sales ───────────────────────────────────────────────────────────────────
-
-// Written by POS; read by Backoffice (Laporan) and Master Office (revenue chart).
-model Transaction {
-  id         String    @id @default(cuid())
-  businessId String
-  business   Business  @relation(fields: [businessId], references: [id])
-  no         String
-  kasirId    String
-  kasir      User      @relation("TransactionKasir", fields: [kasirId], references: [id])
-  shiftId    String?
-  method     PayMethod
-  total      Int
-  items      Json      // [{productId, name, qty, price}]
-  createdAt  DateTime  @default(now())
-}
-
-// Written by POS; read by Backoffice (Laporan Kasir).
+// entryType: OPEN | IN | OUT | AUTO_SALES | CLOSE
 model CashDrawer {
-  id         String   @id @default(cuid())
-  businessId String
-  business   Business @relation(fields: [businessId], references: [id])
-  entryType  CashType
-  amount     Int
-  note       String?
-  byUserId   String
-  byUser     User     @relation("CashByUser", fields: [byUserId], references: [id])
-  shiftId    String?
-  createdAt  DateTime @default(now())
+  id        String   @id @default(cuid())
+  storeId   String   @map("store_id") @db.Uuid
+  store     Store    @relation(fields: [storeId], references: [id])
+  entryType String   @map("entry_type")
+  amount    Int
+  note      String?
+  byUserId  String   @map("by_user_id")
+  shiftId   String?  @map("shift_id")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  @@map("cash_drawers")
 }
 
-// ─── Master Office ───────────────────────────────────────────────────────────
-
-// Append-only event log powering the Master Office activity timeline.
-// Backoffice and POS write events here when significant things happen.
+// Master Office activity timeline
 model ActivityLog {
-  id         String       @id @default(cuid())
-  businessId String
-  business   Business     @relation(fields: [businessId], references: [id])
-  type       ActivityType
-  byUserId   String?
-  byUser     User?        @relation(fields: [byUserId], references: [id])
-  meta       Json?        // { oldTier, newTier } / { kasirName } / etc.
-  createdAt  DateTime     @default(now())
+  id        String   @id @default(cuid())
+  storeId   String   @map("store_id") @db.Uuid
+  store     Store    @relation(fields: [storeId], references: [id])
+  type      String
+  byUserId  String?  @map("by_user_id")
+  meta      Json?
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  @@map("activity_logs")
 }

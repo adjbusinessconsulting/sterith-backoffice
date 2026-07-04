@@ -14,7 +14,6 @@ Harga dalam rupiah (integer, tanpa titik/koma). Jika tidak yakin, kosongkan fiel
 export async function POST(req: NextRequest) {
   const session = await getServerSession(authOptions);
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  if (!session.user.businessId) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
   const form = await req.formData();
   const file = form.get("image") as File | null;
@@ -41,7 +40,7 @@ export async function POST(req: NextRequest) {
   const parsed = jsonMatch ? JSON.parse(jsonMatch[0]) : {};
 
   const products = await db.product.findMany({
-    where: { businessId: session.user.businessId, deletedAt: null },
+    where: { storeId: session.user.storeId, deletedAt: null },
     select: { id: true, name: true, sku: true },
   });
 

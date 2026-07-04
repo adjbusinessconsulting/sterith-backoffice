@@ -7,9 +7,7 @@ export async function POST(req: NextRequest) {
   const session = await getServerSession(authOptions);
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const businessId = session.user.businessId;
-  if (!businessId) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-  const userId = session.user.id;
+  const { storeId, id: userId } = session.user;
   const { location, lines } = await req.json() as {
     location: "WAREHOUSE" | "STORE";
     lines: { productId: string; physicalQty: number }[];
@@ -17,11 +15,11 @@ export async function POST(req: NextRequest) {
 
   const opname = await db.opname.create({
     data: {
-      businessId,
+      storeId,
       location,
       createdById: userId,
       lines: {
-        create: await Promise.all(lines.map(async l => {
+        create: await Promise.all(lines.map(async (l) => {
           const p = await db.product.findFirst({ where: { id: l.productId } });
           return {
             productId: l.productId,

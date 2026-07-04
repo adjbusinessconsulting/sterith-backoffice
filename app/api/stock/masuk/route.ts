@@ -9,9 +9,7 @@ export async function POST(req: NextRequest) {
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   if (session.user.role !== "OWNER") return NextResponse.json({ error: "Owner only" }, { status: 403 });
 
-  const businessId = session.user.businessId;
-  if (!businessId) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-  const userId = session.user.id;
+  const { storeId, id: userId } = session.user;
   const { supplier, items } = await req.json() as {
     supplier: string;
     items: { name: string; qty: number; unitPrice: number; sku?: string | null }[];
@@ -20,18 +18,20 @@ export async function POST(req: NextRequest) {
   await db.$transaction(async (tx) => {
     for (const item of items) {
       let product = item.sku
-        ? await tx.product.findFirst({ where: { businessId, sku: item.sku, deletedAt: null } })
+        ? await tx.product.findFirst({ where: { storeId, sku: item.sku, deletedAt: null } })
         : null;
 
       if (!product) {
+        const id = `prod_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`;
         const sku = item.sku?.trim() || `NEW${Date.now()}`;
+        const initials = item.name.slice(0, 2).toUpperCase();
         product = await tx.product.create({
-          data: { businessId, name: item.name, sku, unit: "pcs", category: "Sembako", price: item.unitPrice },
+          data: { id, storeId, name: item.name, sku, unit: "pcs", category: "Sembako", price: item.unitPrice, monogram: initials },
         });
       }
 
       await recordMovement(tx, {
-        businessId,
+        storeId,
         type: "MASUK",
         productId: product.id,
         qty: item.qty,
