@@ -59,7 +59,7 @@ export default function LoginPage() {
         {/* Branding */}
         <div style={{ textAlign: "center", marginBottom: 20 }}>
           {/* Logo SVG — 4 rising bars with upward arrow */}
-          <svg width="44" height="44" viewBox="0 0 60 60" style={{ marginBottom: 10 }}>
+          <svg width="44" height="44" viewBox="0 0 60 60" style={{ marginBottom: 10, display: "block", margin: "0 auto 10px" }}>
             <rect x="4"  y="42" width="10" height="14" rx="2" fill="#b8934a"/>
             <rect x="17" y="33" width="10" height="23" rx="2" fill="#c9a55f"/>
             <rect x="30" y="22" width="10" height="34" rx="2" fill="#d4b36c"/>
