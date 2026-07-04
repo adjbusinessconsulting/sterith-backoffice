@@ -29,71 +29,73 @@ export default function LoginPage() {
       alignItems: "center",
       justifyContent: "center",
       fontFamily: "var(--font-hanken), system-ui, sans-serif",
-      padding: 24,
+      padding: 16,
     }}>
       <div style={{
         width: "100%",
-        maxWidth: 460,
+        maxWidth: 420,
         background: "#f8f6ef",
-        borderRadius: 20,
-        padding: "36px 40px 28px",
+        borderRadius: 18,
+        padding: "24px 32px 20px",
         border: "1px solid #ddd9cc",
-        boxShadow: "0 8px 48px rgba(20,32,58,0.09)",
+        boxShadow: "0 8px 40px rgba(20,32,58,0.09)",
       }}>
 
         {/* Top bar */}
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 36 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 7 }}>
             <div style={{
-              width: 8, height: 8, borderRadius: "50%",
+              width: 7, height: 7, borderRadius: "50%",
               background: "#e7c987",
               boxShadow: "0 0 0 3px rgba(231,201,135,0.25)",
             }} />
-            <span style={{ fontSize: 10, letterSpacing: "0.2em", color: "#8f897a", fontWeight: 600, textTransform: "uppercase" }}>
+            <span style={{ fontSize: 9, letterSpacing: "0.2em", color: "#8f897a", fontWeight: 600, textTransform: "uppercase" }}>
               Restricted Access
             </span>
           </div>
-          <span style={{ fontSize: 10, letterSpacing: "0.15em", color: "#b8a88a", fontWeight: 500 }}>V1.0.0</span>
+          <span style={{ fontSize: 9, letterSpacing: "0.15em", color: "#b8a88a", fontWeight: 500 }}>V1.0.0</span>
         </div>
 
         {/* Branding */}
-        <div style={{ textAlign: "center", marginBottom: 32 }}>
-          <svg width="52" height="52" viewBox="0 0 100 100" style={{ marginBottom: 16 }}>
-            <rect x="10" y="62" width="14" height="26" rx="3" fill="#b8934a"/>
-            <rect x="30" y="50" width="14" height="38" rx="3" fill="#c9a55f"/>
-            <rect x="50" y="34" width="14" height="54" rx="3" fill="#d4b36c"/>
-            <rect x="70" y="22" width="14" height="66" rx="3" fill="#e7c987"/>
-            <polygon points="63,22 91,22 77,4" fill="#e7c987"/>
+        <div style={{ textAlign: "center", marginBottom: 20 }}>
+          {/* Logo SVG — 4 rising bars with upward arrow */}
+          <svg width="44" height="44" viewBox="0 0 60 60" style={{ marginBottom: 10 }}>
+            <rect x="4"  y="42" width="10" height="14" rx="2" fill="#b8934a"/>
+            <rect x="17" y="33" width="10" height="23" rx="2" fill="#c9a55f"/>
+            <rect x="30" y="22" width="10" height="34" rx="2" fill="#d4b36c"/>
+            <rect x="43" y="12" width="10" height="44" rx="2" fill="#e7c987"/>
+            {/* Arrow above last bar — centered at x=48 */}
+            <polygon points="41,12 55,12 48,2" fill="#e7c987"/>
           </svg>
 
-          <div style={{ fontFamily: "var(--font-garamond)", fontSize: 34, fontWeight: 700, letterSpacing: "0.08em", color: "#14203a", lineHeight: 1, marginBottom: 12 }}>
+          <div style={{ fontFamily: "var(--font-garamond)", fontSize: 28, fontWeight: 700, letterSpacing: "0.08em", color: "#14203a", lineHeight: 1, marginBottom: 10 }}>
             STERITH
           </div>
 
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 10, marginBottom: 24 }}>
-            <div style={{ height: 1, width: 36, background: "#b8934a", opacity: 0.6 }} />
-            <span style={{ fontSize: 10, letterSpacing: "0.25em", color: "#b8934a", textTransform: "uppercase", fontWeight: 600 }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 10, marginBottom: 16 }}>
+            <div style={{ height: 1, width: 32, background: "#b8934a", opacity: 0.6 }} />
+            <span style={{ fontSize: 9, letterSpacing: "0.25em", color: "#b8934a", textTransform: "uppercase", fontWeight: 600 }}>
               Backoffice
             </span>
-            <div style={{ height: 1, width: 36, background: "#b8934a", opacity: 0.6 }} />
+            <div style={{ height: 1, width: 32, background: "#b8934a", opacity: 0.6 }} />
           </div>
 
-          <h1 style={{ fontFamily: "var(--font-garamond)", fontSize: 27, fontWeight: 500, color: "#14203a", marginBottom: 8, lineHeight: 1.25 }}>
+          <h1 style={{ fontFamily: "var(--font-garamond)", fontSize: 22, fontWeight: 500, color: "#14203a", marginBottom: 5, lineHeight: 1.25 }}>
             Authorized personnel only
           </h1>
-          <p style={{ fontSize: 13, color: "#8f897a", lineHeight: 1.5 }}>
+          <p style={{ fontSize: 12, color: "#8f897a", lineHeight: 1.5, margin: 0 }}>
             All access is logged and audited.
           </p>
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+        <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 12, marginTop: 20 }}>
           <div>
-            <label style={{ display: "block", fontSize: 10, letterSpacing: "0.2em", textTransform: "uppercase", color: "#8f897a", fontWeight: 600, marginBottom: 8 }}>
+            <label style={{ display: "block", fontSize: 9, letterSpacing: "0.2em", textTransform: "uppercase", color: "#8f897a", fontWeight: 600, marginBottom: 6 }}>
               Email Pemilik
             </label>
             <div style={{ position: "relative" }}>
-              <svg style={{ position: "absolute", left: 16, top: "50%", transform: "translateY(-50%)", color: "#8f897a" }} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <svg style={{ position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)", color: "#8f897a" }} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                 <rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
               </svg>
               <input
@@ -103,23 +105,22 @@ export default function LoginPage() {
                 placeholder="owner@toko.com"
                 required
                 style={{
-                  width: "100%", height: 52, boxSizing: "border-box",
-                  border: "1.5px solid #ddd9cc", borderRadius: 12,
-                  padding: "0 14px 0 46px",
-                  fontSize: 14, color: "#14203a",
-                  background: "#fff", fontFamily: "inherit",
-                  outline: "none",
+                  width: "100%", height: 46, boxSizing: "border-box",
+                  border: "1.5px solid #ddd9cc", borderRadius: 10,
+                  padding: "0 14px 0 42px",
+                  fontSize: 13, color: "#14203a",
+                  background: "#fff", fontFamily: "inherit", outline: "none",
                 }}
               />
             </div>
           </div>
 
           <div>
-            <label style={{ display: "block", fontSize: 10, letterSpacing: "0.2em", textTransform: "uppercase", color: "#8f897a", fontWeight: 600, marginBottom: 8 }}>
+            <label style={{ display: "block", fontSize: 9, letterSpacing: "0.2em", textTransform: "uppercase", color: "#8f897a", fontWeight: 600, marginBottom: 6 }}>
               Password
             </label>
             <div style={{ position: "relative" }}>
-              <svg style={{ position: "absolute", left: 16, top: "50%", transform: "translateY(-50%)", color: "#8f897a" }} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <svg style={{ position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)", color: "#8f897a" }} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                 <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
               </svg>
               <input
@@ -129,28 +130,27 @@ export default function LoginPage() {
                 placeholder="••••••••••••"
                 required
                 style={{
-                  width: "100%", height: 52, boxSizing: "border-box",
-                  border: "1.5px solid #ddd9cc", borderRadius: 12,
-                  padding: "0 48px 0 46px",
-                  fontSize: 14, color: "#14203a",
-                  background: "#fff", fontFamily: "inherit",
-                  outline: "none",
+                  width: "100%", height: 46, boxSizing: "border-box",
+                  border: "1.5px solid #ddd9cc", borderRadius: 10,
+                  padding: "0 44px 0 42px",
+                  fontSize: 13, color: "#14203a",
+                  background: "#fff", fontFamily: "inherit", outline: "none",
                 }}
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(v => !v)}
                 style={{
-                  position: "absolute", right: 14, top: "50%", transform: "translateY(-50%)",
+                  position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)",
                   background: "none", border: "none", cursor: "pointer", color: "#8f897a", padding: 4, display: "flex",
                 }}
               >
                 {showPassword ? (
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" y1="2" x2="22" y2="22"/>
                   </svg>
                 ) : (
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/>
                   </svg>
                 )}
@@ -159,7 +159,7 @@ export default function LoginPage() {
           </div>
 
           {error && (
-            <p style={{ fontSize: 12.5, color: "#b0492f", background: "#f4e9e4", padding: "10px 14px", borderRadius: 8, margin: 0 }}>
+            <p style={{ fontSize: 12, color: "#b0492f", background: "#f4e9e4", padding: "9px 12px", borderRadius: 8, margin: 0 }}>
               {error}
             </p>
           )}
@@ -168,10 +168,10 @@ export default function LoginPage() {
             type="submit"
             disabled={loading}
             style={{
-              height: 54, background: "#e7c987", color: "#14203a",
-              border: "none", borderRadius: 12, fontSize: 12,
+              height: 48, background: "#e7c987", color: "#14203a",
+              border: "none", borderRadius: 10, fontSize: 11,
               fontWeight: 700, cursor: loading ? "not-allowed" : "pointer",
-              opacity: loading ? 0.7 : 1, marginTop: 6,
+              opacity: loading ? 0.7 : 1, marginTop: 4,
               fontFamily: "inherit", letterSpacing: "0.14em",
               textTransform: "uppercase",
             }}
@@ -183,15 +183,15 @@ export default function LoginPage() {
         {/* Footer */}
         <div style={{
           display: "flex", justifyContent: "space-between", alignItems: "center",
-          marginTop: 28, paddingTop: 20, borderTop: "1px solid #ddd9cc",
+          marginTop: 20, paddingTop: 16, borderTop: "1px solid #ddd9cc",
         }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#b8a88a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#b8a88a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
             </svg>
-            <span style={{ fontSize: 11, color: "#b8a88a" }}>TLS 1.3 · Audit logged</span>
+            <span style={{ fontSize: 10, color: "#b8a88a" }}>TLS 1.3 · Audit logged</span>
           </div>
-          <span style={{ fontSize: 11, color: "#b8a88a" }}>© 2026 STERITH</span>
+          <span style={{ fontSize: 10, color: "#b8a88a" }}>© 2026 STERITH</span>
         </div>
       </div>
     </div>
