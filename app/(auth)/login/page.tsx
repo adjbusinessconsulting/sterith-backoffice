@@ -58,19 +58,11 @@ export default function LoginPage() {
 
         {/* Branding */}
         <div style={{ textAlign: "center", marginBottom: 20 }}>
-          {/* Logo SVG — 4 rising bars with upward arrow */}
-          <svg width="44" height="44" viewBox="0 0 60 60" style={{ marginBottom: 10, display: "block", margin: "0 auto 10px" }}>
-            <rect x="4"  y="42" width="10" height="14" rx="2" fill="#b8934a"/>
-            <rect x="17" y="33" width="10" height="23" rx="2" fill="#c9a55f"/>
-            <rect x="30" y="22" width="10" height="34" rx="2" fill="#d4b36c"/>
-            <rect x="43" y="12" width="10" height="44" rx="2" fill="#e7c987"/>
-            {/* Arrow above last bar — centered at x=48 */}
-            <polygon points="41,12 55,12 48,2" fill="#e7c987"/>
-          </svg>
-
-          <div style={{ fontFamily: "var(--font-garamond)", fontSize: 28, fontWeight: 700, letterSpacing: "0.08em", color: "#14203a", lineHeight: 1, marginBottom: 10 }}>
-            STERITH
-          </div>
+          <img
+            src="/stacked-light.png"
+            alt="Sterith"
+            style={{ width: 120, display: "block", margin: "0 auto 4px", mixBlendMode: "multiply" }}
+          />
 
           <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 10, marginBottom: 16 }}>
             <div style={{ height: 1, width: 32, background: "#b8934a", opacity: 0.6 }} />
