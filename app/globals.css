@@ -1,0 +1,48 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-garamond: "EB Garamond", Georgia, serif;
+  --font-hanken: "Hanken Grotesk", system-ui, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-hanken);
+  background-color: #eceadf;
+  color: #14203a;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.font-garamond {
+  font-family: var(--font-garamond);
+  font-feature-settings: "onum";
+}
+
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #d9d3c4;
+  border-radius: 99px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #c4bfb3;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+}

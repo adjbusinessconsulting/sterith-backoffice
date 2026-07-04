@@ -1,0 +1,232 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ─── Enums ───────────────────────────────────────────────────────────────────
+
+enum Tier {
+  FREE
+  STANDARD
+  PREMIUM
+}
+
+enum Role {
+  MASTER_ADMIN   // Sterith operator — no businessId, accesses Master Office only
+  OWNER          // Business owner — manages Backoffice + POS
+  MANAJER        // Manager — Backoffice (limited) + POS
+  KASIR          // Cashier — POS only, PIN auth
+}
+
+enum MvmtType {
+  MASUK
+  TRANSFER
+  TERJUAL
+  RUSAK
+  OPNAME
+}
+
+enum Location {
+  WAREHOUSE
+  STORE
+}
+
+enum OpnameStatus {
+  DRAFT
+  PENDING
+  APPROVED
+}
+
+enum PayMethod {
+  TUNAI
+  QRIS
+  DEBIT
+  EWALLET
+  TRANSFER
+}
+
+enum CashType {
+  OPEN
+  IN
+  OUT
+  AUTO_SALES
+  CLOSE
+}
+
+enum ActivityType {
+  BUSINESS_CREATED
+  TIER_CHANGED
+  KASIR_ADDED
+  PAYMENT_RECEIVED
+  SYNC_RESTORED
+  SYNC_FAILED
+  SUPPORT_CONTACTED
+}
+
+// ─── Core ────────────────────────────────────────────────────────────────────
+
+// One row per client business. Shared by POS, Backoffice, and Master Office.
+model Business {
+  id          String    @id @default(cuid())
+  clientCode  String?   @unique  // Master Office display ID, e.g. "PLU-001"
+  name        String
+  location    String
+  phone       String?             // WhatsApp number shown in Master Office
+  tier        Tier      @default(FREE)
+  syncedAt    DateTime?           // last successful POS sync; drives sync-health dot
+  createdAt   DateTime  @default(now())
+
+  users        User[]
+  products     Product[]
+  shifts       Shift[]
+  movements    StockMovement[]
+  opnames      Opname[]
+  transactions Transaction[]
+  cashDrawer   CashDrawer[]
+  activityLogs ActivityLog[]
+}
+
+// Unified user table for all three apps.
+//   MASTER_ADMIN → businessId null, email+password auth, Master Office only
+//   OWNER/MANAJER → businessId set, email+password auth, Backoffice + POS
+//   KASIR → businessId set, PIN auth, POS only
+model User {
+  id         String    @id @default(cuid())
+  businessId String?
+  business   Business? @relation(fields: [businessId], references: [id])
+  name       String
+  role       Role
+  email      String?   @unique
+  passwordH  String?
+  pinHash    String?
+  createdAt  DateTime  @default(now())
+  deletedAt  DateTime?
+
+  movements    StockMovement[] @relation("MovementByUser")
+  transactions Transaction[]   @relation("TransactionKasir")
+  cashEntries  CashDrawer[]    @relation("CashByUser")
+  activityLogs ActivityLog[]
+}
+
+// ─── Inventory ───────────────────────────────────────────────────────────────
+
+model Product {
+  id           String    @id @default(cuid())
+  businessId   String
+  business     Business  @relation(fields: [businessId], references: [id])
+  sku          String
+  name         String
+  unit         String
+  category     String
+  price        Int
+  threshold    Int       @default(10)
+  photoUrl     String?
+  warehouseQty Int       @default(0)
+  storeQty     Int       @default(0)
+  soldToday    Int       @default(0)  // reset daily by POS or cron
+  createdAt    DateTime  @default(now())
+  deletedAt    DateTime?
+
+  movements    StockMovement[]
+
+  @@unique([businessId, sku])
+}
+
+model Shift {
+  id         String   @id @default(cuid())
+  businessId String
+  business   Business @relation(fields: [businessId], references: [id])
+  name       String
+  startTime  String   // "06:00"
+  endTime    String   // "14:00"
+  assignedId String?
+}
+
+model StockMovement {
+  id         String    @id @default(cuid())
+  businessId String
+  business   Business  @relation(fields: [businessId], references: [id])
+  type       MvmtType
+  productId  String
+  product    Product   @relation(fields: [productId], references: [id])
+  qty        Int
+  fromLoc    Location?
+  toLoc      Location?
+  byUserId   String
+  byUser     User      @relation("MovementByUser", fields: [byUserId], references: [id])
+  meta       Json?
+  createdAt  DateTime  @default(now())
+}
+
+model Opname {
+  id           String       @id @default(cuid())
+  businessId   String
+  business     Business     @relation(fields: [businessId], references: [id])
+  location     Location
+  status       OpnameStatus @default(DRAFT)
+  createdById  String
+  approvedById String?
+  createdAt    DateTime     @default(now())
+  approvedAt   DateTime?
+  lines        OpnameLine[]
+}
+
+model OpnameLine {
+  id          String @id @default(cuid())
+  opnameId    String
+  opname      Opname @relation(fields: [opnameId], references: [id])
+  productId   String
+  systemQty   Int
+  physicalQty Int
+}
+
+// ─── Sales ───────────────────────────────────────────────────────────────────
+
+// Written by POS; read by Backoffice (Laporan) and Master Office (revenue chart).
+model Transaction {
+  id         String    @id @default(cuid())
+  businessId String
+  business   Business  @relation(fields: [businessId], references: [id])
+  no         String
+  kasirId    String
+  kasir      User      @relation("TransactionKasir", fields: [kasirId], references: [id])
+  shiftId    String?
+  method     PayMethod
+  total      Int
+  items      Json      // [{productId, name, qty, price}]
+  createdAt  DateTime  @default(now())
+}
+
+// Written by POS; read by Backoffice (Laporan Kasir).
+model CashDrawer {
+  id         String   @id @default(cuid())
+  businessId String
+  business   Business @relation(fields: [businessId], references: [id])
+  entryType  CashType
+  amount     Int
+  note       String?
+  byUserId   String
+  byUser     User     @relation("CashByUser", fields: [byUserId], references: [id])
+  shiftId    String?
+  createdAt  DateTime @default(now())
+}
+
+// ─── Master Office ───────────────────────────────────────────────────────────
+
+// Append-only event log powering the Master Office activity timeline.
+// Backoffice and POS write events here when significant things happen.
+model ActivityLog {
+  id         String       @id @default(cuid())
+  businessId String
+  business   Business     @relation(fields: [businessId], references: [id])
+  type       ActivityType
+  byUserId   String?
+  byUser     User?        @relation(fields: [byUserId], references: [id])
+  meta       Json?        // { oldTier, newTier } / { kasirName } / etc.
+  createdAt  DateTime     @default(now())
+}
