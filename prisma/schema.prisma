@@ -18,7 +18,7 @@ model Store {
   address   String?
   phone     String?
   ownerId   String    @map("owner_id") @db.Uuid
-  tier      String    @default("FREE")
+  tier      String    @default("free")
   status    String    @default("active")
   createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
 

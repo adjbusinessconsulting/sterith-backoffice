@@ -22,7 +22,7 @@ async function main() {
       address: "Jl. Diponegoro No. 24, Palu Timur",
       phone: "081234567890",
       ownerId: OWNER_AUTH_ID,
-      tier: "PREMIUM",
+      tier: "free",
       status: "active",
       syncedAt: new Date(),
     },
