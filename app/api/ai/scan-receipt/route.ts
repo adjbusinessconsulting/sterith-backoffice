@@ -1,11 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import Anthropic from "@anthropic-ai/sdk";
 import { db } from "@/lib/prisma";
 import Fuse from "fuse.js";
-
-const anthropic = new Anthropic();
 
 const SYSTEM = `Kamu membaca faktur/struk supplier untuk toko sembako di Indonesia.
 Kembalikan JSON dengan schema tepat ini: {"supplier": "nama supplier", "invoiceNo": "nomor faktur atau null", "lines": [{"name": "nama produk", "qty": angka, "unitPrice": angka}]}.
@@ -15,12 +12,19 @@ export async function POST(req: NextRequest) {
   const session = await getServerSession(authOptions);
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
+  if (!process.env.ANTHROPIC_API_KEY || process.env.ANTHROPIC_API_KEY.startsWith("sk-ant-YOUR")) {
+    return NextResponse.json({ error: "AI feature not configured" }, { status: 503 });
+  }
+
   const form = await req.formData();
   const file = form.get("image") as File | null;
   if (!file) return NextResponse.json({ error: "No image" }, { status: 400 });
 
   const b64 = Buffer.from(await file.arrayBuffer()).toString("base64");
   const mediaType = (file.type as "image/jpeg" | "image/png" | "image/webp") || "image/jpeg";
+
+  const Anthropic = (await import("@anthropic-ai/sdk")).default;
+  const anthropic = new Anthropic();
 
   const msg = await anthropic.messages.create({
     model: "claude-haiku-4-5",
