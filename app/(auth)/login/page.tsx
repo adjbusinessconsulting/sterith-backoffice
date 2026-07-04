@@ -61,7 +61,7 @@ export default function LoginPage() {
           <img
             src="/stacked-light.png"
             alt="Sterith"
-            style={{ width: 120, display: "block", margin: "0 auto 4px", mixBlendMode: "multiply" }}
+            style={{ width: 200, display: "block", margin: "0 auto 4px", mixBlendMode: "multiply" }}
           />
 
           <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 10, marginBottom: 16 }}>
