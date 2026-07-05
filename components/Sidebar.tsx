@@ -5,7 +5,7 @@ import { signOut, useSession } from "next-auth/react";
 import {
   LayoutDashboard, TrendingUp, Package, Store,
   ArrowLeftRight, ClipboardCheck, History,
-  Users, Grid2X2, BarChart2, Wallet, LogOut, ChevronDown,
+  Users, Grid2X2, BarChart2, Wallet, LogOut, ChevronDown, Settings2,
 } from "lucide-react";
 import { useUIStore } from "@/store/ui";
 
@@ -26,6 +26,10 @@ const MANAJEMEN = [
   { href: "/manajemen/produk",  label: "Produk",       Icon: Grid2X2 },
   { href: "/manajemen/laporan", label: "Laporan",      Icon: BarChart2 },
   { href: "/manajemen/keuangan",label: "Keuangan",     Icon: Wallet },
+];
+
+const PENGATURAN = [
+  { href: "/pengaturan", label: "Pengaturan", Icon: Settings2 },
 ];
 
 function NavSection({ label, items, pathname }: {
@@ -161,6 +165,8 @@ export default function Sidebar() {
         </div>
 
         <NavSection label="MANAJEMEN" items={MANAJEMEN} pathname={pathname} />
+
+        <NavSection label="SISTEM" items={PENGATURAN} pathname={pathname} />
       </div>
 
       {/* User footer */}
