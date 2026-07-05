@@ -2,6 +2,9 @@
 import { useState, useEffect, useCallback } from "react";
 import { Trash2 } from "lucide-react";
 import { useUIStore } from "@/store/ui";
+import { useSession } from "next-auth/react";
+import { isAtLeast } from "@/lib/tier";
+import LockedSection from "@/components/LockedSection";
 
 interface StaffMember {
   id: string; name: string; role: string; createdAt: string;
@@ -28,16 +31,21 @@ const ROLE_PERMS: Record<string, string> = {
 };
 
 export default function StafPage() {
+  const { data: session } = useSession();
   const openModal = useUIStore(s => s.openModal);
   const [staff, setStaff] = useState<StaffMember[]>([]);
   const [shifts, setShifts] = useState<Shift[]>([]);
+
+  const userTier = session?.user?.tier ?? 'premium';
 
   const load = useCallback(() => {
     fetch("/api/staff").then(r => r.json()).then(d => { if (Array.isArray(d)) setStaff(d); }).catch(() => {});
     fetch("/api/shifts").then(r => r.json()).then(d => { if (Array.isArray(d)) setShifts(d); }).catch(() => {});
   }, []);
 
-  useEffect(() => { load(); }, [load]);
+  useEffect(() => { if (isAtLeast(userTier, 'business')) load(); }, [load, userTier]);
+
+  if (!isAtLeast(userTier, 'business')) return <LockedSection requiredTier="business" />;
 
   async function deleteStaff(id: string) {
     if (!confirm("Hapus akun ini?")) return;

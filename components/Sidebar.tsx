@@ -8,34 +8,44 @@ import {
   Users, Grid2X2, BarChart2, Wallet, LogOut, ChevronDown, Settings2,
 } from "lucide-react";
 import { useUIStore } from "@/store/ui";
+import { isAtLeast, tierLabel } from "@/lib/tier";
 
 const UTAMA = [
-  { href: "/dashboard", label: "Dashboard", Icon: LayoutDashboard },
+  { href: "/dashboard",           label: "Dashboard",    Icon: LayoutDashboard, lockTier: null },
 ];
 
 const INVENTORI = [
-  { href: "/inventori/ringkasan", label: "Ringkasan", Icon: TrendingUp },
-  { href: "/inventori/gudang",    label: "Gudang",    Icon: Package },
-  { href: "/inventori/toko",      label: "Toko",      Icon: Store },
-  { href: "/inventori/opname",    label: "Stok Opname", Icon: ClipboardCheck },
-  { href: "/inventori/riwayat",   label: "Riwayat Stok", Icon: History },
+  { href: "/inventori/ringkasan", label: "Ringkasan",    Icon: TrendingUp,     lockTier: null },
+  { href: "/inventori/gudang",    label: "Gudang",       Icon: Package,        lockTier: "business" },
+  { href: "/inventori/toko",      label: "Toko",         Icon: Store,          lockTier: "business" },
+  { href: "/inventori/opname",    label: "Stok Opname",  Icon: ClipboardCheck, lockTier: null },
+  { href: "/inventori/riwayat",   label: "Riwayat Stok", Icon: History,        lockTier: null },
 ];
 
 const MANAJEMEN = [
-  { href: "/manajemen/staf",    label: "Staf & Akses", Icon: Users },
-  { href: "/manajemen/produk",  label: "Produk",       Icon: Grid2X2 },
-  { href: "/manajemen/laporan", label: "Laporan",      Icon: BarChart2 },
-  { href: "/manajemen/keuangan",label: "Keuangan",     Icon: Wallet },
+  { href: "/manajemen/staf",     label: "Staf & Akses", Icon: Users,    lockTier: "business" },
+  { href: "/manajemen/produk",   label: "Produk",       Icon: Grid2X2,  lockTier: null },
+  { href: "/manajemen/laporan",  label: "Laporan",      Icon: BarChart2, lockTier: null },
+  { href: "/manajemen/keuangan", label: "Keuangan",     Icon: Wallet,   lockTier: "enterprise" },
 ];
 
 const PENGATURAN = [
-  { href: "/pengaturan", label: "Pengaturan", Icon: Settings2 },
+  { href: "/pengaturan", label: "Pengaturan", Icon: Settings2, lockTier: null },
 ];
 
-function NavSection({ label, items, pathname }: {
+const BADGE_STYLE: React.CSSProperties = {
+  fontSize: 7, letterSpacing: "0.1em", fontWeight: 700,
+  background: "rgba(184,147,74,0.15)", color: "#b8934a",
+  border: "1px solid rgba(184,147,74,0.3)",
+  padding: "1px 5px", borderRadius: 3, textTransform: "uppercase",
+  whiteSpace: "nowrap",
+};
+
+function NavSection({ label, items, pathname, userTier }: {
   label: string;
   items: typeof INVENTORI;
   pathname: string;
+  userTier: string;
 }) {
   return (
     <div style={{ marginBottom: 6 }}>
@@ -46,27 +56,39 @@ function NavSection({ label, items, pathname }: {
       }}>
         {label}
       </p>
-      {items.map(({ href, label: itemLabel, Icon }) => {
-        const isActive = pathname === href || (href !== "/dashboard" && pathname.startsWith(href));
-        return (
-          <Link key={href} href={href} style={{ textDecoration: "none", display: "block", padding: "2px 8px" }}>
-            <div style={{
-              display: "flex", alignItems: "center", gap: 10,
-              padding: "8px 10px", borderRadius: 10,
-              background: isActive ? "#14203a" : "transparent",
-              transition: "background 0.12s",
-              cursor: "pointer",
+      {items.map(({ href, label: itemLabel, Icon, lockTier }) => {
+        const locked = lockTier ? !isAtLeast(userTier, lockTier) : false;
+        const isActive = !locked && (pathname === href || (href !== "/dashboard" && pathname.startsWith(href)));
+
+        const inner = (
+          <div style={{
+            display: "flex", alignItems: "center", gap: 10,
+            padding: "8px 10px", borderRadius: 10,
+            background: isActive ? "#14203a" : "transparent",
+            transition: "background 0.12s",
+            cursor: locked ? "not-allowed" : "pointer",
+            opacity: locked ? 0.5 : 1,
+          }}>
+            <Icon size={15} strokeWidth={isActive ? 2 : 1.6}
+              color={isActive ? "#f8f6ef" : "#8f897a"} />
+            <span style={{
+              fontSize: 13, fontWeight: isActive ? 600 : 400,
+              color: isActive ? "#f8f6ef" : "#14203a",
+              fontFamily: "var(--font-hanken)", flex: 1,
             }}>
-              <Icon size={15} strokeWidth={isActive ? 2 : 1.6}
-                color={isActive ? "#f8f6ef" : "#8f897a"} />
-              <span style={{
-                fontSize: 13, fontWeight: isActive ? 600 : 400,
-                color: isActive ? "#f8f6ef" : "#14203a",
-                fontFamily: "var(--font-hanken)",
-              }}>
-                {itemLabel}
-              </span>
-            </div>
+              {itemLabel}
+            </span>
+            {locked && lockTier && (
+              <span style={BADGE_STYLE}>{tierLabel(lockTier)}</span>
+            )}
+          </div>
+        );
+
+        return locked ? (
+          <div key={href} style={{ padding: "2px 8px" }}>{inner}</div>
+        ) : (
+          <Link key={href} href={href} style={{ textDecoration: "none", display: "block", padding: "2px 8px" }}>
+            {inner}
           </Link>
         );
       })}
@@ -81,8 +103,10 @@ export default function Sidebar() {
 
   const name = session?.user?.name ?? "User";
   const role = session?.user?.role ?? "OWNER";
+  const userTier = session?.user?.tier ?? 'premium';
   const initials = name.split(" ").slice(0, 2).map((w: string) => w[0]).join("").toUpperCase();
   const roleLabel = role === "OWNER" ? "Owner · akses penuh" : "Manajer";
+  const canTransfer = isAtLeast(userTier, 'business');
 
   return (
     <aside style={{
@@ -142,31 +166,34 @@ export default function Sidebar() {
 
       {/* Nav (scrollable) */}
       <div style={{ flex: 1, overflowY: "auto", paddingBottom: 8 }}>
-        <NavSection label="UTAMA" items={UTAMA} pathname={pathname} />
+        <NavSection label="UTAMA" items={UTAMA} pathname={pathname} userTier={userTier} />
 
-        <NavSection label="INVENTORI" items={INVENTORI} pathname={pathname} />
+        <NavSection label="INVENTORI" items={INVENTORI} pathname={pathname} userTier={userTier} />
 
-        {/* Transfer — opens modal, not a page */}
+        {/* Transfer — modal button, Business-locked */}
         <div style={{ padding: "2px 8px" }}>
           <button
-            onClick={() => openModal("transfer")}
+            onClick={() => canTransfer && openModal("transfer")}
             style={{
               width: "100%", display: "flex", alignItems: "center", gap: 10,
               padding: "8px 10px", borderRadius: 10,
               background: "transparent", border: "none",
-              cursor: "pointer", textAlign: "left",
+              cursor: canTransfer ? "pointer" : "not-allowed",
+              opacity: canTransfer ? 1 : 0.5,
+              textAlign: "left",
             }}
           >
             <ArrowLeftRight size={15} strokeWidth={1.6} color="#8f897a" />
-            <span style={{ fontSize: 13, fontWeight: 400, color: "#14203a", fontFamily: "var(--font-hanken)" }}>
+            <span style={{ fontSize: 13, fontWeight: 400, color: "#14203a", fontFamily: "var(--font-hanken)", flex: 1 }}>
               Transfer
             </span>
+            {!canTransfer && <span style={BADGE_STYLE}>Business</span>}
           </button>
         </div>
 
-        <NavSection label="MANAJEMEN" items={MANAJEMEN} pathname={pathname} />
+        <NavSection label="MANAJEMEN" items={MANAJEMEN} pathname={pathname} userTier={userTier} />
 
-        <NavSection label="SISTEM" items={PENGATURAN} pathname={pathname} />
+        <NavSection label="SISTEM" items={PENGATURAN} pathname={pathname} userTier={userTier} />
       </div>
 
       {/* User footer */}
@@ -192,9 +219,9 @@ export default function Sidebar() {
           fontSize: 9, letterSpacing: "0.08em", fontWeight: 700,
           background: "#f1e7cd", color: "#b8934a",
           padding: "2px 7px", borderRadius: 99,
-          whiteSpace: "nowrap",
+          whiteSpace: "nowrap", textTransform: "uppercase",
         }}>
-          PREMIUM
+          {tierLabel(userTier)}
         </span>
         <button
           onClick={() => signOut({ callbackUrl: "/login" })}

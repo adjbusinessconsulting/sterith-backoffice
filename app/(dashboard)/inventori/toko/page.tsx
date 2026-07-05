@@ -2,6 +2,9 @@
 import { useState, useEffect } from "react";
 import { Search, MoreVertical } from "lucide-react";
 import { useUIStore } from "@/store/ui";
+import { useSession } from "next-auth/react";
+import { isAtLeast } from "@/lib/tier";
+import LockedSection from "@/components/LockedSection";
 
 interface Product {
   id: string; name: string; sku: string; unit: string; category: string;
@@ -21,17 +24,23 @@ function initials(name: string) {
 const CATS = ["Semua", "Sembako", "Minuman", "Snack", "Rokok"];
 
 export default function TokoPage() {
+  const { data: session } = useSession();
   const openModal = useUIStore(s => s.openModal);
   const [products, setProducts] = useState<Product[]>([]);
   const [query, setQuery] = useState("");
   const [cat, setCat] = useState("Semua");
 
+  const userTier = session?.user?.tier ?? 'premium';
+
   useEffect(() => {
+    if (!isAtLeast(userTier, 'business')) return;
     fetch(`/api/products?location=store`)
       .then(r => r.json())
       .then(data => { if (Array.isArray(data)) setProducts(data); })
       .catch(() => {});
-  }, []);
+  }, [userTier]);
+
+  if (!isAtLeast(userTier, 'business')) return <LockedSection requiredTier="business" />;
 
   const filtered = products.filter(p => {
     const matchCat = cat === "Semua" || p.category === cat;

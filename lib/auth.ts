@@ -5,17 +5,19 @@ import { db } from "@/lib/prisma";
 declare module "next-auth" {
   interface Session {
     user: {
-      id: string;        // auth.users UUID
+      id: string;
       name?: string | null;
       email?: string | null;
       role: string;
       storeId: string;
+      tier: string;
     };
   }
   interface User {
     id: string;
     role: string;
     storeId: string;
+    tier: string;
   }
 }
 
@@ -24,6 +26,7 @@ declare module "next-auth/jwt" {
     id: string;
     role: string;
     storeId: string;
+    tier: string;
   }
 }
 
@@ -66,12 +69,19 @@ export const authOptions: NextAuthOptions = {
         });
         if (!store) return null;
 
+        // Fetch tier via raw query (column added outside Prisma migration)
+        const tierRows = await db.$queryRaw<Array<{ tier: string }>>`
+          SELECT COALESCE(tier, 'free') AS tier FROM stores WHERE id = ${store.id}::uuid
+        `;
+        const tier = tierRows[0]?.tier ?? 'free';
+
         return {
           id: user.id,
           name: credentials.email.split("@")[0],
           email: user.email,
           role: "OWNER",
           storeId: store.id,
+          tier,
         };
       },
     }),
@@ -82,6 +92,7 @@ export const authOptions: NextAuthOptions = {
         token.id = user.id;
         token.role = user.role;
         token.storeId = user.storeId;
+        token.tier = user.tier;
       }
       return token;
     },
@@ -89,6 +100,7 @@ export const authOptions: NextAuthOptions = {
       session.user.id = token.id;
       session.user.role = token.role;
       session.user.storeId = token.storeId;
+      session.user.tier = token.tier;
       return session;
     },
   },
