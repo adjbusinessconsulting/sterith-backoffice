@@ -210,6 +210,7 @@ export default function PengaturanPage() {
 
           {qrisUrl && (
             <div style={{ width: 110, height: 110, border: "1px solid #e8e3d5", borderRadius: 10, overflow: "hidden", flexShrink: 0, background: "#f6f3ea", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={qrisUrl} alt="QRIS preview" style={{ width: "100%", height: "100%", objectFit: "contain" }}
                 onError={e => { (e.target as HTMLImageElement).style.display = "none"; }} />
             </div>
@@ -217,7 +218,7 @@ export default function PengaturanPage() {
         </div>
 
         <div style={{ marginTop: 16, padding: "12px 16px", background: "#fdf8ee", border: "1px solid #edd99a", borderRadius: 10, fontSize: 12, color: "#7c6430", lineHeight: 1.6 }}>
-          <strong>Cara kerja:</strong> Kasir klik "SELESAIKAN" di POS → QR tampil di layar → pelanggan scan & bayar → kasir klik "Sudah Dibayar ✓" secara manual.
+          <strong>Cara kerja:</strong> Kasir klik &quot;SELESAIKAN&quot; di POS → QR tampil di layar → pelanggan scan &amp; bayar → kasir klik &quot;Sudah Dibayar ✓&quot; secara manual.
         </div>
 
         <div style={{ marginTop: 16, display: "flex", alignItems: "center", gap: 12 }}>
