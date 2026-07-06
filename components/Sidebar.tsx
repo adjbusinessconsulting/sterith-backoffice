@@ -6,12 +6,19 @@ import {
   LayoutDashboard, TrendingUp, Package, Store,
   ArrowLeftRight, ClipboardCheck, History,
   Users, Grid2X2, BarChart2, Wallet, LogOut, ChevronDown, Settings2,
+  LineChart, UserRound, Boxes,
 } from "lucide-react";
 import { useUIStore } from "@/store/ui";
 import { isAtLeast, tierLabel } from "@/lib/tier";
 
 const UTAMA = [
   { href: "/dashboard",           label: "Dashboard",    Icon: LayoutDashboard, lockTier: null },
+];
+
+const ANALITIK = [
+  { href: "/analitik/penjualan", label: "Dashboard Penjualan", Icon: LineChart,  lockTier: null },
+  { href: "/analitik/kasir",     label: "Performa Kasir",      Icon: UserRound,  lockTier: null },
+  { href: "/analitik/produk",    label: "Performa Produk",     Icon: Boxes,      lockTier: null },
 ];
 
 const INVENTORI = [
@@ -167,6 +174,8 @@ export default function Sidebar() {
       {/* Nav (scrollable) */}
       <div style={{ flex: 1, overflowY: "auto", paddingBottom: 8 }}>
         <NavSection label="UTAMA" items={UTAMA} pathname={pathname} userTier={userTier} />
+
+        <NavSection label="ANALITIK" items={ANALITIK} pathname={pathname} userTier={userTier} />
 
         <NavSection label="INVENTORI" items={INVENTORI} pathname={pathname} userTier={userTier} />
 
