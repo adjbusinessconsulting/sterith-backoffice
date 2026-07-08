@@ -69,6 +69,8 @@ export const authOptions: NextAuthOptions = {
           where: { ownerId: user.id },
         });
         if (!store) return null;
+        // Suspended clients can't sign in (Masteroffice sets stores.status).
+        if (store.status !== "active") return null;
 
         // Fetch tier via raw query (column added outside Prisma migration)
         const tierRows = await db.$queryRaw<Array<{ tier: string }>>`
