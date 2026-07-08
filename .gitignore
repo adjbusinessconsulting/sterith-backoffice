@@ -30,3 +30,6 @@ yarn-error.log*
 .turbo
 tsconfig.tsbuildinfo
 .thumbnail
+
+# local script with DB creds — never commit
+check_users.cjs
