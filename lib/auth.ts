@@ -1,6 +1,7 @@
 import type { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { db } from "@/lib/prisma";
+import { isAtLeast } from "@/lib/tier";
 
 declare module "next-auth" {
   interface Session {
@@ -74,6 +75,11 @@ export const authOptions: NextAuthOptions = {
           SELECT COALESCE(tier, 'free') AS tier FROM stores WHERE id = ${store.id}::uuid
         `;
         const tier = tierRows[0]?.tier ?? 'free';
+
+        // Backoffice is a Premium+ feature. Free/Standard owners are rejected here
+        // (they use the POS only). Requires stores.tier to be correct — see the
+        // provisioning trigger + Masteroffice tier sync.
+        if (!isAtLeast(tier, 'premium')) return null;
 
         return {
           id: user.id,
