@@ -1,16 +1,19 @@
 "use client";
 
 interface Props {
-  requiredTier: "business" | "enterprise";
+  requiredTier?: "business" | "enterprise";
+  requiredAddOn?: "inventori" | "crm";
 }
 
-const TIER_COPY: Record<string, { label: string; desc: string }> = {
+const COPY: Record<string, { label: string; desc: string }> = {
   business:   { label: "Business",   desc: "Upgrade ke Business untuk mengakses fitur ini, termasuk inventori dua tingkat, transfer stok, dan manajemen staf." },
   enterprise: { label: "Enterprise", desc: "Upgrade ke Enterprise untuk mengakses modul keuangan, laporan laba rugi, dan manajemen multi-bisnis." },
+  inventori:  { label: "Inventori Lengkap", desc: "Aktifkan add-on Inventori Lengkap untuk Gudang, Toko dua tingkat, Stok Opname, Riwayat, Transfer, dan Scan AI. Ajukan lewat tombol paket di atas." },
+  crm:        { label: "CRM + Loyalti", desc: "Aktifkan add-on CRM + Loyalti untuk data pelanggan dan program loyalti. Ajukan lewat tombol paket di atas." },
 };
 
-export default function LockedSection({ requiredTier }: Props) {
-  const { label, desc } = TIER_COPY[requiredTier];
+export default function LockedSection({ requiredTier, requiredAddOn }: Props) {
+  const { label, desc } = COPY[requiredAddOn ?? requiredTier ?? "business"];
   return (
     <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: "60vh", padding: "60px 40px", textAlign: "center" }}>
       <div style={{ width: 60, height: 60, borderRadius: "50%", background: "#f1e7cd", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 20 }}>

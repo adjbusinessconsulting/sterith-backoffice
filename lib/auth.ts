@@ -12,6 +12,7 @@ declare module "next-auth" {
       role: string;
       storeId: string;
       tier: string;
+      addOns: string[];
     };
   }
   interface User {
@@ -19,6 +20,7 @@ declare module "next-auth" {
     role: string;
     storeId: string;
     tier: string;
+    addOns: string[];
   }
 }
 
@@ -28,6 +30,7 @@ declare module "next-auth/jwt" {
     role: string;
     storeId: string;
     tier: string;
+    addOns: string[];
   }
 }
 
@@ -78,6 +81,15 @@ export const authOptions: NextAuthOptions = {
         `;
         const tier = tierRows[0]?.tier ?? 'free';
 
+        // Add-ons (separate from tier). Column added outside Prisma; tolerate absence.
+        let addOns: string[] = [];
+        try {
+          const addonRows = await db.$queryRaw<Array<{ add_ons: string[] }>>`
+            SELECT COALESCE(add_ons, '{}') AS add_ons FROM stores WHERE id = ${store.id}::uuid
+          `;
+          addOns = addonRows[0]?.add_ons ?? [];
+        } catch { addOns = []; }
+
         // Backoffice is a Premium+ feature. Free/Standard owners are rejected here
         // (they use the POS only). Requires stores.tier to be correct — see the
         // provisioning trigger + Masteroffice tier sync.
@@ -90,6 +102,7 @@ export const authOptions: NextAuthOptions = {
           role: "OWNER",
           storeId: store.id,
           tier,
+          addOns,
         };
       },
     }),
@@ -101,6 +114,7 @@ export const authOptions: NextAuthOptions = {
         token.role = user.role;
         token.storeId = user.storeId;
         token.tier = user.tier;
+        token.addOns = user.addOns;
       }
       return token;
     },
@@ -109,6 +123,7 @@ export const authOptions: NextAuthOptions = {
       session.user.role = token.role;
       session.user.storeId = token.storeId;
       session.user.tier = token.tier;
+      session.user.addOns = token.addOns ?? [];
       return session;
     },
   },

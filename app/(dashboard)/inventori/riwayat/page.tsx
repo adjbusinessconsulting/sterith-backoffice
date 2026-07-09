@@ -1,5 +1,8 @@
 "use client";
 import { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
+import { hasAddOn } from "@/lib/addons";
+import LockedSection from "@/components/LockedSection";
 
 interface Movement {
   id: string;
@@ -39,11 +42,14 @@ function locLabel(from: string | null, to: string | null) {
 const TYPES = ["Semua", "MASUK", "TRANSFER", "TERJUAL", "RUSAK", "OPNAME"];
 
 export default function RiwayatPage() {
+  const { data: session } = useSession();
+  const hasInv = hasAddOn(session?.user?.addOns, "inventori");
   const [movements, setMovements] = useState<Movement[]>([]);
   const [typeFilter, setTypeFilter] = useState("Semua");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!hasInv) return;
     setLoading(true);
     const params = typeFilter !== "Semua" ? `?type=${typeFilter}` : "";
     fetch(`/api/movements${params}`)
@@ -51,7 +57,9 @@ export default function RiwayatPage() {
       .then(data => { if (Array.isArray(data)) setMovements(data); })
       .catch(() => {})
       .finally(() => setLoading(false));
-  }, [typeFilter]);
+  }, [typeFilter, hasInv]);
+
+  if (!hasInv) return <LockedSection requiredAddOn="inventori" />;
 
   return (
     <div style={{ padding: "32px 36px", maxWidth: 1100 }}>

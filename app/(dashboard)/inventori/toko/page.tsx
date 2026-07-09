@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { Search, MoreVertical } from "lucide-react";
 import { useUIStore } from "@/store/ui";
 import { useSession } from "next-auth/react";
-import { isAtLeast } from "@/lib/tier";
+import { hasAddOn } from "@/lib/addons";
 import LockedSection from "@/components/LockedSection";
 
 interface Product {
@@ -30,17 +30,17 @@ export default function TokoPage() {
   const [query, setQuery] = useState("");
   const [cat, setCat] = useState("Semua");
 
-  const userTier = session?.user?.tier ?? 'premium';
+  const hasInv = hasAddOn(session?.user?.addOns, 'inventori');
 
   useEffect(() => {
-    if (!isAtLeast(userTier, 'business')) return;
+    if (!hasInv) return;
     fetch(`/api/products?location=store`)
       .then(r => r.json())
       .then(data => { if (Array.isArray(data)) setProducts(data); })
       .catch(() => {});
-  }, [userTier]);
+  }, [hasInv]);
 
-  if (!isAtLeast(userTier, 'business')) return <LockedSection requiredTier="business" />;
+  if (!hasInv) return <LockedSection requiredAddOn="inventori" />;
 
   const filtered = products.filter(p => {
     const matchCat = cat === "Semua" || p.category === cat;

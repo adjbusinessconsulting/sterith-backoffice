@@ -10,34 +10,38 @@ import {
 } from "lucide-react";
 import { useUIStore } from "@/store/ui";
 import { isAtLeast, tierLabel } from "@/lib/tier";
+import { hasAddOn, type AddOnKey } from "@/lib/addons";
 
-const UTAMA = [
+type NavItem = { href: string; label: string; Icon: React.ElementType; lockTier?: string | null; requiresAddOn?: AddOnKey | null };
+
+const UTAMA: NavItem[] = [
   { href: "/dashboard",           label: "Dashboard",    Icon: LayoutDashboard, lockTier: null },
 ];
 
-const ANALITIK = [
+const ANALITIK: NavItem[] = [
   { href: "/analitik/penjualan", label: "Dashboard Penjualan", Icon: LineChart,  lockTier: null },
   { href: "/analitik/kasir",     label: "Performa Kasir",      Icon: UserRound,  lockTier: null },
   { href: "/analitik/produk",    label: "Performa Produk",     Icon: Boxes,      lockTier: null },
 ];
 
-const INVENTORI = [
+// Full Inventori is a paid add-on ("inventori"); Stok Harian (Basic) stays bundled.
+const INVENTORI: NavItem[] = [
   { href: "/inventori/stok",      label: "Stok Harian",  Icon: Boxes,          lockTier: null },
-  { href: "/inventori/ringkasan", label: "Ringkasan",    Icon: TrendingUp,     lockTier: null },
-  { href: "/inventori/gudang",    label: "Gudang",       Icon: Package,        lockTier: "business" },
-  { href: "/inventori/toko",      label: "Toko",         Icon: Store,          lockTier: "business" },
-  { href: "/inventori/opname",    label: "Stok Opname",  Icon: ClipboardCheck, lockTier: null },
-  { href: "/inventori/riwayat",   label: "Riwayat Stok", Icon: History,        lockTier: null },
+  { href: "/inventori/ringkasan", label: "Ringkasan",    Icon: TrendingUp,     requiresAddOn: "inventori" },
+  { href: "/inventori/gudang",    label: "Gudang",       Icon: Package,        requiresAddOn: "inventori" },
+  { href: "/inventori/toko",      label: "Toko",         Icon: Store,          requiresAddOn: "inventori" },
+  { href: "/inventori/opname",    label: "Stok Opname",  Icon: ClipboardCheck, requiresAddOn: "inventori" },
+  { href: "/inventori/riwayat",   label: "Riwayat Stok", Icon: History,        requiresAddOn: "inventori" },
 ];
 
-const MANAJEMEN = [
+const MANAJEMEN: NavItem[] = [
   { href: "/manajemen/staf",     label: "Staf & Akses", Icon: Users,    lockTier: "business" },
   { href: "/manajemen/produk",   label: "Produk",       Icon: Grid2X2,  lockTier: null },
   { href: "/manajemen/laporan",  label: "Laporan",      Icon: BarChart2, lockTier: null },
   { href: "/manajemen/keuangan", label: "Keuangan",     Icon: Wallet,   lockTier: "enterprise" },
 ];
 
-const PENGATURAN = [
+const PENGATURAN: NavItem[] = [
   { href: "/pengaturan", label: "Pengaturan", Icon: Settings2, lockTier: null },
 ];
 
@@ -49,11 +53,12 @@ const BADGE_STYLE: React.CSSProperties = {
   whiteSpace: "nowrap",
 };
 
-function NavSection({ label, items, pathname, userTier }: {
+function NavSection({ label, items, pathname, userTier, addOns }: {
   label: string;
-  items: typeof INVENTORI;
+  items: NavItem[];
   pathname: string;
   userTier: string;
+  addOns: string[];
 }) {
   return (
     <div style={{ marginBottom: 6 }}>
@@ -64,8 +69,10 @@ function NavSection({ label, items, pathname, userTier }: {
       }}>
         {label}
       </p>
-      {items.map(({ href, label: itemLabel, Icon, lockTier }) => {
-        const locked = lockTier ? !isAtLeast(userTier, lockTier) : false;
+      {items.map(({ href, label: itemLabel, Icon, lockTier, requiresAddOn }) => {
+        const locked = requiresAddOn
+          ? !hasAddOn(addOns, requiresAddOn)
+          : (lockTier ? !isAtLeast(userTier, lockTier) : false);
         const isActive = !locked && (pathname === href || (href !== "/dashboard" && pathname.startsWith(href)));
 
         const inner = (
@@ -86,8 +93,8 @@ function NavSection({ label, items, pathname, userTier }: {
             }}>
               {itemLabel}
             </span>
-            {locked && lockTier && (
-              <span style={BADGE_STYLE}>{tierLabel(lockTier)}</span>
+            {locked && (
+              <span style={BADGE_STYLE}>{requiresAddOn ? "Add-on" : tierLabel(lockTier!)}</span>
             )}
           </div>
         );
@@ -112,9 +119,10 @@ export default function Sidebar() {
   const name = session?.user?.name ?? "User";
   const role = session?.user?.role ?? "OWNER";
   const userTier = session?.user?.tier ?? 'premium';
+  const addOns = session?.user?.addOns ?? [];
   const initials = name.split(" ").slice(0, 2).map((w: string) => w[0]).join("").toUpperCase();
   const roleLabel = role === "OWNER" ? "Owner · akses penuh" : "Manajer";
-  const canTransfer = isAtLeast(userTier, 'business');
+  const canTransfer = hasAddOn(addOns, "inventori");
 
   return (
     <aside style={{
@@ -174,11 +182,11 @@ export default function Sidebar() {
 
       {/* Nav (scrollable) */}
       <div style={{ flex: 1, overflowY: "auto", paddingBottom: 8 }}>
-        <NavSection label="UTAMA" items={UTAMA} pathname={pathname} userTier={userTier} />
+        <NavSection label="UTAMA" items={UTAMA} pathname={pathname} userTier={userTier} addOns={addOns} />
 
-        <NavSection label="ANALITIK" items={ANALITIK} pathname={pathname} userTier={userTier} />
+        <NavSection label="ANALITIK" items={ANALITIK} pathname={pathname} userTier={userTier} addOns={addOns} />
 
-        <NavSection label="INVENTORI" items={INVENTORI} pathname={pathname} userTier={userTier} />
+        <NavSection label="INVENTORI" items={INVENTORI} pathname={pathname} userTier={userTier} addOns={addOns} />
 
         {/* Transfer — modal button, Business-locked */}
         <div style={{ padding: "2px 8px" }}>
@@ -201,9 +209,9 @@ export default function Sidebar() {
           </button>
         </div>
 
-        <NavSection label="MANAJEMEN" items={MANAJEMEN} pathname={pathname} userTier={userTier} />
+        <NavSection label="MANAJEMEN" items={MANAJEMEN} pathname={pathname} userTier={userTier} addOns={addOns} />
 
-        <NavSection label="SISTEM" items={PENGATURAN} pathname={pathname} userTier={userTier} />
+        <NavSection label="SISTEM" items={PENGATURAN} pathname={pathname} userTier={userTier} addOns={addOns} />
       </div>
 
       {/* User footer */}

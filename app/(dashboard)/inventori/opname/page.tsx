@@ -1,5 +1,8 @@
 "use client";
 import { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
+import { hasAddOn } from "@/lib/addons";
+import LockedSection from "@/components/LockedSection";
 
 interface Product {
   id: string; name: string; sku: string; warehouseQty: number; storeQty: number;
@@ -18,6 +21,8 @@ function initials(name: string) {
 }
 
 export default function OpnamePage() {
+  const { data: session } = useSession();
+  const hasInv = hasAddOn(session?.user?.addOns, "inventori");
   const [location, setLocation] = useState<"WAREHOUSE" | "STORE">("WAREHOUSE");
   const [products, setProducts] = useState<Product[]>([]);
   const [lines, setLines] = useState<OpnameLine[]>([]);
@@ -25,6 +30,7 @@ export default function OpnamePage() {
   const [submitted, setSubmitted] = useState(false);
 
   useEffect(() => {
+    if (!hasInv) return;
     fetch("/api/products")
       .then(r => r.json())
       .then((data: Product[]) => {
@@ -39,7 +45,7 @@ export default function OpnamePage() {
         })));
       })
       .catch(() => {});
-  }, [location]);
+  }, [location, hasInv]);
 
   function setPhysical(productId: string, val: string) {
     setLines(prev => prev.map(l => l.productId === productId ? { ...l, physicalQty: val === "" ? null : parseInt(val) || 0 } : l));
@@ -55,6 +61,8 @@ export default function OpnamePage() {
     setSubmitting(false);
     if (res.ok) setSubmitted(true);
   }
+
+  if (!hasInv) return <LockedSection requiredAddOn="inventori" />;
 
   if (submitted) {
     return (
