@@ -1,15 +1,20 @@
 "use client";
 import { useState } from "react";
-import { Bell, Search, Sparkles } from "lucide-react";
+import { usePathname } from "next/navigation";
+import { Bell, Search, Sparkles, Puzzle } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useUIStore } from "@/store/ui";
 import UpgradeModal from "@/components/UpgradeModal";
+
+const INV_ADDON_ROUTES = ["/inventori/ringkasan", "/inventori/gudang", "/inventori/toko", "/inventori/opname", "/inventori/riwayat"];
 
 export default function TopBar() {
   const openModal = useUIStore(s => s.openModal);
   const { data: session } = useSession();
   const tier = (session?.user?.tier as string) ?? "premium";
   const [upgradeOpen, setUpgradeOpen] = useState(false);
+  const pathname = usePathname();
+  const showInvAddon = INV_ADDON_ROUTES.some(r => pathname.startsWith(r));
 
   return (
     <header style={{
@@ -46,6 +51,14 @@ export default function TopBar() {
           ⌘K
         </span>
       </div>
+
+      {/* Add-on context tag */}
+      {showInvAddon && (
+        <div style={{ display: "flex", alignItems: "center", gap: 6, height: 28, padding: "0 11px", borderRadius: 999, background: "rgba(184,147,74,0.10)", border: "1px solid rgba(184,147,74,0.3)", flexShrink: 0 }}>
+          <Puzzle size={12} color="#b8934a" strokeWidth={2} />
+          <span style={{ fontSize: 10.5, fontWeight: 700, color: "#b8934a", fontFamily: "var(--font-hanken)", whiteSpace: "nowrap" }}>Add-on · Inventori Lengkap</span>
+        </div>
+      )}
 
       <div style={{ flex: 1 }} />
 
