@@ -22,6 +22,7 @@ const ANALITIK = [
 ];
 
 const INVENTORI = [
+  { href: "/inventori/stok",      label: "Stok Harian",  Icon: Boxes,          lockTier: null },
   { href: "/inventori/ringkasan", label: "Ringkasan",    Icon: TrendingUp,     lockTier: null },
   { href: "/inventori/gudang",    label: "Gudang",       Icon: Package,        lockTier: "business" },
   { href: "/inventori/toko",      label: "Toko",         Icon: Store,          lockTier: "business" },

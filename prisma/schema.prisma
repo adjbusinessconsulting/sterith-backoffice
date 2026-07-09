@@ -62,6 +62,12 @@ model Product {
   photoUrl     String?  @map("photo_url")
   deletedAt    DateTime? @map("deleted_at") @db.Timestamptz(6)
 
+  // Basic Inventori daily ledger (awal + tambahan − terjual = sisa; `stock` = sisa)
+  stockAwal     Int       @default(0) @map("stock_awal")
+  stockTambahan Int       @default(0) @map("stock_tambahan")
+  stockTerjual  Int       @default(0) @map("stock_terjual")
+  stockDate     DateTime? @map("stock_date") @db.Date
+
   saleItems  SaleItem[]
   movements  StockMovement[]
 
