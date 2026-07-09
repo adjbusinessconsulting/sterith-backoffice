@@ -52,6 +52,12 @@ const BADGE_STYLE: React.CSSProperties = {
   padding: "1px 5px", borderRadius: 3, textTransform: "uppercase",
   whiteSpace: "nowrap",
 };
+// Muted "Add-on" tag for items the store already owns — still noted as an add-on.
+const BADGE_ADDON_OWNED: React.CSSProperties = {
+  ...BADGE_STYLE,
+  background: "rgba(143,137,122,0.14)", color: "#8f897a",
+  border: "1px solid rgba(143,137,122,0.28)",
+};
 
 function NavSection({ label, items, pathname, userTier, addOns }: {
   label: string;
@@ -93,9 +99,11 @@ function NavSection({ label, items, pathname, userTier, addOns }: {
             }}>
               {itemLabel}
             </span>
-            {locked && (
-              <span style={BADGE_STYLE}>{requiresAddOn ? "Add-on" : tierLabel(lockTier!)}</span>
-            )}
+            {requiresAddOn ? (
+              <span style={locked ? BADGE_STYLE : BADGE_ADDON_OWNED}>Add-on</span>
+            ) : locked && lockTier ? (
+              <span style={BADGE_STYLE}>{tierLabel(lockTier)}</span>
+            ) : null}
           </div>
         );
 
