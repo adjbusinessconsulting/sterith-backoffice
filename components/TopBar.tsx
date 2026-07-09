@@ -1,9 +1,15 @@
 "use client";
-import { Bell, Search } from "lucide-react";
+import { useState } from "react";
+import { Bell, Search, Sparkles } from "lucide-react";
+import { useSession } from "next-auth/react";
 import { useUIStore } from "@/store/ui";
+import UpgradeModal from "@/components/UpgradeModal";
 
 export default function TopBar() {
   const openModal = useUIStore(s => s.openModal);
+  const { data: session } = useSession();
+  const tier = (session?.user?.tier as string) ?? "premium";
+  const [upgradeOpen, setUpgradeOpen] = useState(false);
 
   return (
     <header style={{
@@ -50,6 +56,19 @@ export default function TopBar() {
           Tersinkron · {new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" })}
         </span>
       </div>
+
+      {/* Tier badge → upgrade */}
+      <button onClick={() => setUpgradeOpen(true)} title="Lihat paket / upgrade"
+        style={{
+          display: "flex", alignItems: "center", gap: 6, height: 30, padding: "0 12px",
+          borderRadius: 999, border: "1px solid rgba(184,147,74,0.4)", background: "rgba(184,147,74,0.10)",
+          cursor: "pointer", flexShrink: 0,
+        }}>
+        <Sparkles size={13} color="#b8934a" strokeWidth={2} />
+        <span style={{ fontSize: 10, fontWeight: 800, letterSpacing: "0.1em", textTransform: "uppercase", color: "#b8934a", fontFamily: "var(--font-hanken)" }}>{tier}</span>
+      </button>
+
+      <UpgradeModal open={upgradeOpen} onClose={() => setUpgradeOpen(false)} />
 
       {/* Bell */}
       <button
