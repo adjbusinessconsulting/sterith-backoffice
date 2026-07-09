@@ -1,6 +1,8 @@
 "use client";
 import { useState, useEffect, useCallback } from "react";
-import { QrCode, CreditCard, CheckCircle2, AlertCircle, Eye, EyeOff, Upload, Trash2 } from "lucide-react";
+import { QrCode, CreditCard, CheckCircle2, AlertCircle, Eye, EyeOff, Upload, Trash2, Sparkles, Puzzle } from "lucide-react";
+import { useSession } from "next-auth/react";
+import { ADDON_KEYS, ADDON_LABEL, hasAddOn, type AddOnKey } from "@/lib/addons";
 
 interface StoreSettings {
   qris_image_url: string | null;
@@ -26,6 +28,65 @@ function Section({ title, icon, subtitle, children }: {
       </div>
       <div style={{ padding: "24px 28px" }}>{children}</div>
     </div>
+  );
+}
+
+const ADDON_DESC: Record<AddOnKey, string> = {
+  inventori: "Gudang, stok opname, mutasi antar cabang & laporan lengkap.",
+  crm: "Data pelanggan, poin loyalti & riwayat belanja.",
+};
+
+function SubscriptionSection() {
+  const { data: session } = useSession();
+  const tier = ((session?.user as { tier?: string } | undefined)?.tier ?? "premium");
+  const addOns = ((session?.user as { addOns?: string[] } | undefined)?.addOns ?? []);
+  const tierName = tier.charAt(0).toUpperCase() + tier.slice(1);
+
+  return (
+    <Section
+      title="Langganan & Add-on"
+      subtitle="Paket aktif dan modul tambahan"
+      icon={<Sparkles size={18} color="#b8934a" />}
+    >
+      {/* Current plan */}
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, padding: "16px 18px", border: "1px solid rgba(184,147,74,0.4)", background: "rgba(184,147,74,0.07)", borderRadius: 12, marginBottom: 18, flexWrap: "wrap" }}>
+        <div>
+          <p style={{ fontSize: 9.5, letterSpacing: "0.2em", textTransform: "uppercase", color: "#8f897a", fontWeight: 600, margin: 0, fontFamily: "var(--font-hanken)" }}>Paket Anda</p>
+          <p style={{ fontFamily: "var(--font-garamond)", fontSize: 26, fontWeight: 500, color: "#14203a", margin: "2px 0 0" }}>{tierName}</p>
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: 6, height: 28, padding: "0 12px", borderRadius: 999, background: "#e9f1ea", border: "1px solid #b3d4bb" }}>
+          <CheckCircle2 size={13} color="#3f7d54" />
+          <span style={{ fontSize: 11.5, fontWeight: 700, color: "#3f7d54", fontFamily: "var(--font-hanken)" }}>Aktif</span>
+        </div>
+      </div>
+
+      {/* Add-ons (darkened when not active) */}
+      <p style={{ fontSize: 9.5, letterSpacing: "0.2em", textTransform: "uppercase", color: "#8f897a", fontWeight: 600, margin: "0 0 10px", fontFamily: "var(--font-hanken)" }}>Modul Add-on</p>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(240px,1fr))", gap: 12 }}>
+        {ADDON_KEYS.map(key => {
+          const active = hasAddOn(addOns, key);
+          return (
+            <div key={key} style={{
+              position: "relative", padding: "15px 16px", borderRadius: 12,
+              border: active ? "1px solid rgba(63,125,84,0.4)" : "1px dashed #d8d2c4",
+              background: active ? "#f5faf6" : "#f4f1ea",
+              opacity: active ? 1 : 0.68,
+            }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8 }}>
+                <span style={{ fontSize: 13.5, fontWeight: 700, color: "#14203a", fontFamily: "var(--font-hanken)" }}>{ADDON_LABEL[key]}</span>
+                <span style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 9, fontWeight: 800, letterSpacing: "0.08em", textTransform: "uppercase", color: "#b8934a", background: "rgba(184,147,74,0.14)", borderRadius: 5, padding: "3px 7px", fontFamily: "var(--font-hanken)" }}>
+                  <Puzzle size={10} /> Add-on
+                </span>
+              </div>
+              <p style={{ fontSize: 12, color: "#8f897a", margin: "8px 0 0", lineHeight: 1.5, fontFamily: "var(--font-hanken)" }}>{ADDON_DESC[key]}</p>
+              <p style={{ fontSize: 11, margin: "8px 0 0", fontStyle: "italic", color: active ? "#3f7d54" : "#a79f8d", fontFamily: "var(--font-hanken)" }}>
+                {active ? "✓ Aktif" : "Add-on terpisah — belum aktif. Hubungi Sterith untuk mengaktifkan."}
+              </p>
+            </div>
+          );
+        })}
+      </div>
+    </Section>
   );
 }
 
@@ -175,9 +236,12 @@ export default function PengaturanPage() {
           Pengaturan toko
         </h1>
         <p style={{ fontSize: 13, color: "#8f897a", lineHeight: 1.6 }}>
-          Konfigurasi pembayaran QRIS untuk POS Anda.
+          Langganan, add-on, dan konfigurasi pembayaran QRIS untuk POS Anda.
         </p>
       </div>
+
+      {/* Subscription & add-ons */}
+      <SubscriptionSection />
 
       {/* Static QRIS Section */}
       <Section
