@@ -25,6 +25,12 @@ export default function StokHarianPage() {
   const [target, setTarget] = useState<Row | null>(null);
   const [qty, setQty] = useState("");
   const [saving, setSaving] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const c = () => setIsMobile(window.innerWidth < 768);
+    c(); window.addEventListener("resize", c);
+    return () => window.removeEventListener("resize", c);
+  }, []);
 
   async function load() {
     const res = await fetch("/api/inventori/basic", { cache: "no-store" });
@@ -53,7 +59,7 @@ export default function StokHarianPage() {
   const td: React.CSSProperties = { fontSize: 13, color: NAVY, padding: "12px 16px", fontFamily: F, fontVariantNumeric: "tabular-nums" };
 
   return (
-    <div style={{ padding: "28px 32px", fontFamily: F }}>
+    <div style={{ padding: isMobile ? "18px 14px" : "28px 32px", fontFamily: F }}>
       <div style={{ marginBottom: 20 }}>
         <div style={{ fontSize: 11, letterSpacing: "0.18em", textTransform: "uppercase", color: GOLD, fontWeight: 700 }}>Inventori · Dasar</div>
         <h1 style={{ fontSize: 26, fontWeight: 800, color: NAVY, letterSpacing: "-0.02em", marginTop: 4 }}>Stok Harian</h1>
@@ -83,7 +89,44 @@ export default function StokHarianPage() {
           style={{ flex: 1, border: 0, outline: "none", background: "transparent", fontSize: 13, color: NAVY, fontFamily: F }} />
       </div>
 
-      {/* table */}
+      {/* mobile: cards */}
+      {isMobile ? (
+        loading ? (
+          <p style={{ color: MUTE, fontSize: 13, textAlign: "center", padding: 30 }}>Memuat…</p>
+        ) : filtered.length === 0 ? (
+          <p style={{ color: MUTE, fontSize: 13, textAlign: "center", padding: 30 }}>Belum ada produk.</p>
+        ) : (
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            {filtered.map(r => {
+              const s = statusOf(r.stock, threshold);
+              return (
+                <div key={r.id} style={{ background: CARD, border: `1px solid ${BORDER}`, borderRadius: 12, padding: 14 }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 10, marginBottom: 12 }}>
+                    <div style={{ minWidth: 0 }}>
+                      <div style={{ fontSize: 14, fontWeight: 700, color: NAVY }}>{r.name}</div>
+                      <div style={{ fontSize: 11.5, color: MUTE, marginTop: 1 }}>{r.sku ?? "—"} · {r.unit}</div>
+                    </div>
+                    <span style={{ flexShrink: 0, fontSize: 10.5, fontWeight: 700, color: s.color, background: s.bg, borderRadius: 6, padding: "3px 9px", letterSpacing: "0.04em" }}>{s.label}</span>
+                  </div>
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 6, marginBottom: 12 }}>
+                    {[{ l: "Awal", v: r.stockAwal }, { l: "Tambah", v: r.stockTambahan > 0 ? `+${r.stockTambahan}` : "0", g: r.stockTambahan > 0 }, { l: "Terjual", v: r.stockTerjual }, { l: "Sisa", v: r.stock, a: true }].map(c => (
+                      <div key={c.l} style={{ border: `1px solid ${BORDER}`, borderRadius: 9, padding: "7px 2px", textAlign: "center", background: c.a ? "rgba(63,125,84,0.06)" : CREAM }}>
+                        <div style={{ fontSize: 8, letterSpacing: "0.08em", textTransform: "uppercase", color: MUTE, fontWeight: 700 }}>{c.l}</div>
+                        <div style={{ fontSize: 15, fontWeight: 800, marginTop: 1, fontVariantNumeric: "tabular-nums", color: c.a ? GREEN : c.g ? GREEN : NAVY }}>{c.v}</div>
+                      </div>
+                    ))}
+                  </div>
+                  <button onClick={() => { setTarget(r); setQty(""); }}
+                    style={{ width: "100%", height: 40, borderRadius: 10, border: `1px solid rgba(63,125,84,0.4)`, background: "rgba(63,125,84,0.07)", color: GREEN, fontSize: 13, fontWeight: 700, cursor: "pointer", fontFamily: F, display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}>
+                    <Plus size={15} /> Tambah Stok
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+        )
+      ) : (
+      /* desktop: table */
       <div style={{ background: CARD, border: `1px solid ${BORDER}`, borderRadius: 14, overflow: "hidden" }}>
         <div style={{ overflowX: "auto" }}>
           <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 720 }}>
@@ -131,11 +174,12 @@ export default function StokHarianPage() {
           </table>
         </div>
       </div>
+      )}
 
       {/* Tambah modal */}
       {target && (
-        <div onClick={() => setTarget(null)} style={{ position: "fixed", inset: 0, zIndex: 100, background: "rgba(20,32,58,0.5)", backdropFilter: "blur(2px)", display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
-          <div onClick={e => e.stopPropagation()} style={{ background: CREAM, borderRadius: 16, width: "100%", maxWidth: 380, boxShadow: "0 30px 80px rgba(20,32,58,0.4)" }}>
+        <div onClick={() => setTarget(null)} style={{ position: "fixed", inset: 0, zIndex: 100, background: "rgba(20,32,58,0.5)", backdropFilter: "blur(2px)", display: "flex", alignItems: isMobile ? "flex-end" : "center", justifyContent: "center", padding: isMobile ? 0 : 20 }}>
+          <div onClick={e => e.stopPropagation()} style={{ background: CREAM, borderRadius: isMobile ? "18px 18px 0 0" : 16, width: "100%", maxWidth: isMobile ? "100%" : 380, boxShadow: "0 30px 80px rgba(20,32,58,0.4)" }}>
             <div style={{ padding: "18px 20px 4px", display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
               <div>
                 <div style={{ fontSize: 10, letterSpacing: "0.2em", textTransform: "uppercase", color: MUTE, fontWeight: 700 }}>Tambah Stok</div>
