@@ -7,11 +7,11 @@ type TierKey = "free" | "standard" | "premium";
 
 const TIERS: { key: TierKey; name: string; price: number; reg?: number; tagline: string; features: string[] }[] = [
   { key: "free", name: "Free", price: 0, tagline: "Mulai gratis",
-    features: ["1 perangkat toko", "3 akun kasir", "Laporan ringkas", "Riwayat 1 hari"] },
-  { key: "standard", name: "Standard", price: 25000, reg: 50000, tagline: "Untuk toko berkembang",
-    features: ["2 perangkat toko", "10 akun kasir", "Laporan lengkap + export", "Riwayat 1 bulan", "Uang kas, hutang, struk WA"] },
-  { key: "premium", name: "Premium", price: 50000, reg: 100000, tagline: "Kontrol penuh + Backoffice",
-    features: ["Perangkat & kasir tanpa batas", "Riwayat 3 bulan", "Semua metode bayar", "Backoffice (remote)", "Inventori dasar"] },
+    features: ["1 toko", "1 akun kasir", "Dashboard hari ini", "Riwayat 1 hari"] },
+  { key: "standard", name: "Standard", price: 50000, tagline: "Untuk toko berkembang",
+    features: ["2 toko", "10 akun kasir", "Laporan periode + produk terlaris + export", "Riwayat 30 hari", "Uang kas, hutang, struk logo + WA"] },
+  { key: "premium", name: "Premium", price: 100000, tagline: "Analitik penuh + multi-cabang",
+    features: ["Toko & kasir tanpa batas", "Riwayat 90 hari", "Analitik mendalam + bulan lalu", "Semua metode bayar", "Back Office web + audit log", "Inventori dasar"] },
 ];
 
 const ADDONS: { key: string; name: string; price: number; desc: string }[] = [
