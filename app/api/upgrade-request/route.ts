@@ -10,12 +10,14 @@ export async function POST(req: Request) {
   if (!session?.user?.email) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-  const { message } = await req.json().catch(() => ({}));
+  const { message, requested_tier, requested_addons } = await req.json().catch(() => ({}));
   if (!message || typeof message !== "string") {
     return NextResponse.json({ error: "Pesan kosong" }, { status: 400 });
   }
+  const tier = typeof requested_tier === "string" ? requested_tier : null;
+  const addons: string[] = Array.isArray(requested_addons) ? requested_addons.filter((a: unknown) => typeof a === "string") : [];
   await db.$executeRaw`
-    insert into feedback (type, email, message, status)
-    values ('upgrade_request', ${session.user.email}, ${message}, 'pending')`;
+    insert into feedback (type, email, message, status, requested_tier, requested_addons)
+    values ('upgrade_request', ${session.user.email}, ${message}, 'pending', ${tier}, ${addons}::text[])`;
   return NextResponse.json({ ok: true });
 }

@@ -54,7 +54,8 @@ export default function UpgradeModal({ open, onClose }: { open: boolean; onClose
       "Dikirim dari Backoffice.",
     ].join("\n");
     const res = await fetch("/api/upgrade-request", {
-      method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ message: msg }),
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: msg, requested_tier: target, requested_addons: chosen.map(a => a.key) }),
     });
     setSending(false);
     if (!res.ok) { setError("Gagal mengirim permintaan. Coba lagi."); return; }
