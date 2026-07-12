@@ -26,6 +26,11 @@ model Store {
   clientCode String?   @unique @map("client_code")
   syncedAt   DateTime? @map("synced_at") @db.Timestamptz(6)
 
+  // POS feature settings (store_settings.sql). settings = jsonb feature flags;
+  // settingsLocked = Premium master lock (POS Pengaturan becomes Back-Office-only).
+  settings       Json    @default("{}") @map("settings")
+  settingsLocked Boolean @default(false) @map("settings_locked")
+
   products       Product[]
   sales          Sale[]
   cashiers       Cashier[]

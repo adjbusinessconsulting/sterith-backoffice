@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect, useCallback } from "react";
-import { QrCode, CreditCard, CheckCircle2, AlertCircle, Eye, EyeOff, Upload, Trash2, Sparkles, Puzzle } from "lucide-react";
+import { QrCode, CreditCard, CheckCircle2, AlertCircle, Eye, EyeOff, Upload, Trash2, Sparkles, Puzzle, Lock } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { ADDON_KEYS, ADDON_LABEL, hasAddOn, type AddOnKey } from "@/lib/addons";
 
@@ -8,6 +8,7 @@ interface StoreSettings {
   qris_image_url: string | null;
   midtrans_client_key: string | null;
   midtrans_server_key_set: boolean;
+  settings_locked: boolean;
 }
 
 function Section({ title, icon, subtitle, children }: {
@@ -142,6 +143,11 @@ export default function PengaturanPage() {
   const [savingMidtrans, setSavingMidtrans] = useState(false);
   const [midtransMsg, setMidtransMsg] = useState<{ type: "ok" | "err"; text: string } | null>(null);
 
+  // Master lock state
+  const [locked, setLocked] = useState(false);
+  const [savingLock, setSavingLock] = useState(false);
+  const [lockMsg, setLockMsg] = useState<{ type: "ok" | "err"; text: string } | null>(null);
+
   const load = useCallback(async () => {
     setLoading(true);
     try {
@@ -150,6 +156,7 @@ export default function PengaturanPage() {
       setSettings(data);
       setQrisUrl(data.qris_image_url ?? "");
       setClientKey(data.midtrans_client_key ?? "");
+      setLocked(!!data.settings_locked);
     } catch {
       // ignore
     } finally {
@@ -214,6 +221,29 @@ export default function PengaturanPage() {
       body: JSON.stringify({ midtrans_server_key: "" }),
     });
     load();
+  }
+
+  async function toggleLock(next: boolean) {
+    if (next && !confirm("Kunci pengaturan di POS? Kasir/perangkat kasir tidak bisa lagi mengubah pengaturan apa pun — semua diatur dari Back Office ini.")) return;
+    setSavingLock(true);
+    setLockMsg(null);
+    const prev = locked;
+    setLocked(next); // optimistic
+    try {
+      const res = await fetch("/api/store/settings", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ settings_locked: next }),
+      });
+      if (!res.ok) throw new Error();
+      setLockMsg({ type: "ok", text: next ? "Pengaturan POS dikunci." : "Pengaturan POS dibuka." });
+    } catch {
+      setLocked(prev); // revert
+      setLockMsg({ type: "err", text: "Gagal menyimpan, coba lagi." });
+    } finally {
+      setSavingLock(false);
+      setTimeout(() => setLockMsg(null), 3500);
+    }
   }
 
   if (loading) {
@@ -391,6 +421,53 @@ export default function PengaturanPage() {
         <br />
         <span style={{ fontSize: 11 }}>Masukkan URL ini di Midtrans Dashboard → Settings → Configuration → Payment Notification URL.</span>
       </div>
+
+      {/* Master lock — Premium (all Back Office owners are Premium+) */}
+      <Section
+        title="Kunci Pengaturan POS"
+        subtitle="Atur semua pengaturan hanya dari Back Office"
+        icon={<Lock size={18} color="#96762f" />}
+      >
+        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 16 }}>
+          <div style={{ flex: 1 }}>
+            <p style={{ fontSize: 13, color: "#14203a", lineHeight: 1.7, margin: 0, fontFamily: "var(--font-hanken)" }}>
+              Saat aktif, menu <strong>Pengaturan</strong> di aplikasi kasir (POS)
+              disembunyikan sepenuhnya. Kasir atau siapa pun di perangkat kasir tidak bisa
+              mengubah metode pembayaran, fitur, atau pengaturan apa pun — semua Anda atur
+              dari sini. Perlindungan anti-utak-atik untuk perangkat jualan.
+            </p>
+            <p style={{ fontSize: 11.5, color: "#8f897a", margin: "10px 0 0", lineHeight: 1.6, fontFamily: "var(--font-hanken)" }}>
+              Data yang sudah ada tidak terpengaruh. Perubahan berlaku saat POS memuat ulang toko (login berikutnya).
+            </p>
+            {lockMsg && (
+              <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12.5, marginTop: 12, color: lockMsg.type === "ok" ? "#3f7d54" : "#c25e3d" }}>
+                {lockMsg.type === "ok" ? <CheckCircle2 size={14} /> : <AlertCircle size={14} />}
+                {lockMsg.text}
+              </div>
+            )}
+          </div>
+          {/* Toggle */}
+          <button
+            role="switch"
+            aria-checked={locked}
+            disabled={savingLock}
+            onClick={() => toggleLock(!locked)}
+            style={{
+              width: 52, height: 30, borderRadius: 999, border: "none", flexShrink: 0,
+              cursor: savingLock ? "not-allowed" : "pointer", position: "relative",
+              background: locked ? "#96762f" : "#d8d2c4", transition: "background 0.15s",
+              opacity: savingLock ? 0.6 : 1, marginTop: 2,
+            }}>
+            <span style={{ position: "absolute", top: 3, left: locked ? 25 : 3, width: 24, height: 24, borderRadius: 999, background: "#fff", transition: "left 0.15s", boxShadow: "0 1px 3px rgba(0,0,0,0.25)" }} />
+          </button>
+        </div>
+        <div style={{ marginTop: 16, display: "inline-flex", alignItems: "center", gap: 8, padding: "8px 14px", borderRadius: 999, background: locked ? "rgba(150,118,47,0.10)" : "#f0ece3", border: `1px solid ${locked ? "rgba(150,118,47,0.4)" : "#e8e3d5"}` }}>
+          <Lock size={13} color={locked ? "#96762f" : "#8f897a"} />
+          <span style={{ fontSize: 12, fontWeight: 700, color: locked ? "#96762f" : "#8f897a", fontFamily: "var(--font-hanken)" }}>
+            {locked ? "Terkunci — hanya Back Office" : "Terbuka — POS bisa ubah sendiri"}
+          </span>
+        </div>
+      </Section>
     </div>
   );
 }
