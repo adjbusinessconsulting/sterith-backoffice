@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { EB_Garamond, Hanken_Grotesk } from "next/font/google";
 import "./globals.css";
 import Providers from "./providers";
+import RegisterSW from "@/components/RegisterSW";
 
 const garamond = EB_Garamond({
   subsets: ["latin"],
@@ -21,12 +22,23 @@ const hanken = Hanken_Grotesk({
 export const metadata: Metadata = {
   title: "Sterith Backoffice",
   description: "Inventori & manajemen toko",
+  manifest: "/manifest.webmanifest",
+  icons: {
+    icon: "/icon-512.png",
+    apple: "/icon-512.png",
+  },
+  appleWebApp: {
+    capable: true,
+    title: "Back Office",
+    statusBarStyle: "black-translucent",
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="id" className={`${garamond.variable} ${hanken.variable}`}>
       <body>
+        <RegisterSW />
         <Providers>{children}</Providers>
       </body>
     </html>
