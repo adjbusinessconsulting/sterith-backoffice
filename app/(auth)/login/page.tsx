@@ -73,7 +73,7 @@ export default function LoginPage() {
           </div>
 
           <h1 style={{ fontFamily: "var(--font-garamond)", fontSize: 22, fontWeight: 500, color: "#14203a", marginBottom: 5, lineHeight: 1.25 }}>
-            Authorized personnel only
+            Premium Member Only
           </h1>
           <p style={{ fontSize: 12, color: "#8f897a", lineHeight: 1.5, margin: 0 }}>
             All access is logged and audited.
