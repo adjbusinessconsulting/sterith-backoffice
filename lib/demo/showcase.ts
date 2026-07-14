@@ -75,3 +75,43 @@ export const TAG_META: Record<DemoTag, { label: string; color: string; bg: strin
   restock: { label: "RESTOCK",     color: "#a5772a", bg: "#f4ecd6" },
   member:  { label: "MEMBER ONLY", color: "#5b4b8a", bg: "#ece8f5" },
 };
+
+export const productById = (id: string) => SHOWCASE_DEMO.find((p) => p.id === id);
+
+// ── Reservasi (hold / order-ahead / drop) demo ──────────────────────
+export type ResvKind = "hold" | "order" | "drop";
+export type ResvStatus = "menunggu" | "siap" | "selesai" | "kadaluarsa";
+export type DemoReservation = {
+  id: string; customer: string; wa: string; productId: string; size: string;
+  kind: ResvKind; status: ResvStatus; note: string;
+};
+
+export const RESV_KIND_META: Record<ResvKind, { label: string; color: string; bg: string }> = {
+  hold:  { label: "Hold Item",   color: "#5b4b8a", bg: "#ece8f5" },
+  order: { label: "Order-ahead", color: "#2a6f78", bg: "#e2f0f1" },
+  drop:  { label: "Drop",        color: "#b0492f", bg: "#f6e7e1" },
+};
+export const RESV_STATUS_META: Record<ResvStatus, { label: string; color: string; bg: string }> = {
+  menunggu:   { label: "Menunggu",     color: "#a5772a", bg: "#f4ecd6" },
+  siap:       { label: "Siap diambil", color: "#3f7d54", bg: "#e9f1ea" },
+  selesai:    { label: "Selesai",      color: "#8f897a", bg: "#f0ece3" },
+  kadaluarsa: { label: "Kadaluarsa",   color: "#b0492f", bg: "#f6e7e1" },
+};
+
+export const SHOWCASE_RESERVATIONS: DemoReservation[] = [
+  { id: "r1", customer: "Sarah Wijaya",  wa: "0812-3345-1180", productId: "n4", size: "42", kind: "drop",  status: "menunggu",   note: "Air Jordan 1 · member drop · hold s/d besok 17.00" },
+  { id: "r2", customer: "Budi Santoso",  wa: "0857-9921-4408", productId: "n1", size: "43", kind: "hold",  status: "siap",       note: "Sudah disiapkan — tinggal diambil di toko" },
+  { id: "r3", customer: "Rina Kusuma",   wa: "0813-2277-6650", productId: "u1", size: "L",  kind: "order", status: "menunggu",   note: "Order-ahead · ambil sore ini" },
+  { id: "r4", customer: "Andi Pratama",  wa: "0821-4410-9002", productId: "n2", size: "44", kind: "drop",  status: "menunggu",   note: "Dunk Low drop · Jumat 20.00" },
+  { id: "r5", customer: "Maya Sari",     wa: "0838-6612-3341", productId: "u3", size: "M",  kind: "hold",  status: "selesai",    note: "Sudah diambil 2 hari lalu" },
+  { id: "r6", customer: "Dimas Aryo",    wa: "0819-5540-7781", productId: "n5", size: "41", kind: "hold",  status: "kadaluarsa", note: "Lewat batas waktu — item dilepas kembali" },
+];
+
+// Restock waitlist (for the Drops page later): who's waiting on which size.
+export const SHOWCASE_WAITLIST: { productId: string; size: string; count: number }[] = [
+  { productId: "n1", size: "42", count: 8 },
+  { productId: "n1", size: "41", count: 5 },
+  { productId: "u1", size: "M", count: 6 },
+  { productId: "u7", size: "XL", count: 3 },
+  { productId: "n2", size: "40", count: 4 },
+];
