@@ -3,10 +3,8 @@ import { useState } from "react";
 import { useSession } from "next-auth/react";
 import { hasAddOn } from "@/lib/addons";
 import DemoBanner from "@/components/DemoBanner";
-import ShopperPhone from "@/components/ShopperPhone";
-import { SHOWCASE_DEMO_STORE, productById } from "@/lib/demo/showcase";
-
-const HERO = productById("n2")!; // Dunk Low — a drop
+import ShopperApp from "@/components/ShopperApp";
+import { SHOWCASE_DEMO, SHOWCASE_DEMO_STORE } from "@/lib/demo/showcase";
 
 function Toggle({ on, onClick }: { on: boolean; onClick: () => void }) {
   return (
@@ -99,9 +97,9 @@ export default function ShowcasePengaturanPage() {
           </div>
         </div>
 
-        {/* Phone preview */}
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-          <ShopperPhone product={HERO} />
+        {/* Phone preview — interactive customer view */}
+        <div style={{ position: "sticky", top: 20 }}>
+          <ShopperApp products={SHOWCASE_DEMO} previewId="n2" storeName="Kanso" />
         </div>
       </div>
 

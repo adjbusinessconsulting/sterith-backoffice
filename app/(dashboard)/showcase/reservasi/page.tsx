@@ -3,13 +3,11 @@ import { useState } from "react";
 import { useSession } from "next-auth/react";
 import { hasAddOn } from "@/lib/addons";
 import DemoBanner from "@/components/DemoBanner";
-import ShopperPhone from "@/components/ShopperPhone";
+import ShopperApp from "@/components/ShopperApp";
 import {
-  SHOWCASE_RESERVATIONS, SHOWCASE_DEMO_STORE, RESV_KIND_META, RESV_STATUS_META,
+  SHOWCASE_RESERVATIONS, SHOWCASE_DEMO, SHOWCASE_DEMO_STORE, RESV_KIND_META, RESV_STATUS_META,
   productById, type ResvStatus,
 } from "@/lib/demo/showcase";
-
-const HERO = productById("n4")!; // Air Jordan 1 — member drop, best hero
 
 export default function ReservasiPage() {
   const { data: session } = useSession();
@@ -96,8 +94,10 @@ export default function ReservasiPage() {
           </div>
         </div>
 
-        {/* Phone mockup */}
-        <ShopperPhone product={HERO} />
+        {/* Phone mockup — interactive customer view */}
+        <div style={{ position: "sticky", top: 20 }}>
+          <ShopperApp products={SHOWCASE_DEMO} previewId="n4" storeName="Kanso" />
+        </div>
       </div>
 
       {nudge && (
