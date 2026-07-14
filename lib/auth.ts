@@ -1,5 +1,6 @@
 import type { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import bcrypt from "bcryptjs";
 import { db } from "@/lib/prisma";
 import { isAtLeast } from "@/lib/tier";
 
@@ -70,8 +71,22 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) return null;
+        const email = credentials.email;
 
-        // Verify against Supabase Auth — same credentials as the POS owner login
+        // If the owner set a SEPARATE Back Office password (Settings), verify against
+        // it instead of the shared Supabase/POS password. Email is always shared.
+        const boRows = await db.$queryRaw<Array<{ owner_id: string; hash: string }>>`
+          SELECT owner_id, backoffice_password_hash AS hash
+          FROM stores
+          WHERE lower(owner_email) = lower(${email}) AND backoffice_password_hash IS NOT NULL
+          LIMIT 1`;
+        if (boRows[0]?.hash) {
+          const ok = await bcrypt.compare(credentials.password, boRows[0].hash);
+          if (!ok) return null;
+          return resolveOwner(boRows[0].owner_id, email);
+        }
+
+        // Otherwise verify against Supabase Auth — same credentials as the POS login.
         const res = await fetch(
           `${process.env.SUPABASE_URL}/auth/v1/token?grant_type=password`,
           {

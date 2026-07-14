@@ -10,6 +10,8 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [mode, setMode] = useState<"login" | "forgot">("login");
+  const [sent, setSent] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -19,6 +21,15 @@ export default function LoginPage() {
     setLoading(false);
     if (res?.error) setError("Email atau password salah.");
     else window.location.href = "/inventori/ringkasan";
+  }
+
+  async function handleForgot(e: React.FormEvent) {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+    try { await fetch("/api/auth/forgot", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email }) }); } catch { /* ignore */ }
+    setLoading(false);
+    setSent(true);
   }
 
   return (
@@ -81,7 +92,7 @@ export default function LoginPage() {
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 12, marginTop: 20 }}>
+        <form onSubmit={mode === "forgot" ? handleForgot : handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 12, marginTop: 20 }}>
           <div>
             <label style={{ display: "block", fontSize: 9, letterSpacing: "0.2em", textTransform: "uppercase", color: "#8f897a", fontWeight: 600, marginBottom: 6 }}>
               Email Pemilik
@@ -107,7 +118,7 @@ export default function LoginPage() {
             </div>
           </div>
 
-          <div>
+          {mode === "login" && <div>
             <label style={{ display: "block", fontSize: 9, letterSpacing: "0.2em", textTransform: "uppercase", color: "#8f897a", fontWeight: 600, marginBottom: 6 }}>
               Password
             </label>
@@ -148,11 +159,22 @@ export default function LoginPage() {
                 )}
               </button>
             </div>
-          </div>
+          </div>}
+
+          {mode === "forgot" && (
+            <p style={{ fontSize: 12, color: "#8f897a", lineHeight: 1.5, margin: 0 }}>
+              Masukkan email akun Anda. Kami kirim tautan untuk membuat kata sandi baru — ini juga menyamakan kembali kata sandi Back Office dengan akun.
+            </p>
+          )}
 
           {error && (
             <p style={{ fontSize: 12, color: "#b0492f", background: "#f4e9e4", padding: "9px 12px", borderRadius: 8, margin: 0 }}>
               {error}
+            </p>
+          )}
+          {sent && (
+            <p style={{ fontSize: 12, color: "#3f7d54", background: "#e9f1ea", padding: "9px 12px", borderRadius: 8, margin: 0 }}>
+              Jika email terdaftar, tautan reset sudah dikirim. Cek inbox atau folder spam.
             </p>
           )}
 
@@ -168,7 +190,15 @@ export default function LoginPage() {
               textTransform: "uppercase",
             }}
           >
-            {loading ? "MEMUAT…" : "MASUK KE BACKOFFICE →"}
+            {loading ? "MEMUAT…" : mode === "forgot" ? "KIRIM TAUTAN RESET →" : "MASUK KE BACKOFFICE →"}
+          </button>
+
+          <button
+            type="button"
+            onClick={() => { setMode(mode === "forgot" ? "login" : "forgot"); setError(""); setSent(false); }}
+            style={{ background: "none", border: "none", cursor: "pointer", color: "#8f897a", fontSize: 12, fontFamily: "inherit", textDecoration: "underline", textUnderlineOffset: 3, marginTop: 2 }}
+          >
+            {mode === "forgot" ? "← Kembali ke login" : "Lupa password?"}
           </button>
         </form>
 

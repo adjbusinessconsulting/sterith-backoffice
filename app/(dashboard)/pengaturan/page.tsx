@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect, useCallback } from "react";
-import { QrCode, CreditCard, CheckCircle2, AlertCircle, Eye, EyeOff, Upload, Trash2, Sparkles, Puzzle } from "lucide-react";
+import { QrCode, CreditCard, CheckCircle2, AlertCircle, Eye, EyeOff, Upload, Trash2, Sparkles, Puzzle, KeyRound } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { ADDON_KEYS, ADDON_LABEL, hasAddOn, type AddOnKey } from "@/lib/addons";
 
@@ -125,6 +125,105 @@ function Input({ value, onChange, placeholder, type = "text", masked }: {
         </button>
       )}
     </div>
+  );
+}
+
+const credBtnGhost: React.CSSProperties = { height: 40, padding: "0 16px", background: "#fff", color: "#14203a", border: "1.5px solid #e8e3d5", borderRadius: 9, fontSize: 13, fontWeight: 500, cursor: "pointer", fontFamily: "var(--font-hanken)", flexShrink: 0 };
+const credBtnNavy: React.CSSProperties = { height: 40, padding: "0 18px", background: "#14203a", color: "#f8f6ef", border: "none", borderRadius: 9, fontSize: 13, fontWeight: 600, cursor: "pointer", fontFamily: "var(--font-hanken)" };
+
+function CredField({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
+  return (
+    <label style={{ display: "block" }}>
+      <span style={{ display: "block", fontSize: 9, letterSpacing: "0.18em", textTransform: "uppercase", color: "#8f897a", fontWeight: 600, marginBottom: 5 }}>{label}</span>
+      <input type="password" value={value} onChange={e => onChange(e.target.value)}
+        style={{ width: "100%", height: 42, border: "1.5px solid #e8e3d5", borderRadius: 9, padding: "0 12px", fontSize: 13.5, color: "#14203a", background: "#fff", outline: "none", boxSizing: "border-box", fontFamily: "var(--font-hanken)" }} />
+    </label>
+  );
+}
+
+function CredentialsSection() {
+  const { data: session } = useSession();
+  const email = session?.user?.email ?? "—";
+  const [separate, setSeparate] = useState(false);
+  const [panel, setPanel] = useState<"" | "pos" | "bo">("");
+  const [cur, setCur] = useState(""); const [nw, setNw] = useState(""); const [cf, setCf] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [msg, setMsg] = useState<{ type: "ok" | "err"; text: string } | null>(null);
+
+  const load = useCallback(() => {
+    fetch("/api/store/password").then(r => r.json()).then(d => { if (typeof d.separate === "boolean") setSeparate(d.separate); }).catch(() => {});
+  }, []);
+  useEffect(() => { load(); }, [load]);
+
+  function open(p: "pos" | "bo") { setPanel(p); setCur(""); setNw(""); setCf(""); setMsg(null); }
+  function close() { setPanel(""); setCur(""); setNw(""); setCf(""); }
+
+  async function save(target: "pos" | "backoffice", remove = false) {
+    setMsg(null);
+    if (!remove) {
+      if (nw.length < 6) { setMsg({ type: "err", text: "Kata sandi baru minimal 6 karakter." }); return; }
+      if (nw !== cf) { setMsg({ type: "err", text: "Konfirmasi kata sandi tidak cocok." }); return; }
+    }
+    setBusy(true);
+    const res = await fetch("/api/store/password", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ target, currentPassword: cur, newPassword: nw, remove }) });
+    const j = await res.json().catch(() => ({})); setBusy(false);
+    if (!res.ok) { setMsg({ type: "err", text: j.error || "Gagal menyimpan." }); return; }
+    if (target === "pos") setMsg({ type: "ok", text: "Kata sandi POS diperbarui." });
+    else { setSeparate(!remove); setMsg({ type: "ok", text: remove ? "Kata sandi Back Office kini sama dengan POS." : "Kata sandi Back Office terpisah tersimpan." }); }
+    close();
+  }
+
+  return (
+    <Section title="Kredensial & Keamanan" subtitle="Email sama untuk POS & Back Office — kata sandi bisa dipisah" icon={<KeyRound size={18} color="#96762f" />}>
+      <div>
+        <span style={{ display: "block", fontSize: 9, letterSpacing: "0.18em", textTransform: "uppercase", color: "#8f897a", fontWeight: 600, marginBottom: 5 }}>Email (POS &amp; Back Office)</span>
+        <div style={{ height: 42, border: "1.5px solid #e8e3d5", borderRadius: 9, padding: "0 12px", display: "flex", alignItems: "center", background: "#f4f1ea", fontSize: 13.5, color: "#14203a" }}>{email}</div>
+        <p style={{ fontSize: 11.5, color: "#8f897a", marginTop: 6, lineHeight: 1.5 }}>Email selalu sama — inilah penghubung antara aplikasi kasir (POS) dan Back Office.</p>
+      </div>
+
+      <div style={{ borderTop: "1px solid #f0ebe0", marginTop: 16, paddingTop: 16 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12 }}>
+          <div><p style={{ fontSize: 13.5, fontWeight: 600, color: "#14203a" }}>Kata Sandi POS (Front Office)</p><p style={{ fontSize: 11.5, color: "#8f897a", marginTop: 2 }}>Dipakai untuk login di aplikasi kasir.</p></div>
+          {panel !== "pos" && <button onClick={() => open("pos")} style={credBtnGhost}>Ubah</button>}
+        </div>
+        {panel === "pos" && (
+          <div style={{ display: "flex", flexDirection: "column", gap: 10, marginTop: 12 }}>
+            <CredField label="Kata sandi POS saat ini" value={cur} onChange={setCur} />
+            <CredField label="Kata sandi baru" value={nw} onChange={setNw} />
+            <CredField label="Ulangi kata sandi baru" value={cf} onChange={setCf} />
+            <div style={{ display: "flex", gap: 8 }}>
+              <button onClick={close} style={credBtnGhost}>Batal</button>
+              <button onClick={() => save("pos")} disabled={busy} style={{ ...credBtnNavy, opacity: busy ? 0.7 : 1 }}>{busy ? "Menyimpan…" : "Simpan"}</button>
+            </div>
+          </div>
+        )}
+      </div>
+
+      <div style={{ borderTop: "1px solid #f0ebe0", marginTop: 16, paddingTop: 16 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12 }}>
+          <div><p style={{ fontSize: 13.5, fontWeight: 600, color: "#14203a" }}>Kata Sandi Back Office</p><p style={{ fontSize: 11.5, color: "#8f897a", marginTop: 2 }}>{separate ? "Terpisah dari POS." : "Saat ini sama dengan POS."}</p></div>
+          {panel !== "bo" && <button onClick={() => open("bo")} style={credBtnGhost}>{separate ? "Ubah" : "Pisahkan"}</button>}
+        </div>
+        {panel === "bo" && (
+          <div style={{ display: "flex", flexDirection: "column", gap: 10, marginTop: 12 }}>
+            <CredField label={separate ? "Kata sandi Back Office saat ini" : "Kata sandi POS saat ini"} value={cur} onChange={setCur} />
+            <CredField label="Kata sandi Back Office baru" value={nw} onChange={setNw} />
+            <CredField label="Ulangi kata sandi baru" value={cf} onChange={setCf} />
+            <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+              <button onClick={close} style={credBtnGhost}>Batal</button>
+              <button onClick={() => save("backoffice")} disabled={busy} style={{ ...credBtnNavy, opacity: busy ? 0.7 : 1 }}>{busy ? "Menyimpan…" : "Simpan"}</button>
+              {separate && <button onClick={() => save("backoffice", true)} disabled={busy} style={{ ...credBtnGhost, color: "#b0492f", borderColor: "#e8d5d0" }}>Samakan dengan POS</button>}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {msg && (
+        <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12.5, marginTop: 14, color: msg.type === "ok" ? "#3f7d54" : "#c25e3d" }}>
+          {msg.type === "ok" ? <CheckCircle2 size={14} /> : <AlertCircle size={14} />}{msg.text}
+        </div>
+      )}
+    </Section>
   );
 }
 
@@ -394,6 +493,8 @@ export default function PengaturanPage() {
         <br />
         <span style={{ fontSize: 11 }}>Masukkan URL ini di Midtrans Dashboard → Settings → Configuration → Payment Notification URL.</span>
       </div>
+
+      <CredentialsSection />
 
     </div>
   );
