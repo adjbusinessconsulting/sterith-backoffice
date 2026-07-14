@@ -8,7 +8,7 @@ import { rupiah, TAG_META, totalStock, type DemoProduct } from "@/lib/demo/showc
  * and `previewId` jumps the phone to a product (owner clicks a product in the BO).
  * Also browsable on its own (tap a product → detail → back).
  */
-export default function ShopperApp({ products, previewId, hiddenIds, storeName = "Kanso" }: { products: DemoProduct[]; previewId?: string | null; hiddenIds?: Set<string>; storeName?: string }) {
+export default function ShopperApp({ products, previewId, hiddenIds, featuredIds, storeName = "Kanso" }: { products: DemoProduct[]; previewId?: string | null; hiddenIds?: Set<string>; featuredIds?: Set<string>; storeName?: string }) {
   const [curId, setCurId] = useState<string | null>(previewId ?? null);
   useEffect(() => { if (previewId !== undefined) setCurId(previewId); }, [previewId]);
   const cur = products.find((p) => p.id === curId) ?? null;
@@ -40,7 +40,7 @@ export default function ShopperApp({ products, previewId, hiddenIds, storeName =
 
           {/* Body */}
           <div style={{ position: "absolute", top: 71, bottom: 46, left: 0, right: 0, overflowY: "auto" }}>
-            {cur ? <Detail p={cur} hidden={curHidden} /> : <Browse products={visible} onOpen={setCurId} />}
+            {cur ? <Detail p={cur} hidden={curHidden} /> : <Browse products={visible} onOpen={setCurId} featuredIds={featuredIds} />}
           </div>
 
           {/* Bottom nav */}
@@ -64,7 +64,7 @@ export default function ShopperApp({ products, previewId, hiddenIds, storeName =
   );
 }
 
-function Browse({ products, onOpen }: { products: DemoProduct[]; onOpen: (id: string) => void }) {
+function Browse({ products, onOpen, featuredIds }: { products: DemoProduct[]; onOpen: (id: string) => void; featuredIds?: Set<string> }) {
   return (
     <div style={{ padding: "12px 12px 16px" }}>
       <p style={{ fontSize: 10, letterSpacing: "0.1em", textTransform: "uppercase", color: "#8f897a", fontWeight: 700, margin: "2px 2px 10px" }}>Koleksi ({products.length})</p>
@@ -79,7 +79,8 @@ function Browse({ products, onOpen }: { products: DemoProduct[]; onOpen: (id: st
               <button key={p.id} onClick={() => onOpen(p.id)} style={{ textAlign: "left", background: "#fff", border: "1px solid #ece7dd", borderRadius: 12, overflow: "hidden", cursor: "pointer", padding: 0 }}>
                 <div style={{ position: "relative", width: "100%", aspectRatio: "3 / 4", background: "#f1ede4" }}>
                   <img src={p.image} alt={p.name} loading="lazy" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
-                  {tag && <span style={{ position: "absolute", top: 6, left: 6, fontSize: 7, letterSpacing: "0.06em", fontWeight: 800, color: tag.color, background: tag.bg, padding: "2px 5px", borderRadius: 4 }}>{tag.label}</span>}
+                  {featuredIds?.has(p.id) && <span style={{ position: "absolute", top: 6, left: 6, fontSize: 8, fontWeight: 800, color: "#14203a", background: "#f4d58a", padding: "2px 5px", borderRadius: 4 }}>★</span>}
+                  {tag && !featuredIds?.has(p.id) && <span style={{ position: "absolute", top: 6, left: 6, fontSize: 7, letterSpacing: "0.06em", fontWeight: 800, color: tag.color, background: tag.bg, padding: "2px 5px", borderRadius: 4 }}>{tag.label}</span>}
                   {out && <span style={{ position: "absolute", top: 6, right: 6, fontSize: 7, fontWeight: 800, color: "#fff", background: "rgba(20,32,58,0.75)", padding: "2px 5px", borderRadius: 4 }}>HABIS</span>}
                 </div>
                 <div style={{ padding: "7px 8px 9px" }}>
