@@ -34,6 +34,30 @@ declare module "next-auth/jwt" {
   }
 }
 
+// From a verified Supabase user, resolve the Back Office session user (store,
+// tier, add-ons). Premium-gated; returns null if not eligible. Shared by both
+// the password provider and the token (SSO) provider.
+async function resolveOwner(userId: string, email: string) {
+  const store = await db.store.findFirst({ where: { ownerId: userId } });
+  if (!store) return null;
+  if (store.status !== "active") return null;
+
+  const tierRows = await db.$queryRaw<Array<{ tier: string }>>`
+    SELECT COALESCE(tier, 'free') AS tier FROM stores WHERE id = ${store.id}::uuid`;
+  const tier = tierRows[0]?.tier ?? 'free';
+
+  let addOns: string[] = [];
+  try {
+    const addonRows = await db.$queryRaw<Array<{ add_ons: string[] }>>`
+      SELECT COALESCE(add_ons, '{}') AS add_ons FROM stores WHERE id = ${store.id}::uuid`;
+    addOns = addonRows[0]?.add_ons ?? [];
+  } catch { addOns = []; }
+
+  if (!isAtLeast(tier, 'premium')) return null;
+
+  return { id: userId, name: email.split("@")[0], email, role: "OWNER", storeId: store.id, tier, addOns };
+}
+
 export const authOptions: NextAuthOptions = {
   session: { strategy: "jwt" },
   pages: { signIn: "/login" },
@@ -67,43 +91,27 @@ export const authOptions: NextAuthOptions = {
         const { user } = await res.json() as { user: { id: string; email: string } };
         if (!user?.id) return null;
 
-        // Look up their store
-        const store = await db.store.findFirst({
-          where: { ownerId: user.id },
+        // Store lookup, tier, add-ons, Premium gate — shared with the SSO provider.
+        return resolveOwner(user.id, user.email ?? credentials.email);
+      },
+    }),
+    // SSO from the POS portal: the POS validated the password via Supabase and
+    // hands us a Supabase access token. We verify it against Supabase and issue
+    // the Back Office session — no second login.
+    CredentialsProvider({
+      id: "supabase-token",
+      name: "supabase-token",
+      credentials: { accessToken: { label: "Token", type: "text" } },
+      async authorize(credentials) {
+        const token = credentials?.accessToken;
+        if (!token) return null;
+        const res = await fetch(`${process.env.SUPABASE_URL}/auth/v1/user`, {
+          headers: { apikey: process.env.SUPABASE_ANON_KEY ?? "", Authorization: `Bearer ${token}` },
         });
-        if (!store) return null;
-        // Suspended clients can't sign in (Masteroffice sets stores.status).
-        if (store.status !== "active") return null;
-
-        // Fetch tier via raw query (column added outside Prisma migration)
-        const tierRows = await db.$queryRaw<Array<{ tier: string }>>`
-          SELECT COALESCE(tier, 'free') AS tier FROM stores WHERE id = ${store.id}::uuid
-        `;
-        const tier = tierRows[0]?.tier ?? 'free';
-
-        // Add-ons (separate from tier). Column added outside Prisma; tolerate absence.
-        let addOns: string[] = [];
-        try {
-          const addonRows = await db.$queryRaw<Array<{ add_ons: string[] }>>`
-            SELECT COALESCE(add_ons, '{}') AS add_ons FROM stores WHERE id = ${store.id}::uuid
-          `;
-          addOns = addonRows[0]?.add_ons ?? [];
-        } catch { addOns = []; }
-
-        // Backoffice is a Premium+ feature. Free/Standard owners are rejected here
-        // (they use the POS only). Requires stores.tier to be correct — see the
-        // provisioning trigger + Masteroffice tier sync.
-        if (!isAtLeast(tier, 'premium')) return null;
-
-        return {
-          id: user.id,
-          name: credentials.email.split("@")[0],
-          email: user.email,
-          role: "OWNER",
-          storeId: store.id,
-          tier,
-          addOns,
-        };
+        if (!res.ok) return null;
+        const user = await res.json() as { id?: string; email?: string };
+        if (!user?.id) return null;
+        return resolveOwner(user.id, user.email ?? "");
       },
     }),
   ],
