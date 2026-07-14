@@ -3,7 +3,6 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
-import { isAtLeast } from "@/lib/tier";
 
 export async function GET() {
   const session = await getServerSession(authOptions);
@@ -13,13 +12,11 @@ export async function GET() {
     qris_image_url: string | null;
     midtrans_client_key: string | null;
     midtrans_server_key_set: boolean;
-    settings_locked: boolean;
   }[]>(Prisma.sql`
     SELECT
       qris_image_url,
       midtrans_client_key,
-      (midtrans_server_key IS NOT NULL AND midtrans_server_key <> '') AS midtrans_server_key_set,
-      COALESCE(settings_locked, false) AS settings_locked
+      (midtrans_server_key IS NOT NULL AND midtrans_server_key <> '') AS midtrans_server_key_set
     FROM stores WHERE id = ${session.user.storeId}::uuid
   `);
 
@@ -49,16 +46,6 @@ export async function PATCH(req: NextRequest) {
     fields.push("midtrans_server_key");
     values.push(body.midtrans_server_key?.trim() || null);
   }
-  // Master lock — Premium+ only (the Back Office is already Premium-gated at login,
-  // but enforce here too). When true the POS hides its Pengaturan surface entirely.
-  if ("settings_locked" in body) {
-    if (!isAtLeast(session.user.tier ?? "free", "premium")) {
-      return NextResponse.json({ error: "Premium only" }, { status: 403 });
-    }
-    fields.push("settings_locked");
-    values.push(!!body.settings_locked);
-  }
-
   if (fields.length === 0) return NextResponse.json({ ok: true });
 
   // Build update SQL dynamically
