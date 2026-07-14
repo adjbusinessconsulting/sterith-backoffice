@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { hasAddOn } from "@/lib/addons";
-import LockedSection from "@/components/LockedSection";
+import InventoriDemo from "@/components/InventoriDemo";
 
 interface Product {
   id: string; name: string; sku: string; warehouseQty: number; storeQty: number;
@@ -62,7 +62,7 @@ export default function OpnamePage() {
     if (res.ok) setSubmitted(true);
   }
 
-  if (!hasInv) return <LockedSection requiredAddOn="inventori" />;
+  if (!hasInv) return <InventoriDemo section="opname" />;
 
   if (submitted) {
     return (

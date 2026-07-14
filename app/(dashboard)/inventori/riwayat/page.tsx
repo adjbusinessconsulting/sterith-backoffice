@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { hasAddOn } from "@/lib/addons";
-import LockedSection from "@/components/LockedSection";
+import InventoriDemo from "@/components/InventoriDemo";
 
 interface Movement {
   id: string;
@@ -59,7 +59,7 @@ export default function RiwayatPage() {
       .finally(() => setLoading(false));
   }, [typeFilter, hasInv]);
 
-  if (!hasInv) return <LockedSection requiredAddOn="inventori" />;
+  if (!hasInv) return <InventoriDemo section="riwayat" />;
 
   return (
     <div style={{ padding: "32px 36px", maxWidth: 1100 }}>

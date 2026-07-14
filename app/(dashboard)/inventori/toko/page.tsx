@@ -4,7 +4,7 @@ import { Search, MoreVertical } from "lucide-react";
 import { useUIStore } from "@/store/ui";
 import { useSession } from "next-auth/react";
 import { hasAddOn } from "@/lib/addons";
-import LockedSection from "@/components/LockedSection";
+import InventoriDemo from "@/components/InventoriDemo";
 
 interface Product {
   id: string; name: string; sku: string; unit: string; category: string;
@@ -40,7 +40,7 @@ export default function TokoPage() {
       .catch(() => {});
   }, [hasInv]);
 
-  if (!hasInv) return <LockedSection requiredAddOn="inventori" />;
+  if (!hasInv) return <InventoriDemo section="toko" />;
 
   const filtered = products.filter(p => {
     const matchCat = cat === "Semua" || p.category === cat;

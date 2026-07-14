@@ -2,7 +2,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/prisma";
 import { hasAddOn } from "@/lib/addons";
-import LockedSection from "@/components/LockedSection";
+import InventoriDemo from "@/components/InventoriDemo";
 import RingkasanClient from "./RingkasanClient";
 
 async function getData(storeId: string) {
@@ -50,7 +50,7 @@ async function getData(storeId: string) {
 
 export default async function RingkasanPage() {
   const session = await getServerSession(authOptions);
-  if (!hasAddOn(session?.user?.addOns, "inventori")) return <LockedSection requiredAddOn="inventori" />;
+  if (!hasAddOn(session?.user?.addOns, "inventori")) return <InventoriDemo section="ringkasan" />;
   const storeId = session?.user?.storeId ?? "";
   const data = await getData(storeId);
   return <RingkasanClient data={data} />;
