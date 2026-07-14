@@ -34,6 +34,7 @@ function Section({ title, icon, subtitle, children }: {
 const ADDON_DESC: Record<AddOnKey, string> = {
   inventori: "Gudang, stok opname, mutasi antar cabang & laporan lengkap.",
   crm: "Data pelanggan, poin loyalti & riwayat belanja.",
+  showcase: "Etalase pelanggan wired ke POS — katalog, drops & reservasi.",
 };
 
 function SubscriptionSection() {

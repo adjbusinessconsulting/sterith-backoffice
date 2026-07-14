@@ -7,6 +7,7 @@ import {
   ArrowLeftRight, ClipboardCheck, History,
   Users, Grid2X2, BarChart2, Wallet, LogOut, ChevronDown, Settings2,
   LineChart, UserRound, Boxes,
+  Heart, Images, Megaphone, Bookmark, SlidersHorizontal,
 } from "lucide-react";
 import { useUIStore } from "@/store/ui";
 import { isAtLeast, tierLabel } from "@/lib/tier";
@@ -32,6 +33,20 @@ const INVENTORI: NavItem[] = [
   { href: "/inventori/toko",      label: "Toko",         Icon: Store,          requiresAddOn: "inventori" },
   { href: "/inventori/opname",    label: "Stok Opname",  Icon: ClipboardCheck, requiresAddOn: "inventori" },
   { href: "/inventori/riwayat",   label: "Riwayat Stok", Icon: History,        requiresAddOn: "inventori" },
+];
+
+// CRM + Loyalti add-on ("crm"). Premium can open + preview; needs the add-on to use.
+const CRM: NavItem[] = [
+  { href: "/crm/pelanggan", label: "Pelanggan", Icon: Users, requiresAddOn: "crm" },
+  { href: "/crm/loyalti",   label: "Loyalti",   Icon: Heart, requiresAddOn: "crm" },
+];
+
+// Showcase add-on ("showcase") — customer-facing storefront wired to the POS.
+const SHOWCASE: NavItem[] = [
+  { href: "/showcase/katalog",    label: "Katalog",     Icon: Images,           requiresAddOn: "showcase" },
+  { href: "/showcase/drops",      label: "Drops",       Icon: Megaphone,        requiresAddOn: "showcase" },
+  { href: "/showcase/reservasi",  label: "Reservasi",   Icon: Bookmark,         requiresAddOn: "showcase" },
+  { href: "/showcase/pengaturan", label: "Pengaturan",  Icon: SlidersHorizontal, requiresAddOn: "showcase" },
 ];
 
 const MANAJEMEN: NavItem[] = [
@@ -77,10 +92,12 @@ function NavSection({ label, items, pathname, userTier, addOns }: {
         {label}
       </p>
       {items.map(({ href, label: itemLabel, Icon, lockTier, requiresAddOn }) => {
-        const locked = requiresAddOn
-          ? !hasAddOn(addOns, requiresAddOn)
-          : (lockTier ? !isAtLeast(userTier, lockTier) : false);
-        const isActive = !locked && (pathname === href || (href !== "/dashboard" && pathname.startsWith(href)));
+        // Tier locks are hard (non-clickable). Add-on items stay CLICKABLE even when
+        // not owned, so Premium can open and preview what the add-on does.
+        const tierLocked = lockTier ? !isAtLeast(userTier, lockTier) : false;
+        const addOnMissing = requiresAddOn ? !hasAddOn(addOns, requiresAddOn) : false;
+        const clickable = !tierLocked;
+        const isActive = clickable && (pathname === href || (href !== "/dashboard" && pathname.startsWith(href)));
 
         const inner = (
           <div style={{
@@ -88,8 +105,8 @@ function NavSection({ label, items, pathname, userTier, addOns }: {
             padding: "8px 10px", borderRadius: 10,
             background: isActive ? "#14203a" : "transparent",
             transition: "background 0.12s",
-            cursor: locked ? "not-allowed" : "pointer",
-            opacity: locked ? 0.5 : 1,
+            cursor: clickable ? "pointer" : "not-allowed",
+            opacity: tierLocked ? 0.5 : 1,
           }}>
             <Icon size={15} strokeWidth={isActive ? 2 : 1.6}
               color={isActive ? "#f8f6ef" : "#8f897a"} />
@@ -101,19 +118,19 @@ function NavSection({ label, items, pathname, userTier, addOns }: {
               {itemLabel}
             </span>
             {requiresAddOn ? (
-              <span style={locked ? BADGE_STYLE : BADGE_ADDON_OWNED}>Add-on</span>
-            ) : locked && lockTier ? (
+              <span style={addOnMissing ? BADGE_STYLE : BADGE_ADDON_OWNED}>Add-on</span>
+            ) : tierLocked && lockTier ? (
               <span style={BADGE_STYLE}>{tierLabel(lockTier)}</span>
             ) : null}
           </div>
         );
 
-        return locked ? (
-          <div key={href} style={{ padding: "2px 8px" }}>{inner}</div>
-        ) : (
+        return clickable ? (
           <Link key={href} href={href} style={{ textDecoration: "none", display: "block", padding: "2px 8px" }}>
             {inner}
           </Link>
+        ) : (
+          <div key={href} style={{ padding: "2px 8px" }}>{inner}</div>
         );
       })}
     </div>
@@ -219,6 +236,10 @@ export default function Sidebar() {
         </div>
 
         <NavSection label="MANAJEMEN" items={MANAJEMEN} pathname={pathname} userTier={userTier} addOns={addOns} />
+
+        <NavSection label="CRM" items={CRM} pathname={pathname} userTier={userTier} addOns={addOns} />
+
+        <NavSection label="SHOWCASE" items={SHOWCASE} pathname={pathname} userTier={userTier} addOns={addOns} />
 
         <NavSection label="SISTEM" items={PENGATURAN} pathname={pathname} userTier={userTier} addOns={addOns} />
       </div>
