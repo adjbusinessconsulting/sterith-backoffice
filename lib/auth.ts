@@ -91,27 +91,8 @@ export const authOptions: NextAuthOptions = {
         const { user } = await res.json() as { user: { id: string; email: string } };
         if (!user?.id) return null;
 
-        // Store lookup, tier, add-ons, Premium gate — shared with the SSO provider.
+        // Store lookup, tier, add-ons, Premium gate.
         return resolveOwner(user.id, user.email ?? credentials.email);
-      },
-    }),
-    // SSO from the POS portal: the POS validated the password via Supabase and
-    // hands us a Supabase access token. We verify it against Supabase and issue
-    // the Back Office session — no second login.
-    CredentialsProvider({
-      id: "supabase-token",
-      name: "supabase-token",
-      credentials: { accessToken: { label: "Token", type: "text" } },
-      async authorize(credentials) {
-        const token = credentials?.accessToken;
-        if (!token) return null;
-        const res = await fetch(`${process.env.SUPABASE_URL}/auth/v1/user`, {
-          headers: { apikey: process.env.SUPABASE_ANON_KEY ?? "", Authorization: `Bearer ${token}` },
-        });
-        if (!res.ok) return null;
-        const user = await res.json() as { id?: string; email?: string };
-        if (!user?.id) return null;
-        return resolveOwner(user.id, user.email ?? "");
       },
     }),
   ],
