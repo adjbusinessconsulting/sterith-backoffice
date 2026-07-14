@@ -107,11 +107,30 @@ export const SHOWCASE_RESERVATIONS: DemoReservation[] = [
   { id: "r6", customer: "Dimas Aryo",    wa: "0819-5540-7781", productId: "n5", size: "41", kind: "hold",  status: "kadaluarsa", note: "Lewat batas waktu — item dilepas kembali" },
 ];
 
-// Restock waitlist (for the Drops page later): who's waiting on which size.
+// Restock waitlist (Drops page): who's waiting on which size.
 export const SHOWCASE_WAITLIST: { productId: string; size: string; count: number }[] = [
   { productId: "n1", size: "42", count: 8 },
   { productId: "n1", size: "41", count: 5 },
   { productId: "u1", size: "M", count: 6 },
   { productId: "u7", size: "XL", count: 3 },
   { productId: "n2", size: "40", count: 4 },
+];
+
+// ── Drops & pengumuman demo ─────────────────────────────────────────
+export type AnnKind = "arrival" | "drop" | "promo" | "restock";
+export type DemoAnnouncement = {
+  id: string; kind: AnnKind; title: string; body: string;
+  when: string; audience: "semua" | "member"; reach: number; status: "terkirim" | "terjadwal";
+};
+export const ANN_META: Record<AnnKind, { label: string; color: string; bg: string }> = {
+  arrival: { label: "Barang Baru", color: "#2a6f78", bg: "#e2f0f1" },
+  drop:    { label: "Member Drop", color: "#5b4b8a", bg: "#ece8f5" },
+  promo:   { label: "Promo",       color: "#a5772a", bg: "#f4ecd6" },
+  restock: { label: "Restock",     color: "#3f7d54", bg: "#e9f1ea" },
+};
+export const SHOWCASE_ANNOUNCEMENTS: DemoAnnouncement[] = [
+  { id: "a1", kind: "arrival", title: "Koleksi AIRism Linen 2026", body: "Koleksi terbaru sudah tiba di etalase — lihat sekarang.", when: "2 jam lalu", audience: "semua", reach: 1240, status: "terkirim" },
+  { id: "a2", kind: "drop", title: "Air Jordan 1 Low — Member Drop", body: "Akses awal khusus member. Jumat 20.00, stok terbatas.", when: "Terjadwal · Jumat 20.00", audience: "member", reach: 318, status: "terjadwal" },
+  { id: "a3", kind: "promo", title: "Diskon 15% Akhir Pekan", body: "Semua sneakers, Sabtu–Minggu. Kode: WEEKEND.", when: "3 hari lalu", audience: "semua", reach: 1502, status: "terkirim" },
+  { id: "a4", kind: "restock", title: "Restock: Air Force 1 · size 42", body: "Item favorit kembali tersedia. 8 orang menunggu ukuran ini.", when: "5 hari lalu", audience: "semua", reach: 640, status: "terkirim" },
 ];
