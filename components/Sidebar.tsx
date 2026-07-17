@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import { useState } from "react";
 import { usePathname } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
 import {
@@ -8,8 +9,10 @@ import {
   Users, Grid2X2, BarChart2, Wallet, LogOut, ChevronDown, Settings2,
   LineChart, UserRound, Boxes,
   Heart, Images, Megaphone, Bookmark, SlidersHorizontal,
+  MessageSquare,
 } from "lucide-react";
 import { useUIStore } from "@/store/ui";
+import FeedbackDrawer from "./FeedbackDrawer";
 import { isAtLeast, tierLabel } from "@/lib/tier";
 import { hasAddOn, type AddOnKey } from "@/lib/addons";
 
@@ -141,6 +144,7 @@ export default function Sidebar() {
   const pathname = usePathname();
   const { data: session } = useSession();
   const openModal = useUIStore(s => s.openModal);
+  const [feedbackOpen, setFeedbackOpen] = useState(false);
 
   const name = session?.user?.name ?? "User";
   const role = session?.user?.role ?? "OWNER";
@@ -243,6 +247,18 @@ export default function Sidebar() {
 
         <NavSection label="SISTEM" items={PENGATURAN} pathname={pathname} userTier={userTier} addOns={addOns} />
       </div>
+
+      {/* Kritik & Saran */}
+      <div style={{ borderTop: "1px solid #e8e3d5", padding: "8px 12px", flexShrink: 0 }}>
+        <button
+          onClick={() => setFeedbackOpen(true)}
+          style={{ width: "100%", display: "flex", alignItems: "center", gap: 9, background: "transparent", border: "1px solid #e8e3d5", borderRadius: 9, padding: "8px 10px", cursor: "pointer", color: "#8f897a" }}
+        >
+          <MessageSquare size={13} strokeWidth={1.7} />
+          <span style={{ fontSize: 12, fontWeight: 600, color: "#14203a" }}>Kritik & Saran</span>
+        </button>
+      </div>
+      <FeedbackDrawer open={feedbackOpen} onClose={() => setFeedbackOpen(false)} />
 
       {/* User footer */}
       <div style={{

@@ -17,7 +17,7 @@ export async function POST(req: Request) {
   const tier = typeof requested_tier === "string" ? requested_tier : null;
   const addons: string[] = Array.isArray(requested_addons) ? requested_addons.filter((a: unknown) => typeof a === "string") : [];
   await db.$executeRaw`
-    insert into feedback (type, email, message, status, requested_tier, requested_addons)
-    values ('upgrade_request', ${session.user.email}, ${message}, 'pending', ${tier}, ${addons}::text[])`;
+    insert into feedback (type, email, message, status, requested_tier, requested_addons, app)
+    values ('upgrade_request', ${session.user.email}, ${message}, 'pending', ${tier}, ${addons}::text[], 'backoffice')`;
   return NextResponse.json({ ok: true });
 }
