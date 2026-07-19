@@ -45,7 +45,7 @@ export default function TambahKasirModal() {
         <div style={{ padding: "18px 22px", borderBottom: "1px solid #f0ebe0", display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
           <div>
             <p style={{ fontSize: 10, letterSpacing: "0.18em", textTransform: "uppercase", color: "#b8934a", fontWeight: 600 }}>MANAJEMEN · KASIR BARU</p>
-            <p style={{ fontSize: 20, fontWeight: 700, color: "#14203a", marginTop: 3 }}>Tambah akun kasir</p>
+            <p style={{ fontSize: 20, fontWeight: 700, color: "#0D1117", marginTop: 3 }}>Tambah akun kasir</p>
           </div>
           <button onClick={handleClose} style={{ background: "transparent", border: "none", cursor: "pointer", padding: 6, color: "#8f897a", borderRadius: 8 }}>
             <X size={18} />
@@ -59,7 +59,7 @@ export default function TambahKasirModal() {
             <label style={{ display: "block", fontSize: 10, letterSpacing: "0.16em", textTransform: "uppercase", color: "#8f897a", fontWeight: 600, marginBottom: 7 }}>NAMA KASIR</label>
             <input value={name} onChange={e => setName(e.target.value)}
               placeholder="mis. Stevany Carolin"
-              style={{ width: "100%", height: 46, border: "1.5px solid #e8e3d5", borderRadius: 10, padding: "0 14px", fontSize: 14, color: "#14203a", fontFamily: "var(--font-hanken)", background: "#fff" }} />
+              style={{ width: "100%", height: 46, border: "1.5px solid #e8e3d5", borderRadius: 10, padding: "0 14px", fontSize: 14, color: "#0D1117", fontFamily: "var(--font-hanken)", background: "#fff" }} />
           </div>
 
           {/* PIN */}
@@ -68,13 +68,13 @@ export default function TambahKasirModal() {
             <div style={{ display: "flex", gap: 10 }}>
               {[0, 1, 2, 3].map(i => (
                 <div key={i} style={{ flex: 1, height: 52, border: "1.5px solid #e8e3d5", borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", background: pin[i] ? "#f8f6ef" : "#fff" }}>
-                  <span style={{ fontSize: 20, color: "#14203a" }}>{pin[i] ? "•" : ""}</span>
+                  <span style={{ fontSize: 20, color: "#0D1117" }}>{pin[i] ? "•" : ""}</span>
                 </div>
               ))}
             </div>
             <input
               type="number" value={pin} onChange={e => { const v = e.target.value.replace(/\D/g, "").slice(0, 4); setPin(v); }}
-              style={{ width: "100%", height: 44, border: "1.5px solid #e8e3d5", borderRadius: 10, padding: "0 14px", fontSize: 18, color: "#14203a", fontFamily: "var(--font-garamond)", background: "#fff", marginTop: 8, letterSpacing: "0.5em", textAlign: "center" }}
+              style={{ width: "100%", height: 44, border: "1.5px solid #e8e3d5", borderRadius: 10, padding: "0 14px", fontSize: 18, color: "#0D1117", fontFamily: "var(--font-garamond)", background: "#fff", marginTop: 8, letterSpacing: "0.5em", textAlign: "center" }}
               placeholder="1234"
             />
           </div>
@@ -90,10 +90,10 @@ export default function TambahKasirModal() {
                 <button key={r.value} onClick={() => setRole(r.value)} style={{
                   padding: "14px 16px", textAlign: "left",
                   borderRadius: 12, cursor: "pointer",
-                  background: role === r.value ? "#14203a" : "#f8f6ef",
-                  border: `1.5px solid ${role === r.value ? "#14203a" : "#e8e3d5"}`,
+                  background: role === r.value ? "#0D1117" : "#f8f6ef",
+                  border: `1.5px solid ${role === r.value ? "#0D1117" : "#e8e3d5"}`,
                 }}>
-                  <p style={{ fontSize: 14, fontWeight: 700, color: role === r.value ? "#f8f6ef" : "#14203a", marginBottom: 6 }}>{r.label}</p>
+                  <p style={{ fontSize: 14, fontWeight: 700, color: role === r.value ? "#f8f6ef" : "#0D1117", marginBottom: 6 }}>{r.label}</p>
                   <p style={{ fontSize: 11.5, color: role === r.value ? "rgba(248,246,239,0.65)" : "#8f897a", lineHeight: 1.5 }}>{r.desc}</p>
                 </button>
               ))}
@@ -104,11 +104,11 @@ export default function TambahKasirModal() {
 
           {/* Footer buttons */}
           <div style={{ display: "flex", gap: 10, justifyContent: "flex-end" }}>
-            <button onClick={handleClose} style={{ height: 42, padding: "0 18px", background: "#fff", border: "1.5px solid #e8e3d5", borderRadius: 10, fontSize: 13, color: "#14203a", cursor: "pointer", fontFamily: "var(--font-hanken)" }}>
+            <button onClick={handleClose} style={{ height: 42, padding: "0 18px", background: "#fff", border: "1.5px solid #e8e3d5", borderRadius: 10, fontSize: 13, color: "#0D1117", cursor: "pointer", fontFamily: "var(--font-hanken)" }}>
               Batal
             </button>
             <button onClick={handleSave} disabled={submitting}
-              style={{ height: 42, padding: "0 20px", background: "#14203a", border: "none", borderRadius: 10, fontSize: 13, fontWeight: 600, color: "#f8f6ef", cursor: "pointer", display: "flex", alignItems: "center", gap: 7, fontFamily: "var(--font-hanken)" }}>
+              style={{ height: 42, padding: "0 20px", background: "#0D1117", border: "none", borderRadius: 10, fontSize: 13, fontWeight: 600, color: "#f8f6ef", cursor: "pointer", display: "flex", alignItems: "center", gap: 7, fontFamily: "var(--font-hanken)" }}>
               {submitting ? "Menyimpan…" : "Simpan kasir →"}
             </button>
           </div>

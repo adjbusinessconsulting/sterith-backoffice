@@ -21,7 +21,7 @@ function Section({ title, icon, subtitle, children }: {
             {icon}
           </div>
           <div>
-            <h2 style={{ fontSize: 15, fontWeight: 600, color: "#14203a", margin: 0, fontFamily: "var(--font-hanken)" }}>{title}</h2>
+            <h2 style={{ fontSize: 15, fontWeight: 600, color: "#0D1117", margin: 0, fontFamily: "var(--font-hanken)" }}>{title}</h2>
             <p style={{ fontSize: 12, color: "#8f897a", margin: "2px 0 0", fontFamily: "var(--font-hanken)" }}>{subtitle}</p>
           </div>
         </div>
@@ -53,7 +53,7 @@ function SubscriptionSection() {
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, padding: "16px 18px", border: "1px solid rgba(184,147,74,0.4)", background: "rgba(184,147,74,0.07)", borderRadius: 12, marginBottom: 18, flexWrap: "wrap" }}>
         <div>
           <p style={{ fontSize: 9.5, letterSpacing: "0.2em", textTransform: "uppercase", color: "#8f897a", fontWeight: 600, margin: 0, fontFamily: "var(--font-hanken)" }}>Paket Anda</p>
-          <p style={{ fontFamily: "var(--font-garamond)", fontSize: 26, fontWeight: 500, color: "#14203a", margin: "2px 0 0" }}>{tierName}</p>
+          <p style={{ fontFamily: "var(--font-garamond)", fontSize: 26, fontWeight: 500, color: "#0D1117", margin: "2px 0 0" }}>{tierName}</p>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 6, height: 28, padding: "0 12px", borderRadius: 999, background: "#e9f1ea", border: "1px solid #b3d4bb" }}>
           <CheckCircle2 size={13} color="#3f7d54" />
@@ -74,7 +74,7 @@ function SubscriptionSection() {
               opacity: active ? 1 : 0.68,
             }}>
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8 }}>
-                <span style={{ fontSize: 13.5, fontWeight: 700, color: "#14203a", fontFamily: "var(--font-hanken)" }}>{ADDON_LABEL[key]}</span>
+                <span style={{ fontSize: 13.5, fontWeight: 700, color: "#0D1117", fontFamily: "var(--font-hanken)" }}>{ADDON_LABEL[key]}</span>
                 <span style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 9, fontWeight: 800, letterSpacing: "0.08em", textTransform: "uppercase", color: "#b8934a", background: "rgba(184,147,74,0.14)", borderRadius: 5, padding: "3px 7px", fontFamily: "var(--font-hanken)" }}>
                   <Puzzle size={10} /> Add-on
                 </span>
@@ -114,7 +114,7 @@ function Input({ value, onChange, placeholder, type = "text", masked }: {
         style={{
           width: "100%", height: 44, border: "1px solid #e0dbd0", borderRadius: 10,
           padding: masked ? "0 44px 0 14px" : "0 14px",
-          fontSize: 13.5, color: "#14203a", background: "#fafaf7",
+          fontSize: 13.5, color: "#0D1117", background: "#fafaf7",
           fontFamily: "var(--font-hanken)", outline: "none", boxSizing: "border-box",
         }}
       />
@@ -128,15 +128,15 @@ function Input({ value, onChange, placeholder, type = "text", masked }: {
   );
 }
 
-const credBtnGhost: React.CSSProperties = { height: 40, padding: "0 16px", background: "#fff", color: "#14203a", border: "1.5px solid #e8e3d5", borderRadius: 9, fontSize: 13, fontWeight: 500, cursor: "pointer", fontFamily: "var(--font-hanken)", flexShrink: 0 };
-const credBtnNavy: React.CSSProperties = { height: 40, padding: "0 18px", background: "#14203a", color: "#f8f6ef", border: "none", borderRadius: 9, fontSize: 13, fontWeight: 600, cursor: "pointer", fontFamily: "var(--font-hanken)" };
+const credBtnGhost: React.CSSProperties = { height: 40, padding: "0 16px", background: "#fff", color: "#0D1117", border: "1.5px solid #e8e3d5", borderRadius: 9, fontSize: 13, fontWeight: 500, cursor: "pointer", fontFamily: "var(--font-hanken)", flexShrink: 0 };
+const credBtnNavy: React.CSSProperties = { height: 40, padding: "0 18px", background: "#0D1117", color: "#f8f6ef", border: "none", borderRadius: 9, fontSize: 13, fontWeight: 600, cursor: "pointer", fontFamily: "var(--font-hanken)" };
 
 function CredField({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
   return (
     <label style={{ display: "block" }}>
       <span style={{ display: "block", fontSize: 9, letterSpacing: "0.18em", textTransform: "uppercase", color: "#8f897a", fontWeight: 600, marginBottom: 5 }}>{label}</span>
       <input type="password" value={value} onChange={e => onChange(e.target.value)}
-        style={{ width: "100%", height: 42, border: "1.5px solid #e8e3d5", borderRadius: 9, padding: "0 12px", fontSize: 13.5, color: "#14203a", background: "#fff", outline: "none", boxSizing: "border-box", fontFamily: "var(--font-hanken)" }} />
+        style={{ width: "100%", height: 42, border: "1.5px solid #e8e3d5", borderRadius: 9, padding: "0 12px", fontSize: 13.5, color: "#0D1117", background: "#fff", outline: "none", boxSizing: "border-box", fontFamily: "var(--font-hanken)" }} />
     </label>
   );
 }
@@ -177,13 +177,13 @@ function CredentialsSection() {
     <Section title="Kredensial & Keamanan" subtitle="Email sama untuk POS & Back Office — kata sandi bisa dipisah" icon={<KeyRound size={18} color="#96762f" />}>
       <div>
         <span style={{ display: "block", fontSize: 9, letterSpacing: "0.18em", textTransform: "uppercase", color: "#8f897a", fontWeight: 600, marginBottom: 5 }}>Email (POS &amp; Back Office)</span>
-        <div style={{ height: 42, border: "1.5px solid #e8e3d5", borderRadius: 9, padding: "0 12px", display: "flex", alignItems: "center", background: "#f4f1ea", fontSize: 13.5, color: "#14203a" }}>{email}</div>
+        <div style={{ height: 42, border: "1.5px solid #e8e3d5", borderRadius: 9, padding: "0 12px", display: "flex", alignItems: "center", background: "#f4f1ea", fontSize: 13.5, color: "#0D1117" }}>{email}</div>
         <p style={{ fontSize: 11.5, color: "#8f897a", marginTop: 6, lineHeight: 1.5 }}>Email selalu sama — inilah penghubung antara aplikasi kasir (POS) dan Back Office.</p>
       </div>
 
       <div style={{ borderTop: "1px solid #f0ebe0", marginTop: 16, paddingTop: 16 }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12 }}>
-          <div><p style={{ fontSize: 13.5, fontWeight: 600, color: "#14203a" }}>Kata Sandi POS (Front Office)</p><p style={{ fontSize: 11.5, color: "#8f897a", marginTop: 2 }}>Dipakai untuk login di aplikasi kasir.</p></div>
+          <div><p style={{ fontSize: 13.5, fontWeight: 600, color: "#0D1117" }}>Kata Sandi POS (Front Office)</p><p style={{ fontSize: 11.5, color: "#8f897a", marginTop: 2 }}>Dipakai untuk login di aplikasi kasir.</p></div>
           {panel !== "pos" && <button onClick={() => open("pos")} style={credBtnGhost}>Ubah</button>}
         </div>
         {panel === "pos" && (
@@ -201,7 +201,7 @@ function CredentialsSection() {
 
       <div style={{ borderTop: "1px solid #f0ebe0", marginTop: 16, paddingTop: 16 }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12 }}>
-          <div><p style={{ fontSize: 13.5, fontWeight: 600, color: "#14203a" }}>Kata Sandi Back Office</p><p style={{ fontSize: 11.5, color: "#8f897a", marginTop: 2 }}>{separate ? "Terpisah dari POS." : "Saat ini sama dengan POS."}</p></div>
+          <div><p style={{ fontSize: 13.5, fontWeight: 600, color: "#0D1117" }}>Kata Sandi Back Office</p><p style={{ fontSize: 11.5, color: "#8f897a", marginTop: 2 }}>{separate ? "Terpisah dari POS." : "Saat ini sama dengan POS."}</p></div>
           {panel !== "bo" && <button onClick={() => open("bo")} style={credBtnGhost}>{separate ? "Ubah" : "Pisahkan"}</button>}
         </div>
         {panel === "bo" && (
@@ -334,7 +334,7 @@ export default function PengaturanPage() {
         <p style={{ fontSize: 10, letterSpacing: "0.2em", textTransform: "uppercase", color: "#96762f", fontWeight: 600, marginBottom: 8 }}>
           SISTEM · PENGATURAN
         </p>
-        <h1 style={{ fontFamily: "var(--font-garamond)", fontSize: 34, fontWeight: 500, color: "#14203a", lineHeight: 1.15, marginBottom: 6 }}>
+        <h1 style={{ fontFamily: "var(--font-garamond)", fontSize: 34, fontWeight: 500, color: "#0D1117", lineHeight: 1.15, marginBottom: 6 }}>
           Pengaturan toko
         </h1>
         <p style={{ fontSize: 13, color: "#8f897a", lineHeight: 1.6 }}>
@@ -392,7 +392,7 @@ export default function PengaturanPage() {
             onClick={saveStatic}
             disabled={savingStatic}
             style={{
-              height: 42, padding: "0 24px", background: "#14203a", color: "#f8f6ef",
+              height: 42, padding: "0 24px", background: "#0D1117", color: "#f8f6ef",
               border: "none", borderRadius: 10, fontSize: 13.5, fontWeight: 600,
               fontFamily: "var(--font-hanken)", cursor: savingStatic ? "not-allowed" : "pointer",
               opacity: savingStatic ? 0.7 : 1, display: "flex", alignItems: "center", gap: 8,

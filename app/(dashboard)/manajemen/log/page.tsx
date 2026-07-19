@@ -9,7 +9,7 @@ interface Log {
   createdAt: string;
 }
 
-const NAVY = "#14203a", GOLD = "#b8934a", MUTE = "#8f897a", BORDER = "#e8e3d5", CARD = "#fff";
+const NAVY = "#0D1117", GOLD = "#b8934a", MUTE = "#8f897a", BORDER = "#e8e3d5", CARD = "#fff";
 const F = "var(--font-hanken)";
 
 const TYPE_LABEL: Record<string, string> = {

@@ -48,7 +48,7 @@ export default function FeedbackDrawer({ open, onClose }: { open: boolean; onClo
       <div style={{ padding: "18px 20px 14px", borderBottom: "1px solid #e8e3d5", display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0 }}>
         <div>
           <p style={{ margin: 0, fontSize: 9, letterSpacing: "0.2em", textTransform: "uppercase", color: "#b8934a", fontWeight: 700 }}>Sterith · Back Office</p>
-          <p style={{ margin: "2px 0 0", fontFamily: "var(--font-garamond)", fontSize: 20, fontWeight: 600, color: "#14203a" }}>Kritik & Saran</p>
+          <p style={{ margin: "2px 0 0", fontFamily: "var(--font-garamond)", fontSize: 20, fontWeight: 600, color: "#0D1117" }}>Kritik & Saran</p>
         </div>
         <button onClick={handleClose} style={{ background: "transparent", border: "none", cursor: "pointer", padding: 6, color: "#b8b0a8" }}><X size={16} /></button>
       </div>
@@ -58,9 +58,9 @@ export default function FeedbackDrawer({ open, onClose }: { open: boolean; onClo
           <div style={{ width: 52, height: 52, borderRadius: "50%", background: "rgba(92,158,126,0.12)", border: "1px solid rgba(92,158,126,0.3)", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 14 }}>
             <Check size={22} color="#5C9E7E" strokeWidth={2.5} />
           </div>
-          <p style={{ fontFamily: "var(--font-garamond)", fontSize: 20, fontWeight: 600, color: "#14203a", margin: "0 0 6px" }}>Terima kasih!</p>
+          <p style={{ fontFamily: "var(--font-garamond)", fontSize: 20, fontWeight: 600, color: "#0D1117", margin: "0 0 6px" }}>Terima kasih!</p>
           <p style={{ fontSize: 12.5, color: "#8f897a", margin: "0 0 24px", lineHeight: 1.6 }}>Masukan Anda sudah kami terima dan akan ditinjau oleh tim Sterith.</p>
-          <button onClick={handleClose} style={{ background: "#14203a", color: "#f8f6ef", border: "none", borderRadius: 10, height: 42, padding: "0 28px", fontSize: 12.5, fontWeight: 600, cursor: "pointer" }}>Tutup</button>
+          <button onClick={handleClose} style={{ background: "#0D1117", color: "#f8f6ef", border: "none", borderRadius: 10, height: 42, padding: "0 28px", fontSize: 12.5, fontWeight: 600, cursor: "pointer" }}>Tutup</button>
         </div>
       ) : (
         <div style={{ flex: 1, overflowY: "auto", padding: 20 }}>
@@ -80,7 +80,7 @@ export default function FeedbackDrawer({ open, onClose }: { open: boolean; onClo
               const on = kind === k;
               return (
                 <button key={k} onClick={() => setKind(k)}
-                  style={{ flex: 1, height: 38, borderRadius: 9, fontSize: 12.5, fontWeight: 600, cursor: "pointer", background: on ? "#14203a" : "#fff", color: on ? "#f8f6ef" : "#8f897a", border: `1px solid ${on ? "#14203a" : "#e8e3d5"}` }}>{l}</button>
+                  style={{ flex: 1, height: 38, borderRadius: 9, fontSize: 12.5, fontWeight: 600, cursor: "pointer", background: on ? "#0D1117" : "#fff", color: on ? "#f8f6ef" : "#8f897a", border: `1px solid ${on ? "#0D1117" : "#e8e3d5"}` }}>{l}</button>
               );
             })}
           </div>
@@ -88,11 +88,11 @@ export default function FeedbackDrawer({ open, onClose }: { open: boolean; onClo
           <label style={label}>{kind === "complain" ? "Kendala yang Anda alami" : "Kritik & saran Anda"}</label>
           <textarea value={message} onChange={e => { setMessage(e.target.value); setError(""); }} rows={7}
             placeholder={kind === "complain" ? "Ceritakan kendalanya — makin detail makin cepat kami bantu…" : "Tulis masukan atau saran Anda…"}
-            style={{ width: "100%", background: "#fff", border: `1.5px solid ${message.trim() ? "#e7c987" : "#e8e3d5"}`, borderRadius: 10, padding: "12px 13px", fontSize: 13.5, color: "#14203a", resize: "none", outline: "none", lineHeight: 1.6, boxSizing: "border-box", fontFamily: "inherit" }} />
+            style={{ width: "100%", background: "#fff", border: `1.5px solid ${message.trim() ? "#e7c987" : "#e8e3d5"}`, borderRadius: 10, padding: "12px 13px", fontSize: 13.5, color: "#0D1117", resize: "none", outline: "none", lineHeight: 1.6, boxSizing: "border-box", fontFamily: "inherit" }} />
           {error && <p style={{ margin: "6px 0 0", fontSize: 11.5, color: "#b0492f" }}>{error}</p>}
 
           <button onClick={submit} disabled={loading || !message.trim()}
-            style={{ width: "100%", marginTop: 14, height: 46, background: "#e7c987", color: "#14203a", border: "none", borderRadius: 10, fontSize: 11, fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", cursor: loading || !message.trim() ? "not-allowed" : "pointer", opacity: !message.trim() ? 0.5 : 1 }}>
+            style={{ width: "100%", marginTop: 14, height: 46, background: "#e7c987", color: "#0D1117", border: "none", borderRadius: 10, fontSize: 11, fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", cursor: loading || !message.trim() ? "not-allowed" : "pointer", opacity: !message.trim() ? 0.5 : 1 }}>
             {loading ? "Mengirim…" : "Kirim →"}
           </button>
         </div>

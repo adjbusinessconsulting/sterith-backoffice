@@ -39,7 +39,7 @@ export default function ShowcasePengaturanPage() {
     <div style={{ padding: "32px 36px", maxWidth: 1120 }}>
       <div style={{ marginBottom: 20 }}>
         <p style={{ fontSize: 10, letterSpacing: "0.2em", textTransform: "uppercase", color: "#96762f", fontWeight: 600, marginBottom: 8 }}>SHOWCASE · PENGATURAN</p>
-        <h1 style={{ fontFamily: "var(--font-garamond)", fontSize: 34, fontWeight: 500, color: "#14203a", lineHeight: 1.15, marginBottom: 6 }}>Pengaturan Showcase</h1>
+        <h1 style={{ fontFamily: "var(--font-garamond)", fontSize: 34, fontWeight: 500, color: "#0D1117", lineHeight: 1.15, marginBottom: 6 }}>Pengaturan Showcase</h1>
         <p style={{ fontSize: 13, color: "#8f897a", lineHeight: 1.6, maxWidth: 470 }}>Atur cara kerja etalase: engine aktif, tipe bisnis, dan tampilan pelanggan.</p>
       </div>
 
@@ -56,7 +56,7 @@ export default function ShowcasePengaturanPage() {
               <div key={e.key} style={{ display: "flex", alignItems: "center", gap: 14, padding: "12px 0", borderTop: i ? "1px solid #f4f1ea" : "none" }}>
                 <div style={{ flex: 1 }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 7 }}>
-                    <p style={{ fontSize: 13.5, fontWeight: 600, color: "#14203a" }}>{e.label}</p>
+                    <p style={{ fontSize: 13.5, fontWeight: 600, color: "#0D1117" }}>{e.label}</p>
                     {e.lock && <span style={{ fontSize: 8, letterSpacing: "0.1em", fontWeight: 700, color: "#8f897a", background: "#f0ece3", padding: "1px 6px", borderRadius: 4, textTransform: "uppercase" }}>Wajib</span>}
                   </div>
                   <p style={{ fontSize: 11.5, color: "#8f897a", marginTop: 2, lineHeight: 1.5 }}>{e.desc}</p>
@@ -72,7 +72,7 @@ export default function ShowcasePengaturanPage() {
             <p style={{ fontSize: 12, color: "#8f897a", marginBottom: 12 }}>Menentukan default engine yang pas.</p>
             <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
               {bizTypes.map((b) => (
-                <button key={b} onClick={() => softGate("Ubah tipe bisnis")} style={{ height: 36, padding: "0 16px", borderRadius: 99, background: b === activeBiz ? "#14203a" : "#fff", border: `1.5px solid ${b === activeBiz ? "#14203a" : "#e8e3d5"}`, color: b === activeBiz ? "#f8f6ef" : "#14203a", fontSize: 13, fontWeight: b === activeBiz ? 600 : 400, cursor: "pointer", fontFamily: "var(--font-hanken)" }}>{b}</button>
+                <button key={b} onClick={() => softGate("Ubah tipe bisnis")} style={{ height: 36, padding: "0 16px", borderRadius: 99, background: b === activeBiz ? "#0D1117" : "#fff", border: `1.5px solid ${b === activeBiz ? "#0D1117" : "#e8e3d5"}`, color: b === activeBiz ? "#f8f6ef" : "#0D1117", fontSize: 13, fontWeight: b === activeBiz ? 600 : 400, cursor: "pointer", fontFamily: "var(--font-hanken)" }}>{b}</button>
               ))}
             </div>
           </div>
@@ -82,14 +82,14 @@ export default function ShowcasePengaturanPage() {
             <p style={{ fontSize: 10, letterSpacing: "0.16em", textTransform: "uppercase", color: "#8f897a", fontWeight: 700, marginBottom: 12 }}>Tampilan & Integrasi</p>
             <div style={{ display: "flex", alignItems: "center", gap: 14, padding: "6px 0" }}>
               <div style={{ flex: 1 }}>
-                <p style={{ fontSize: 13.5, fontWeight: 600, color: "#14203a" }}>Nama etalase</p>
+                <p style={{ fontSize: 13.5, fontWeight: 600, color: "#0D1117" }}>Nama etalase</p>
                 <p style={{ fontSize: 11.5, color: "#8f897a", marginTop: 2 }}>{SHOWCASE_DEMO_STORE}</p>
               </div>
-              <button onClick={() => softGate("Ubah branding")} style={{ height: 32, padding: "0 14px", borderRadius: 8, border: "1.5px solid #e8e3d5", background: "#fff", color: "#14203a", fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "var(--font-hanken)" }}>Ubah</button>
+              <button onClick={() => softGate("Ubah branding")} style={{ height: 32, padding: "0 14px", borderRadius: 8, border: "1.5px solid #e8e3d5", background: "#fff", color: "#0D1117", fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "var(--font-hanken)" }}>Ubah</button>
             </div>
             <div style={{ display: "flex", alignItems: "center", gap: 14, padding: "12px 0 6px", borderTop: "1px solid #f4f1ea" }}>
               <div style={{ flex: 1 }}>
-                <p style={{ fontSize: 13.5, fontWeight: 600, color: "#14203a" }}>Hubungkan ke CRM</p>
+                <p style={{ fontSize: 13.5, fontWeight: 600, color: "#0D1117" }}>Hubungkan ke CRM</p>
                 <p style={{ fontSize: 11.5, color: "#8f897a", marginTop: 2, lineHeight: 1.5 }}>Poin loyalti & riwayat belanja di aplikasi pelanggan (opsional — perlu add-on CRM).</p>
               </div>
               <Toggle on={false} onClick={() => softGate("Hubungkan CRM")} />
@@ -104,7 +104,7 @@ export default function ShowcasePengaturanPage() {
       </div>
 
       {nudge && (
-        <div style={{ position: "fixed", left: "50%", bottom: 28, transform: "translateX(-50%)", zIndex: 1000, background: "#14203a", color: "#f8f6ef", fontSize: 13, fontWeight: 500, padding: "11px 18px", borderRadius: 11, boxShadow: "0 12px 40px rgba(20,32,58,0.4)", fontFamily: "var(--font-hanken)" }}>{nudge}</div>
+        <div style={{ position: "fixed", left: "50%", bottom: 28, transform: "translateX(-50%)", zIndex: 1000, background: "#0D1117", color: "#f8f6ef", fontSize: 13, fontWeight: 500, padding: "11px 18px", borderRadius: 11, boxShadow: "0 12px 40px rgba(20,32,58,0.4)", fontFamily: "var(--font-hanken)" }}>{nudge}</div>
       )}
     </div>
   );

@@ -12,7 +12,7 @@ export default function KeuanganPage() {
   return (
     <div style={{ padding: "32px 36px", display: "flex", alignItems: "center", justifyContent: "center", minHeight: "60vh" }}>
       <div style={{ textAlign: "center" }}>
-        <p style={{ fontFamily: "var(--font-garamond)", fontSize: 26, fontWeight: 500, color: "#14203a", marginBottom: 8 }}>
+        <p style={{ fontFamily: "var(--font-garamond)", fontSize: 26, fontWeight: 500, color: "#0D1117", marginBottom: 8 }}>
           Segera hadir
         </p>
         <p style={{ fontSize: 13.5, color: "#8f897a", lineHeight: 1.6, maxWidth: 320 }}>

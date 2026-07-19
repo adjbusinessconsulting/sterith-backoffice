@@ -36,7 +36,7 @@ export default function ReservasiPage() {
       {/* Header */}
       <div style={{ marginBottom: 20 }}>
         <p style={{ fontSize: 10, letterSpacing: "0.2em", textTransform: "uppercase", color: "#96762f", fontWeight: 600, marginBottom: 8 }}>SHOWCASE · RESERVASI</p>
-        <h1 style={{ fontFamily: "var(--font-garamond)", fontSize: 34, fontWeight: 500, color: "#14203a", lineHeight: 1.15, marginBottom: 6 }}>Reservasi & Hold</h1>
+        <h1 style={{ fontFamily: "var(--font-garamond)", fontSize: 34, fontWeight: 500, color: "#0D1117", lineHeight: 1.15, marginBottom: 6 }}>Reservasi & Hold</h1>
         <p style={{ fontSize: 13, color: "#8f897a", lineHeight: 1.6, maxWidth: 480 }}>Antrian permintaan pelanggan: tahan item, order-ahead, dan drop — semua dari aplikasi.</p>
       </div>
 
@@ -44,7 +44,7 @@ export default function ReservasiPage() {
 
       {/* Stat chips */}
       <div style={{ display: "flex", gap: 10, marginBottom: 18, flexWrap: "wrap" }}>
-        {[{ n: waiting, l: "Menunggu diproses", c: "#a5772a" }, { n: ready, l: "Siap diambil", c: "#3f7d54" }, { n: SHOWCASE_RESERVATIONS.length, l: "Total reservasi", c: "#14203a" }].map((s) => (
+        {[{ n: waiting, l: "Menunggu diproses", c: "#a5772a" }, { n: ready, l: "Siap diambil", c: "#3f7d54" }, { n: SHOWCASE_RESERVATIONS.length, l: "Total reservasi", c: "#0D1117" }].map((s) => (
           <div key={s.l} style={{ background: "#fff", border: "1px solid #e8e3d5", borderRadius: 12, padding: "12px 18px", minWidth: 120 }}>
             <p style={{ fontFamily: "var(--font-garamond)", fontSize: 26, fontWeight: 600, color: s.c, lineHeight: 1 }}>{s.n}</p>
             <p style={{ fontSize: 11, color: "#8f897a", marginTop: 4 }}>{s.l}</p>
@@ -58,7 +58,7 @@ export default function ReservasiPage() {
         <div style={{ flex: 1, minWidth: 320 }}>
           <div style={{ display: "flex", gap: 7, marginBottom: 12, flexWrap: "wrap" }}>
             {FILTERS.map((f) => (
-              <button key={f.id} onClick={() => setFilter(f.id)} style={{ height: 32, padding: "0 13px", borderRadius: 99, background: filter === f.id ? "#14203a" : "#fff", border: `1.5px solid ${filter === f.id ? "#14203a" : "#e8e3d5"}`, color: filter === f.id ? "#f8f6ef" : "#14203a", fontSize: 12.5, fontWeight: filter === f.id ? 600 : 400, cursor: "pointer", fontFamily: "var(--font-hanken)" }}>{f.label}</button>
+              <button key={f.id} onClick={() => setFilter(f.id)} style={{ height: 32, padding: "0 13px", borderRadius: 99, background: filter === f.id ? "#0D1117" : "#fff", border: `1.5px solid ${filter === f.id ? "#0D1117" : "#e8e3d5"}`, color: filter === f.id ? "#f8f6ef" : "#0D1117", fontSize: 12.5, fontWeight: filter === f.id ? 600 : 400, cursor: "pointer", fontFamily: "var(--font-hanken)" }}>{f.label}</button>
             ))}
           </div>
 
@@ -73,17 +73,17 @@ export default function ReservasiPage() {
                   {p && <img src={p.image} alt={p.name} style={{ width: 52, height: 62, borderRadius: 9, objectFit: "cover", flexShrink: 0, background: "#f1ede4" }} />}
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ display: "flex", alignItems: "center", gap: 7, flexWrap: "wrap", marginBottom: 2 }}>
-                      <span style={{ fontSize: 13.5, fontWeight: 700, color: "#14203a" }}>{r.customer}</span>
+                      <span style={{ fontSize: 13.5, fontWeight: 700, color: "#0D1117" }}>{r.customer}</span>
                       <span style={{ fontSize: 8.5, letterSpacing: "0.06em", fontWeight: 700, color: kind.color, background: kind.bg, padding: "2px 7px", borderRadius: 5, textTransform: "uppercase" }}>{kind.label}</span>
                     </div>
-                    <p style={{ fontSize: 12, color: "#14203a", marginBottom: 1 }}>{p?.name} · <b>size {r.size}</b></p>
+                    <p style={{ fontSize: 12, color: "#0D1117", marginBottom: 1 }}>{p?.name} · <b>size {r.size}</b></p>
                     <p style={{ fontSize: 11, color: "#8f897a" }}>{r.note} · {r.wa}</p>
                   </div>
                   <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 8, flexShrink: 0 }}>
                     <span style={{ fontSize: 10, fontWeight: 700, color: st.color, background: st.bg, padding: "3px 9px", borderRadius: 99 }}>{st.label}</span>
                     {actionable && (
                       <div style={{ display: "flex", gap: 6 }}>
-                        <button onClick={() => softGate(r.status === "siap" ? "Tandai selesai" : "Konfirmasi")} style={{ height: 30, padding: "0 12px", borderRadius: 8, border: "none", background: "#14203a", color: "#f8f6ef", fontSize: 11.5, fontWeight: 600, cursor: "pointer", fontFamily: "var(--font-hanken)", whiteSpace: "nowrap" }}>{r.status === "siap" ? "Selesai" : "Konfirmasi"}</button>
+                        <button onClick={() => softGate(r.status === "siap" ? "Tandai selesai" : "Konfirmasi")} style={{ height: 30, padding: "0 12px", borderRadius: 8, border: "none", background: "#0D1117", color: "#f8f6ef", fontSize: 11.5, fontWeight: 600, cursor: "pointer", fontFamily: "var(--font-hanken)", whiteSpace: "nowrap" }}>{r.status === "siap" ? "Selesai" : "Konfirmasi"}</button>
                         <button onClick={() => softGate("Lepas item")} style={{ height: 30, padding: "0 11px", borderRadius: 8, border: "1px solid #e8d5d0", background: "#fff", color: "#b0492f", fontSize: 11.5, fontWeight: 600, cursor: "pointer", fontFamily: "var(--font-hanken)", whiteSpace: "nowrap" }}>Lepas</button>
                       </div>
                     )}
@@ -101,7 +101,7 @@ export default function ReservasiPage() {
       </div>
 
       {nudge && (
-        <div style={{ position: "fixed", left: "50%", bottom: 28, transform: "translateX(-50%)", zIndex: 1000, background: "#14203a", color: "#f8f6ef", fontSize: 13, fontWeight: 500, padding: "11px 18px", borderRadius: 11, boxShadow: "0 12px 40px rgba(20,32,58,0.4)", fontFamily: "var(--font-hanken)" }}>{nudge}</div>
+        <div style={{ position: "fixed", left: "50%", bottom: 28, transform: "translateX(-50%)", zIndex: 1000, background: "#0D1117", color: "#f8f6ef", fontSize: 13, fontWeight: 500, padding: "11px 18px", borderRadius: 11, boxShadow: "0 12px 40px rgba(20,32,58,0.4)", fontFamily: "var(--font-hanken)" }}>{nudge}</div>
       )}
     </div>
   );

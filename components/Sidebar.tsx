@@ -106,7 +106,7 @@ function NavSection({ label, items, pathname, userTier, addOns }: {
           <div style={{
             display: "flex", alignItems: "center", gap: 10,
             padding: "8px 10px", borderRadius: 10,
-            background: isActive ? "#14203a" : "transparent",
+            background: isActive ? "#0D1117" : "transparent",
             transition: "background 0.12s",
             cursor: clickable ? "pointer" : "not-allowed",
             opacity: tierLocked ? 0.5 : 1,
@@ -115,7 +115,7 @@ function NavSection({ label, items, pathname, userTier, addOns }: {
               color={isActive ? "#f8f6ef" : "#8f897a"} />
             <span style={{
               fontSize: 13, fontWeight: isActive ? 600 : 400,
-              color: isActive ? "#f8f6ef" : "#14203a",
+              color: isActive ? "#f8f6ef" : "#0D1117",
               fontFamily: "var(--font-hanken)", flex: 1,
             }}>
               {itemLabel}
@@ -173,7 +173,7 @@ export default function Sidebar() {
             <polygon points="63,22 91,22 77,4" fill="#e7c987"/>
           </svg>
           <div>
-            <div style={{ fontFamily: "var(--font-garamond)", fontWeight: 700, fontSize: 17, letterSpacing: "0.05em", color: "#14203a", lineHeight: 1.1 }}>
+            <div style={{ fontFamily: "var(--font-garamond)", fontWeight: 700, fontSize: 17, letterSpacing: "0.05em", color: "#0D1117", lineHeight: 1.1 }}>
               STERITH
             </div>
             <div style={{ fontSize: 8, letterSpacing: "0.22em", color: "#b8934a", textTransform: "uppercase", marginTop: 1.5, fontWeight: 600 }}>
@@ -202,7 +202,7 @@ export default function Sidebar() {
           <span style={{ fontFamily: "var(--font-garamond)", fontSize: 12, fontWeight: 700, color: "#fff" }}>TS</span>
         </div>
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ fontSize: 12.5, fontWeight: 600, color: "#14203a", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+          <div style={{ fontSize: 12.5, fontWeight: 600, color: "#0D1117", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
             Toko Sembako Maju
           </div>
           <div style={{ fontSize: 10.5, color: "#8f897a", marginTop: 0.5 }}>Palu Timur · 1 outlet</div>
@@ -232,7 +232,7 @@ export default function Sidebar() {
             }}
           >
             <ArrowLeftRight size={15} strokeWidth={1.6} color="#8f897a" />
-            <span style={{ fontSize: 13, fontWeight: 400, color: "#14203a", fontFamily: "var(--font-hanken)", flex: 1 }}>
+            <span style={{ fontSize: 13, fontWeight: 400, color: "#0D1117", fontFamily: "var(--font-hanken)", flex: 1 }}>
               Transfer
             </span>
             {!canTransfer && <span style={BADGE_STYLE}>Business</span>}
@@ -255,7 +255,7 @@ export default function Sidebar() {
           style={{ width: "100%", display: "flex", alignItems: "center", gap: 9, background: "transparent", border: "1px solid #e8e3d5", borderRadius: 9, padding: "8px 10px", cursor: "pointer", color: "#8f897a" }}
         >
           <MessageSquare size={13} strokeWidth={1.7} />
-          <span style={{ fontSize: 12, fontWeight: 600, color: "#14203a" }}>Kritik & Saran</span>
+          <span style={{ fontSize: 12, fontWeight: 600, color: "#0D1117" }}>Kritik & Saran</span>
         </button>
       </div>
       <FeedbackDrawer open={feedbackOpen} onClose={() => setFeedbackOpen(false)} />
@@ -269,14 +269,14 @@ export default function Sidebar() {
       }}>
         <div style={{
           width: 32, height: 32, borderRadius: "50%",
-          background: "#14203a",
+          background: "#0D1117",
           display: "flex", alignItems: "center", justifyContent: "center",
           flexShrink: 0,
         }}>
           <span style={{ fontFamily: "var(--font-garamond)", fontSize: 13, fontWeight: 700, color: "#f8f6ef" }}>{initials}</span>
         </div>
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ fontSize: 12.5, fontWeight: 600, color: "#14203a", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{name}</div>
+          <div style={{ fontSize: 12.5, fontWeight: 600, color: "#0D1117", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{name}</div>
           <div style={{ fontSize: 10.5, color: "#8f897a", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{roleLabel}</div>
         </div>
         <span style={{

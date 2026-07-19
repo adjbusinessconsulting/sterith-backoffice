@@ -17,7 +17,7 @@ function KpiCard({ label, value, sub, valueColor }: { label: string; value: numb
   return (
     <div style={{ background: "#fff", border: "1px solid #e8e3d5", borderRadius: 12, padding: "20px 22px", flex: 1 }}>
       <p style={{ fontSize: 9.5, letterSpacing: "0.18em", textTransform: "uppercase", color: "#8f897a", fontWeight: 600, marginBottom: 10 }}>{label}</p>
-      <p style={{ fontFamily: "var(--font-garamond)", fontSize: 40, fontWeight: 500, color: valueColor ?? "#14203a", lineHeight: 1, marginBottom: 6, fontFeatureSettings: '"onum"' }}>
+      <p style={{ fontFamily: "var(--font-garamond)", fontSize: 40, fontWeight: 500, color: valueColor ?? "#0D1117", lineHeight: 1, marginBottom: 6, fontFeatureSettings: '"onum"' }}>
         {value}
       </p>
       <p style={{ fontSize: 12, color: "#8f897a" }}>{sub}</p>
@@ -30,14 +30,14 @@ function FlowNode({ icon, label, sub, active }: { icon: React.ReactNode; label: 
     <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 10 }}>
       <div style={{
         width: 52, height: 52, borderRadius: 14,
-        background: active ? "#14203a" : "#f8f6ef",
-        border: `1.5px solid ${active ? "#14203a" : "#e8e3d5"}`,
+        background: active ? "#0D1117" : "#f8f6ef",
+        border: `1.5px solid ${active ? "#0D1117" : "#e8e3d5"}`,
         display: "flex", alignItems: "center", justifyContent: "center",
       }}>
         {icon}
       </div>
       <div style={{ textAlign: "center" }}>
-        <p style={{ fontSize: 13.5, fontWeight: 600, color: "#14203a" }}>{label}</p>
+        <p style={{ fontSize: 13.5, fontWeight: 600, color: "#0D1117" }}>{label}</p>
         <p style={{ fontSize: 11.5, color: "#8f897a", marginTop: 2 }}>{sub}</p>
       </div>
     </div>
@@ -76,7 +76,7 @@ export default function RingkasanClient({ data }: Props) {
           <p style={{ fontSize: 10, letterSpacing: "0.2em", textTransform: "uppercase", color: "#96762f", fontWeight: 600, marginBottom: 8 }}>
             INVENTORI · RINGKASAN
           </p>
-          <h1 style={{ fontFamily: "var(--font-garamond)", fontSize: 34, fontWeight: 500, color: "#14203a", lineHeight: 1.15, marginBottom: 6 }}>
+          <h1 style={{ fontFamily: "var(--font-garamond)", fontSize: 34, fontWeight: 500, color: "#0D1117", lineHeight: 1.15, marginBottom: 6 }}>
             Ringkasan inventori
           </h1>
           <p style={{ fontSize: 13, color: "#8f897a", lineHeight: 1.6, maxWidth: 340 }}>
@@ -89,7 +89,7 @@ export default function RingkasanClient({ data }: Props) {
               height: 40, padding: "0 18px",
               background: "#fff", border: "1.5px solid #e8e3d5",
               borderRadius: 10, fontSize: 13, fontWeight: 500,
-              color: "#14203a", cursor: "pointer", display: "flex", alignItems: "center", gap: 7,
+              color: "#0D1117", cursor: "pointer", display: "flex", alignItems: "center", gap: 7,
               fontFamily: "var(--font-hanken)",
             }}>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
@@ -100,7 +100,7 @@ export default function RingkasanClient({ data }: Props) {
             onClick={() => openModal("stokMasuk")}
             style={{
               height: 40, padding: "0 18px",
-              background: "#14203a", border: "none",
+              background: "#0D1117", border: "none",
               borderRadius: 10, fontSize: 13, fontWeight: 600,
               color: "#f8f6ef", cursor: "pointer", display: "flex", alignItems: "center", gap: 7,
               fontFamily: "var(--font-hanken)",
@@ -117,7 +117,7 @@ export default function RingkasanClient({ data }: Props) {
         <KpiCard label="ITEM AKTIF" value={data.itemAktif} sub="SKU terdaftar" />
         <KpiCard label="STOK RENDAH" value={data.stokRendah} sub="perlu tindakan" valueColor="#b8934a" />
         <KpiCard label="TRANSFER HARI INI" value={data.transferHariIni} sub={`${data.transferQty} item ke toko`} />
-        <KpiCard label="RUSAK / HILANG" value={data.rusakBulanIni} sub="bulan ini" valueColor={data.rusakBulanIni > 0 ? "#b0492f" : "#14203a"} />
+        <KpiCard label="RUSAK / HILANG" value={data.rusakBulanIni} sub="bulan ini" valueColor={data.rusakBulanIni > 0 ? "#b0492f" : "#0D1117"} />
       </div>
 
       {/* Stock flow diagram */}
@@ -170,7 +170,7 @@ export default function RingkasanClient({ data }: Props) {
                 </span>
               </div>
               <div style={{ flex: 1 }}>
-                <p style={{ fontSize: 13, fontWeight: 500, color: "#14203a" }}>{p.name}</p>
+                <p style={{ fontSize: 13, fontWeight: 500, color: "#0D1117" }}>{p.name}</p>
                 <p style={{ fontSize: 11.5, color: "#8f897a" }}>{p.category}</p>
               </div>
               <div style={{ textAlign: "right" }}>

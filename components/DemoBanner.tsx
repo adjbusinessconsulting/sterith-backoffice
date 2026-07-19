@@ -23,7 +23,7 @@ export default function DemoBanner({ owned, addOn, storeName }: { owned: boolean
       <div style={{ flex: 1 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", marginBottom: 2 }}>
           <span style={{ fontSize: 9, letterSpacing: "0.14em", textTransform: "uppercase", color: "#b8934a", fontWeight: 700 }}>Mode Demo · Add-on Berbayar</span>
-          <span style={{ fontSize: 13.5, fontWeight: 700, color: "#14203a", fontFamily: "var(--font-hanken)" }}>{ADDON_LABEL[addOn]}</span>
+          <span style={{ fontSize: 13.5, fontWeight: 700, color: "#0D1117", fontFamily: "var(--font-hanken)" }}>{ADDON_LABEL[addOn]}</span>
         </div>
         <p style={{ fontSize: 12.5, color: "#7a6f57", lineHeight: 1.6, margin: 0 }}>
           Ini pratinjau dengan data contoh (<b>{storeName}</b>). Coba jelajahi — untuk memakainya dengan katalog toko Anda, aktifkan add-on ini lewat tombol <b>Paket</b> di atas.

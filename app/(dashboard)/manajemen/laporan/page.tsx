@@ -71,7 +71,7 @@ export default function LaporanPage() {
         <p style={{ fontSize: 10, letterSpacing: "0.2em", textTransform: "uppercase", color: "#96762f", fontWeight: 600, marginBottom: 8 }}>
           LAPORAN
         </p>
-        <h1 style={{ fontFamily: "var(--font-garamond)", fontSize: 34, fontWeight: 500, color: "#14203a", lineHeight: 1.15, marginBottom: 6 }}>
+        <h1 style={{ fontFamily: "var(--font-garamond)", fontSize: 34, fontWeight: 500, color: "#0D1117", lineHeight: 1.15, marginBottom: 6 }}>
           Performa toko
         </h1>
         <p style={{ fontSize: 13, color: "#8f897a" }}>
@@ -86,7 +86,7 @@ export default function LaporanPage() {
           {(["riwayat", "kasir"] as const).map(t => (
             <button key={t} onClick={() => setTab(t)} style={{
               height: 34, padding: "0 18px", borderRadius: 8,
-              background: tab === t ? "#14203a" : "transparent",
+              background: tab === t ? "#0D1117" : "transparent",
               border: "none",
               color: tab === t ? "#f8f6ef" : "#8f897a",
               fontSize: 13, fontWeight: tab === t ? 600 : 400,
@@ -102,7 +102,7 @@ export default function LaporanPage() {
         <button style={{
           height: 38, padding: "0 14px",
           background: "#fff", border: "1.5px solid #e8e3d5",
-          borderRadius: 10, fontSize: 12.5, color: "#14203a",
+          borderRadius: 10, fontSize: 12.5, color: "#0D1117",
           cursor: "pointer", display: "flex", alignItems: "center", gap: 7,
           fontFamily: "var(--font-hanken)",
         }}>
@@ -114,7 +114,7 @@ export default function LaporanPage() {
         <button style={{
           height: 38, padding: "0 14px",
           background: "#fff", border: "1.5px solid #e8e3d5",
-          borderRadius: 10, fontSize: 12.5, color: "#14203a",
+          borderRadius: 10, fontSize: 12.5, color: "#0D1117",
           cursor: "pointer", display: "flex", alignItems: "center", gap: 7,
           fontFamily: "var(--font-hanken)",
         }}>
@@ -129,9 +129,9 @@ export default function LaporanPage() {
           {[`Semua · ${totalTrx}`, `Tunai · ${tunaiCount}`, `QRIS · ${qrisCount}`].map(l => (
             <button key={l} style={{
               height: 32, padding: "0 12px", borderRadius: 99,
-              background: l.startsWith("Semua") ? "#14203a" : "#fff",
-              border: `1.5px solid ${l.startsWith("Semua") ? "#14203a" : "#e8e3d5"}`,
-              color: l.startsWith("Semua") ? "#f8f6ef" : "#14203a",
+              background: l.startsWith("Semua") ? "#0D1117" : "#fff",
+              border: `1.5px solid ${l.startsWith("Semua") ? "#0D1117" : "#e8e3d5"}`,
+              color: l.startsWith("Semua") ? "#f8f6ef" : "#0D1117",
               fontSize: 12, fontWeight: l.startsWith("Semua") ? 600 : 400,
               cursor: "pointer", fontFamily: "var(--font-hanken)",
             }}>
@@ -147,7 +147,7 @@ export default function LaporanPage() {
           {/* Summary strip */}
           {summary && (
             <div style={{
-              background: "#14203a", borderRadius: 14, padding: "20px 24px",
+              background: "#0D1117", borderRadius: 14, padding: "20px 24px",
               display: "grid", gridTemplateColumns: "repeat(4, 1fr)",
               gap: 0, marginBottom: 24,
             }}>
@@ -193,13 +193,13 @@ export default function LaporanPage() {
                 {transactions.map(t => (
                   <tr key={t.id} style={{ borderBottom: "1px solid #f8f5ef" }}>
                     <td style={{ padding: "13px 16px" }}>
-                      <span style={{ fontFamily: "var(--font-garamond)", fontSize: 14, fontWeight: 500, color: "#14203a" }}>{t.no}</span>
+                      <span style={{ fontFamily: "var(--font-garamond)", fontSize: 14, fontWeight: 500, color: "#0D1117" }}>{t.no}</span>
                     </td>
                     <td style={{ padding: "13px 16px" }}>
-                      <span style={{ fontFamily: "var(--font-garamond)", fontSize: 14, color: "#14203a" }}>{fmtTime(t.createdAt)}</span>
+                      <span style={{ fontFamily: "var(--font-garamond)", fontSize: 14, color: "#0D1117" }}>{fmtTime(t.createdAt)}</span>
                     </td>
                     <td style={{ padding: "13px 16px" }}>
-                      <span style={{ fontSize: 13, color: "#14203a" }}>{t.kasir?.name ?? "—"}</span>
+                      <span style={{ fontSize: 13, color: "#0D1117" }}>{t.kasir?.name ?? "—"}</span>
                     </td>
                     <td style={{ padding: "13px 16px" }}>
                       <span style={{ fontSize: 12, color: "#8f897a", maxWidth: 180, display: "block", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
@@ -207,10 +207,10 @@ export default function LaporanPage() {
                       </span>
                     </td>
                     <td style={{ padding: "13px 16px" }}>
-                      <span style={{ fontSize: 12, color: "#14203a" }}>{t.method}</span>
+                      <span style={{ fontSize: 12, color: "#0D1117" }}>{t.method}</span>
                     </td>
                     <td style={{ padding: "13px 16px", textAlign: "right" }}>
-                      <span style={{ fontFamily: "var(--font-garamond)", fontSize: 14, fontWeight: 500, color: "#14203a" }}>Rp {t.total.toLocaleString("id-ID")}</span>
+                      <span style={{ fontFamily: "var(--font-garamond)", fontSize: 14, fontWeight: 500, color: "#0D1117" }}>Rp {t.total.toLocaleString("id-ID")}</span>
                     </td>
                   </tr>
                 ))}
@@ -224,7 +224,7 @@ export default function LaporanPage() {
       {tab === "kasir" && summary && (
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
           {/* Saldo laci card */}
-          <div style={{ background: "#14203a", borderRadius: 14, padding: "24px 28px" }}>
+          <div style={{ background: "#0D1117", borderRadius: 14, padding: "24px 28px" }}>
             <p style={{ fontSize: 9.5, letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(248,246,239,0.5)", fontWeight: 600, marginBottom: 12 }}>
               SALDO LACI SAAT INI
             </p>
@@ -267,12 +267,12 @@ export default function LaporanPage() {
                   </span>
                 </div>
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <p style={{ fontSize: 12.5, fontWeight: 500, color: "#14203a", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{e.note ?? e.entryType}</p>
+                  <p style={{ fontSize: 12.5, fontWeight: 500, color: "#0D1117", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{e.note ?? e.entryType}</p>
                   <p style={{ fontSize: 11, color: "#8f897a", marginTop: 1 }}>
                     {fmtTime(e.createdAt)} · {e.byUser?.name}
                   </p>
                 </div>
-                <span style={{ fontFamily: "var(--font-garamond)", fontSize: 13, fontWeight: 500, color: e.entryType === "OUT" ? "#b0492f" : "#14203a", whiteSpace: "nowrap" }}>
+                <span style={{ fontFamily: "var(--font-garamond)", fontSize: 13, fontWeight: 500, color: e.entryType === "OUT" ? "#b0492f" : "#0D1117", whiteSpace: "nowrap" }}>
                   {e.entryType === "OUT" ? "–" : "+"} {fmtRpFull(e.amount)}
                 </span>
               </div>

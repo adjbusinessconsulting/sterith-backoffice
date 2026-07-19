@@ -47,7 +47,7 @@ export default function SalesDashboardPage() {
                   {d.hourly.map((x) => (
                     <div key={x.hour} title={`${String(x.hour).padStart(2, "0")}.00 · ${fmtRpFull(x.revenue)} · ${x.transactions} trx`}
                       style={{ flex: 1, height: `${Math.max((x.revenue / maxHour) * 100, x.revenue > 0 ? 4 : 1)}%`,
-                        background: x.hour === peakHour.hour ? "#14203a" : x.revenue > 0 ? "#d9bd7e" : "#ece8dc", borderRadius: "2px 2px 0 0" }} />
+                        background: x.hour === peakHour.hour ? "#0D1117" : x.revenue > 0 ? "#d9bd7e" : "#ece8dc", borderRadius: "2px 2px 0 0" }} />
                   ))}
                 </div>
                 <div style={{ display: "flex", justifyContent: "space-between", marginTop: 8, fontSize: 10, color: "#a49d8c" }}>
@@ -61,7 +61,7 @@ export default function SalesDashboardPage() {
                   {d.paymentMix.map((p) => (
                     <div key={p.method}>
                       <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12.5, marginBottom: 5 }}>
-                        <span style={{ color: "#14203a", fontWeight: 500 }}>{p.method}</span>
+                        <span style={{ color: "#0D1117", fontWeight: 500 }}>{p.method}</span>
                         <span style={{ color: "#8f897a", fontVariantNumeric: "tabular-nums" }}>{fmtRp(p.revenue)} · {Math.round((p.revenue / totalPay) * 100)}%</span>
                       </div>
                       <div style={{ height: 8, background: "#f1ede1", borderRadius: 99, overflow: "hidden" }}>

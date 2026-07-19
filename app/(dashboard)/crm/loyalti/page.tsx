@@ -24,10 +24,10 @@ export default function LoyaltiPage() {
       <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 16, marginBottom: 20, flexWrap: "wrap" }}>
         <div>
           <p style={{ fontSize: 10, letterSpacing: "0.2em", textTransform: "uppercase", color: "#96762f", fontWeight: 600, marginBottom: 8 }}>CRM · LOYALTI</p>
-          <h1 style={{ fontFamily: "var(--font-garamond)", fontSize: 34, fontWeight: 500, color: "#14203a", lineHeight: 1.15, marginBottom: 6 }}>Program Loyalti</h1>
+          <h1 style={{ fontFamily: "var(--font-garamond)", fontSize: 34, fontWeight: 500, color: "#0D1117", lineHeight: 1.15, marginBottom: 6 }}>Program Loyalti</h1>
           <p style={{ fontSize: 13, color: "#8f897a", lineHeight: 1.6, maxWidth: 470 }}>Poin & reward untuk pelanggan setia — poin dihitung otomatis dari transaksi POS.</p>
         </div>
-        <button onClick={() => softGate("Ubah program")} style={{ height: 40, padding: "0 18px", background: "#14203a", border: "none", borderRadius: 10, fontSize: 13, fontWeight: 600, color: "#f8f6ef", cursor: "pointer", fontFamily: "var(--font-hanken)", flexShrink: 0 }}>Ubah Program</button>
+        <button onClick={() => softGate("Ubah program")} style={{ height: 40, padding: "0 18px", background: "#0D1117", border: "none", borderRadius: 10, fontSize: 13, fontWeight: 600, color: "#f8f6ef", cursor: "pointer", fontFamily: "var(--font-hanken)", flexShrink: 0 }}>Ubah Program</button>
       </div>
 
       <DemoBanner owned={owned} addOn="crm" storeName="Kanso Lifestyle" />
@@ -39,7 +39,7 @@ export default function LoyaltiPage() {
         </div>
         <div>
           <p style={{ fontSize: 10, letterSpacing: "0.14em", textTransform: "uppercase", color: "#96762f", fontWeight: 700 }}>Aturan Poin</p>
-          <p style={{ fontSize: 15, fontWeight: 700, color: "#14203a", marginTop: 1 }}>{LOYALTY.earn}</p>
+          <p style={{ fontSize: 15, fontWeight: 700, color: "#0D1117", marginTop: 1 }}>{LOYALTY.earn}</p>
         </div>
       </div>
 
@@ -55,7 +55,7 @@ export default function LoyaltiPage() {
                 <span style={{ fontSize: 11, fontWeight: 600, color: "#8f897a" }}>{countTier(t.name)} member</span>
               </div>
               <p style={{ fontSize: 11.5, color: "#8f897a", marginBottom: 8 }}>Mulai {t.threshold.toLocaleString("id-ID")} poin</p>
-              <p style={{ fontSize: 12.5, color: "#14203a", lineHeight: 1.6 }}>{t.perks}</p>
+              <p style={{ fontSize: 12.5, color: "#0D1117", lineHeight: 1.6 }}>{t.perks}</p>
             </div>
           );
         })}
@@ -66,12 +66,12 @@ export default function LoyaltiPage() {
         <div style={{ flex: 1, minWidth: 300 }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
             <p style={{ fontSize: 10, letterSpacing: "0.16em", textTransform: "uppercase", color: "#8f897a", fontWeight: 700 }}>Katalog Reward</p>
-            <button onClick={() => softGate("Tambah reward")} style={{ height: 30, padding: "0 12px", borderRadius: 8, border: "1.5px solid #e8e3d5", background: "#fff", color: "#14203a", fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "var(--font-hanken)" }}>+ Reward</button>
+            <button onClick={() => softGate("Tambah reward")} style={{ height: 30, padding: "0 12px", borderRadius: 8, border: "1.5px solid #e8e3d5", background: "#fff", color: "#0D1117", fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "var(--font-hanken)" }}>+ Reward</button>
           </div>
           <div style={{ background: "#fff", border: "1px solid #e8e3d5", borderRadius: 12, overflow: "hidden" }}>
             {LOYALTY.rewards.map((r, i) => (
               <div key={r.name} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "13px 16px", borderBottom: i < LOYALTY.rewards.length - 1 ? "1px solid #f4f1ea" : "none" }}>
-                <span style={{ fontSize: 13, fontWeight: 500, color: "#14203a" }}>{r.name}</span>
+                <span style={{ fontSize: 13, fontWeight: 500, color: "#0D1117" }}>{r.name}</span>
                 <span style={{ fontSize: 12.5, fontWeight: 700, color: "#a5772a" }}>{r.cost} poin</span>
               </div>
             ))}
@@ -89,7 +89,7 @@ export default function LoyaltiPage() {
                   <span style={{ fontFamily: "var(--font-garamond)", fontSize: 11.5, fontWeight: 600, color: "#b8934a" }}>{initials(c.name)}</span>
                 </div>
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <p style={{ fontSize: 12.5, fontWeight: 600, color: "#14203a", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{c.name}</p>
+                  <p style={{ fontSize: 12.5, fontWeight: 600, color: "#0D1117", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{c.name}</p>
                   <p style={{ fontSize: 10.5, color: TIER_META[c.tier].color, fontWeight: 600 }}>{c.tier}</p>
                 </div>
                 <span style={{ fontSize: 12.5, fontWeight: 700, color: "#a5772a", fontVariantNumeric: "tabular-nums" }}>{c.points.toLocaleString("id-ID")}</span>
@@ -100,7 +100,7 @@ export default function LoyaltiPage() {
       </div>
 
       {nudge && (
-        <div style={{ position: "fixed", left: "50%", bottom: 28, transform: "translateX(-50%)", zIndex: 1000, background: "#14203a", color: "#f8f6ef", fontSize: 13, fontWeight: 500, padding: "11px 18px", borderRadius: 11, boxShadow: "0 12px 40px rgba(20,32,58,0.4)", fontFamily: "var(--font-hanken)" }}>{nudge}</div>
+        <div style={{ position: "fixed", left: "50%", bottom: 28, transform: "translateX(-50%)", zIndex: 1000, background: "#0D1117", color: "#f8f6ef", fontSize: 13, fontWeight: 500, padding: "11px 18px", borderRadius: 11, boxShadow: "0 12px 40px rgba(20,32,58,0.4)", fontFamily: "var(--font-hanken)" }}>{nudge}</div>
       )}
     </div>
   );

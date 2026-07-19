@@ -69,8 +69,8 @@ export default function UpgradeModal({ open, onClose }: { open: boolean; onClose
         <div style={{ padding: "20px 24px 16px", borderBottom: "1px solid #e8e3d5", display: "flex", alignItems: "flex-start", justifyContent: "space-between", flexShrink: 0 }}>
           <div>
             <p style={{ margin: 0, fontSize: 9.5, letterSpacing: "0.22em", textTransform: "uppercase", color: "#b8934a", fontWeight: 700 }}>Sterith · Paket</p>
-            <h2 style={{ margin: "4px 0 0", fontSize: 21, fontWeight: 800, color: "#14203a", letterSpacing: "-0.02em" }}>Tingkatkan paket Anda</h2>
-            <p style={{ margin: "3px 0 0", fontSize: 12.5, color: "#8f897a" }}>Paket saat ini: <b style={{ color: "#14203a", textTransform: "capitalize" }}>{currentTier}</b> · tim kami akan menghubungi Anda.</p>
+            <h2 style={{ margin: "4px 0 0", fontSize: 21, fontWeight: 800, color: "#0D1117", letterSpacing: "-0.02em" }}>Tingkatkan paket Anda</h2>
+            <p style={{ margin: "3px 0 0", fontSize: 12.5, color: "#8f897a" }}>Paket saat ini: <b style={{ color: "#0D1117", textTransform: "capitalize" }}>{currentTier}</b> · tim kami akan menghubungi Anda.</p>
           </div>
           <button onClick={onClose} style={{ width: 32, height: 32, borderRadius: 9, border: "1px solid #e8e3d5", background: "white", cursor: "pointer", color: "#8f897a", flexShrink: 0 }}>✕</button>
         </div>
@@ -80,9 +80,9 @@ export default function UpgradeModal({ open, onClose }: { open: boolean; onClose
             <div style={{ width: 58, height: 58, borderRadius: "50%", background: "rgba(63,125,84,0.12)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 16px" }}>
               <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#3f7d54" strokeWidth="2.5"><path d="M20 6L9 17l-5-5" /></svg>
             </div>
-            <p style={{ margin: 0, fontSize: 17, fontWeight: 800, color: "#14203a" }}>Permintaan terkirim!</p>
+            <p style={{ margin: 0, fontSize: 17, fontWeight: 800, color: "#0D1117" }}>Permintaan terkirim!</p>
             <p style={{ margin: "6px auto 22px", fontSize: 13, color: "#8f897a", lineHeight: 1.6, maxWidth: 360 }}>Tim Sterith akan meninjau dan menghubungi Anda untuk menyelesaikan upgrade. Terima kasih!</p>
-            <button onClick={onClose} style={{ height: 44, padding: "0 30px", borderRadius: 11, border: "none", background: "#14203a", color: "#f8f6ef", fontSize: 13, fontWeight: 700, cursor: "pointer" }}>Tutup</button>
+            <button onClick={onClose} style={{ height: 44, padding: "0 30px", borderRadius: 11, border: "none", background: "#0D1117", color: "#f8f6ef", fontSize: 13, fontWeight: 700, cursor: "pointer" }}>Tutup</button>
           </div>
         ) : (
           <>
@@ -97,7 +97,7 @@ export default function UpgradeModal({ open, onClose }: { open: boolean; onClose
                     <button key={t.key} disabled={!canPick} onClick={() => canPick && setTarget(t.key)}
                       style={{ textAlign: "left", background: "#fff", border: `2px solid ${selected ? "#b8934a" : "#e8e3d5"}`, borderRadius: 14, padding: 14, cursor: canPick ? "pointer" : "default", opacity: !canPick && !isCurrent ? 0.5 : 1, position: "relative" }}>
                       {isCurrent && <span style={{ position: "absolute", top: 10, right: 10, fontSize: 8, letterSpacing: "0.1em", fontWeight: 800, color: "#8f897a", background: "#f0ecdf", borderRadius: 5, padding: "2px 6px", textTransform: "uppercase" }}>Paket Anda</span>}
-                      <div style={{ fontSize: 15, fontWeight: 800, color: "#14203a" }}>{t.name}</div>
+                      <div style={{ fontSize: 15, fontWeight: 800, color: "#0D1117" }}>{t.name}</div>
                       <div style={{ fontSize: 11, color: "#8f897a", marginBottom: 8 }}>{t.tagline}</div>
                       <div style={{ fontSize: 18, fontWeight: 800, color: "#b8934a" }}>{rp(t.price)}{t.price > 0 && <span style={{ fontSize: 11, color: "#a9a396", fontWeight: 600 }}>/bln</span>}</div>
                       {t.reg && <div style={{ fontSize: 10, color: "#a9a396", textDecoration: "line-through" }}>{rp(t.reg)}/bln</div>}
@@ -124,7 +124,7 @@ export default function UpgradeModal({ open, onClose }: { open: boolean; onClose
                         {on && <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3.5"><path d="M20 6L9 17l-5-5" /></svg>}
                       </div>
                       <div style={{ flex: 1 }}>
-                        <div style={{ fontSize: 13, fontWeight: 700, color: "#14203a" }}>{a.name}</div>
+                        <div style={{ fontSize: 13, fontWeight: 700, color: "#0D1117" }}>{a.name}</div>
                         <div style={{ fontSize: 11, color: "#8f897a" }}>{a.desc}</div>
                       </div>
                       <div style={{ fontSize: 12.5, fontWeight: 700, color: "#b8934a", flexShrink: 0 }}>~{rp(a.price)}/bln</div>
@@ -139,10 +139,10 @@ export default function UpgradeModal({ open, onClose }: { open: boolean; onClose
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16 }}>
                 <div>
                   <div style={{ fontSize: 10, letterSpacing: "0.14em", textTransform: "uppercase", color: "#8f897a", fontWeight: 700 }}>Estimasi</div>
-                  <div style={{ fontSize: 20, fontWeight: 800, color: "#14203a" }}>{rp(monthly)}<span style={{ fontSize: 12, color: "#a9a396", fontWeight: 600 }}>/bln</span></div>
+                  <div style={{ fontSize: 20, fontWeight: 800, color: "#0D1117" }}>{rp(monthly)}<span style={{ fontSize: 12, color: "#a9a396", fontWeight: 600 }}>/bln</span></div>
                 </div>
                 <button onClick={submit} disabled={sending}
-                  style={{ height: 50, padding: "0 26px", borderRadius: 12, border: "none", background: "#14203a", color: "#f8f6ef", fontSize: 14, fontWeight: 700, cursor: sending ? "default" : "pointer", opacity: sending ? 0.7 : 1, display: "flex", alignItems: "center", gap: 9 }}>
+                  style={{ height: 50, padding: "0 26px", borderRadius: 12, border: "none", background: "#0D1117", color: "#f8f6ef", fontSize: 14, fontWeight: 700, cursor: sending ? "default" : "pointer", opacity: sending ? 0.7 : 1, display: "flex", alignItems: "center", gap: 9 }}>
                   {sending ? "Mengirim…" : "Kirim Permintaan"}
                   {!sending && <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#b8934a" strokeWidth="2.5"><path d="M5 12h14M13 5l7 7-7 7" /></svg>}
                 </button>

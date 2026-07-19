@@ -24,7 +24,7 @@ export default function ProductPerformancePage() {
                     <div style={{ width: 22, textAlign: "center", fontFamily: "var(--font-garamond)", fontSize: 15, fontWeight: 600, color: i === 0 ? "#b8934a" : "#c4bda8", flexShrink: 0 }}>{i + 1}</div>
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 5 }}>
-                        <span style={{ fontSize: 13.5, fontWeight: 500, color: "#14203a", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", maxWidth: "60%" }}>{p.productName}</span>
+                        <span style={{ fontSize: 13.5, fontWeight: 500, color: "#0D1117", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", maxWidth: "60%" }}>{p.productName}</span>
                         <span style={{ fontSize: 12.5, color: "#8f897a", fontVariantNumeric: "tabular-nums" }}>{fmtNum(p.qty)}× · {fmtRp(p.revenue)}</span>
                       </div>
                       <div style={{ height: 8, background: "#f1ede1", borderRadius: 99, overflow: "hidden" }}>
@@ -46,7 +46,7 @@ export default function ProductPerformancePage() {
                     <div key={p.id} style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 12px", background: "#faf8f1", border: "1px solid #eee6d4", borderRadius: 10 }}>
                       <div style={{ width: 30, height: 30, borderRadius: 8, background: "#fff", border: "1px solid #eee6d4", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 15, flexShrink: 0 }}>{p.emoji || "📦"}</div>
                       <div style={{ flex: 1, minWidth: 0 }}>
-                        <div style={{ fontSize: 12.5, fontWeight: 500, color: "#14203a", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{p.name}</div>
+                        <div style={{ fontSize: 12.5, fontWeight: 500, color: "#0D1117", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{p.name}</div>
                         <div style={{ fontSize: 10.5, color: "#a49d8c" }}>Stok {fmtNum(p.stock)} · {p.category}</div>
                       </div>
                     </div>

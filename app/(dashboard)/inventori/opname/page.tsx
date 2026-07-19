@@ -70,9 +70,9 @@ export default function OpnamePage() {
         <div style={{ width: 60, height: 60, borderRadius: "50%", background: "#e9f1ea", border: "1.5px solid #3f7d54", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 16px" }}>
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#3f7d54" strokeWidth="2.5"><path d="M20 6L9 17l-5-5"/></svg>
         </div>
-        <p style={{ fontFamily: "var(--font-garamond)", fontSize: 22, color: "#14203a", marginBottom: 8 }}>Opname dikirim</p>
+        <p style={{ fontFamily: "var(--font-garamond)", fontSize: 22, color: "#0D1117", marginBottom: 8 }}>Opname dikirim</p>
         <p style={{ fontSize: 13, color: "#8f897a", marginBottom: 24 }}>Menunggu persetujuan owner untuk diterapkan.</p>
-        <button onClick={() => setSubmitted(false)} style={{ height: 40, padding: "0 20px", background: "#14203a", color: "#f8f6ef", border: "none", borderRadius: 10, fontSize: 13, fontWeight: 600, cursor: "pointer", fontFamily: "var(--font-hanken)" }}>
+        <button onClick={() => setSubmitted(false)} style={{ height: 40, padding: "0 20px", background: "#0D1117", color: "#f8f6ef", border: "none", borderRadius: 10, fontSize: 13, fontWeight: 600, cursor: "pointer", fontFamily: "var(--font-hanken)" }}>
           Opname baru
         </button>
       </div>
@@ -85,7 +85,7 @@ export default function OpnamePage() {
         <p style={{ fontSize: 10, letterSpacing: "0.2em", textTransform: "uppercase", color: "#96762f", fontWeight: 600, marginBottom: 8 }}>
           INVENTORI · STOK OPNAME
         </p>
-        <h1 style={{ fontFamily: "var(--font-garamond)", fontSize: 34, fontWeight: 500, color: "#14203a", lineHeight: 1.15, marginBottom: 6 }}>
+        <h1 style={{ fontFamily: "var(--font-garamond)", fontSize: 34, fontWeight: 500, color: "#0D1117", lineHeight: 1.15, marginBottom: 6 }}>
           Stok opname {location === "WAREHOUSE" ? "gudang" : "toko"}
         </h1>
         <p style={{ fontSize: 13, color: "#8f897a", lineHeight: 1.6 }}>
@@ -98,9 +98,9 @@ export default function OpnamePage() {
         {(["WAREHOUSE", "STORE"] as const).map(loc => (
           <button key={loc} onClick={() => setLocation(loc)} style={{
             height: 36, padding: "0 16px", borderRadius: 99,
-            background: location === loc ? "#14203a" : "#fff",
-            border: `1.5px solid ${location === loc ? "#14203a" : "#e8e3d5"}`,
-            color: location === loc ? "#f8f6ef" : "#14203a",
+            background: location === loc ? "#0D1117" : "#fff",
+            border: `1.5px solid ${location === loc ? "#0D1117" : "#e8e3d5"}`,
+            color: location === loc ? "#f8f6ef" : "#0D1117",
             fontSize: 13, fontWeight: location === loc ? 600 : 400,
             cursor: "pointer", fontFamily: "var(--font-hanken)",
           }}>
@@ -157,13 +157,13 @@ export default function OpnamePage() {
                         <span style={{ fontFamily: "var(--font-garamond)", fontSize: 13, fontWeight: 600, color: "#b8934a" }}>{initials(l.name)}</span>
                       </div>
                       <div>
-                        <p style={{ fontSize: 13.5, fontWeight: 500, color: "#14203a" }}>{l.name}</p>
+                        <p style={{ fontSize: 13.5, fontWeight: 500, color: "#0D1117" }}>{l.name}</p>
                         <p style={{ fontSize: 11.5, color: "#8f897a", marginTop: 1 }}>{l.sku}</p>
                       </div>
                     </div>
                   </td>
                   <td style={{ padding: "14px 16px" }}>
-                    <span style={{ fontFamily: "var(--font-garamond)", fontSize: 20, fontWeight: 500, color: "#14203a" }}>{l.systemQty}</span>
+                    <span style={{ fontFamily: "var(--font-garamond)", fontSize: 20, fontWeight: 500, color: "#0D1117" }}>{l.systemQty}</span>
                   </td>
                   <td style={{ padding: "10px 16px" }}>
                     <input
@@ -175,7 +175,7 @@ export default function OpnamePage() {
                         width: 80, height: 36,
                         border: "1.5px solid #e8e3d5", borderRadius: 8,
                         padding: "0 10px", textAlign: "center",
-                        fontSize: 14, color: "#14203a",
+                        fontSize: 14, color: "#0D1117",
                         fontFamily: "var(--font-garamond)",
                         background: l.physicalQty !== null ? "#fff" : "#f8f6ef",
                       }}
@@ -185,7 +185,7 @@ export default function OpnamePage() {
                     {selisih !== null ? (
                       <span style={{
                         fontFamily: "var(--font-garamond)", fontSize: 18, fontWeight: 500,
-                        color: selisih === 0 ? "#3f7d54" : selisih > 0 ? "#14203a" : "#b0492f",
+                        color: selisih === 0 ? "#3f7d54" : selisih > 0 ? "#0D1117" : "#b0492f",
                       }}>
                         {selisih > 0 ? "+" : ""}{selisih}
                       </span>
@@ -206,7 +206,7 @@ export default function OpnamePage() {
           disabled={submitting || lines.every(l => l.physicalQty === null)}
           style={{
             height: 42, padding: "0 24px",
-            background: "#14203a", border: "none",
+            background: "#0D1117", border: "none",
             borderRadius: 10, fontSize: 13, fontWeight: 600,
             color: "#f8f6ef", cursor: "pointer",
             opacity: lines.every(l => l.physicalQty === null) ? 0.5 : 1,

@@ -8,7 +8,7 @@ export default function DashboardPage() {
             <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
           </svg>
         </div>
-        <p style={{ fontFamily: "var(--font-garamond)", fontSize: 26, fontWeight: 500, color: "#14203a", marginBottom: 8 }}>
+        <p style={{ fontFamily: "var(--font-garamond)", fontSize: 26, fontWeight: 500, color: "#0D1117", marginBottom: 8 }}>
           Dashboard — segera hadir
         </p>
         <p style={{ fontSize: 13.5, color: "#8f897a", lineHeight: 1.6, maxWidth: 320 }}>

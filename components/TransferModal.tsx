@@ -67,10 +67,10 @@ export default function TransferModal() {
         {/* Header */}
         <div style={{ padding: "18px 22px", borderBottom: "1px solid #f0ebe0", display: "flex", alignItems: "center", gap: 12, flexShrink: 0 }}>
           <div style={{ width: 38, height: 38, borderRadius: 10, background: "#f8f6ef", border: "1.5px solid #e8e3d5", display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#14203a" strokeWidth="1.8"><path d="M7 16l-4-4 4-4M17 8l4 4-4 4M3 12h18"/></svg>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0D1117" strokeWidth="1.8"><path d="M7 16l-4-4 4-4M17 8l4 4-4 4M3 12h18"/></svg>
           </div>
           <div style={{ flex: 1 }}>
-            <p style={{ fontSize: 15, fontWeight: 700, color: "#14203a" }}>Transfer stok ke toko</p>
+            <p style={{ fontSize: 15, fontWeight: 700, color: "#0D1117" }}>Transfer stok ke toko</p>
             <p style={{ fontSize: 12, color: "#8f897a", marginTop: 1 }}>Gudang → Toko · sinkron real-time</p>
           </div>
           <button onClick={handleClose} style={{ background: "transparent", border: "none", cursor: "pointer", padding: 6, color: "#8f897a", borderRadius: 8 }}>
@@ -97,13 +97,13 @@ export default function TransferModal() {
                         <span style={{ fontFamily: "var(--font-garamond)", fontSize: 12, fontWeight: 600, color: "#b8934a" }}>{initials(p.name)}</span>
                       </div>
                       <div>
-                        <p style={{ fontSize: 13.5, fontWeight: 500, color: "#14203a" }}>{p.name}</p>
+                        <p style={{ fontSize: 13.5, fontWeight: 500, color: "#0D1117" }}>{p.name}</p>
                         <p style={{ fontSize: 11, color: "#8f897a", marginTop: 1 }}>{p.sku}</p>
                       </div>
                     </div>
                   </td>
                   <td style={{ padding: "12px 16px", textAlign: "right" }}>
-                    <span style={{ fontFamily: "var(--font-garamond)", fontSize: 18, fontWeight: 500, color: "#14203a" }}>{p.warehouseQty}</span>
+                    <span style={{ fontFamily: "var(--font-garamond)", fontSize: 18, fontWeight: 500, color: "#0D1117" }}>{p.warehouseQty}</span>
                   </td>
                   <td style={{ padding: "10px 18px", textAlign: "right" }}>
                     <input
@@ -113,9 +113,9 @@ export default function TransferModal() {
                       placeholder="0"
                       style={{
                         width: 72, height: 36,
-                        border: `1.5px solid ${quantities[p.id] ? "#14203a" : "#e8e3d5"}`,
+                        border: `1.5px solid ${quantities[p.id] ? "#0D1117" : "#e8e3d5"}`,
                         borderRadius: 8, padding: "0 10px", textAlign: "center",
-                        fontSize: 14, fontFamily: "var(--font-garamond)", color: "#14203a",
+                        fontSize: 14, fontFamily: "var(--font-garamond)", color: "#0D1117",
                         background: "#fff",
                       }}
                     />
@@ -139,7 +139,7 @@ export default function TransferModal() {
             {hasItems ? `${Object.values(quantities).filter(q => q > 0).length} produk dipilih` : "Isi jumlah untuk transfer"}
           </p>
           <div style={{ display: "flex", gap: 10 }}>
-            <button onClick={handleClose} style={{ height: 40, padding: "0 18px", background: "#fff", border: "1.5px solid #e8e3d5", borderRadius: 10, fontSize: 13, color: "#14203a", cursor: "pointer", fontFamily: "var(--font-hanken)" }}>
+            <button onClick={handleClose} style={{ height: 40, padding: "0 18px", background: "#fff", border: "1.5px solid #e8e3d5", borderRadius: 10, fontSize: 13, color: "#0D1117", cursor: "pointer", fontFamily: "var(--font-hanken)" }}>
               Batal
             </button>
             <button
@@ -147,7 +147,7 @@ export default function TransferModal() {
               disabled={!hasItems || submitting}
               style={{
                 height: 40, padding: "0 20px",
-                background: hasItems ? "#14203a" : "#e8e3d5", border: "none",
+                background: hasItems ? "#0D1117" : "#e8e3d5", border: "none",
                 borderRadius: 10, fontSize: 13, fontWeight: 600,
                 color: hasItems ? "#f8f6ef" : "#8f897a", cursor: hasItems ? "pointer" : "not-allowed",
                 display: "flex", alignItems: "center", gap: 7, fontFamily: "var(--font-hanken)",

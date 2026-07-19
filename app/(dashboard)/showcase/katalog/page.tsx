@@ -35,7 +35,7 @@ export default function KatalogPage() {
       <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 16, marginBottom: 20, flexWrap: "wrap" }}>
         <div>
           <p style={{ fontSize: 10, letterSpacing: "0.2em", textTransform: "uppercase", color: "#96762f", fontWeight: 600, marginBottom: 8 }}>SHOWCASE · KATALOG</p>
-          <h1 style={{ fontFamily: "var(--font-garamond)", fontSize: 34, fontWeight: 500, color: "#14203a", lineHeight: 1.15, marginBottom: 6 }}>Katalog & Etalase</h1>
+          <h1 style={{ fontFamily: "var(--font-garamond)", fontSize: 34, fontWeight: 500, color: "#0D1117", lineHeight: 1.15, marginBottom: 6 }}>Katalog & Etalase</h1>
           <p style={{ fontSize: 13, color: "#8f897a", lineHeight: 1.6, maxWidth: 500 }}>Atur etalase — setiap perubahan langsung terlihat di HP pelanggan. Klik produk untuk pratinjau · ubah harga & stok · ★ unggulkan · 👁 tampil/sembunyikan.</p>
         </div>
       </div>
@@ -45,12 +45,12 @@ export default function KatalogPage() {
       <div style={{ display: "flex", gap: 12, marginBottom: 18, flexWrap: "wrap", alignItems: "center" }}>
         <div style={{ display: "flex", gap: 8 }}>
           {DEPTS.map((d) => (
-            <button key={d.id} onClick={() => setDept(d.id)} style={{ height: 34, padding: "0 14px", borderRadius: 99, background: dept === d.id ? "#14203a" : "#fff", border: `1.5px solid ${dept === d.id ? "#14203a" : "#e8e3d5"}`, color: dept === d.id ? "#f8f6ef" : "#14203a", fontSize: 13, fontWeight: dept === d.id ? 600 : 400, cursor: "pointer", fontFamily: "var(--font-hanken)" }}>{d.label}</button>
+            <button key={d.id} onClick={() => setDept(d.id)} style={{ height: 34, padding: "0 14px", borderRadius: 99, background: dept === d.id ? "#0D1117" : "#fff", border: `1.5px solid ${dept === d.id ? "#0D1117" : "#e8e3d5"}`, color: dept === d.id ? "#f8f6ef" : "#0D1117", fontSize: 13, fontWeight: dept === d.id ? 600 : 400, cursor: "pointer", fontFamily: "var(--font-hanken)" }}>{d.label}</button>
           ))}
         </div>
         <div style={{ flex: 1, minWidth: 180, height: 40, background: "#fff", border: "1.5px solid #e8e3d5", borderRadius: 10, display: "flex", alignItems: "center", gap: 10, padding: "0 14px" }}>
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#8f897a" strokeWidth="1.8"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>
-          <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Cari produk atau brand..." style={{ flex: 1, border: "none", fontSize: 13.5, color: "#14203a", fontFamily: "var(--font-hanken)", background: "transparent", outline: "none" }} />
+          <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Cari produk atau brand..." style={{ flex: 1, border: "none", fontSize: 13.5, color: "#0D1117", fontFamily: "var(--font-hanken)", background: "transparent", outline: "none" }} />
         </div>
       </div>
 
@@ -87,17 +87,17 @@ function Card({ p, selected, hidden, featured, onPreview, onToggleHidden, onTogg
   const commit = () => { const n = parseInt(val.replace(/\D/g, ""), 10); if (!isNaN(n)) onSetPrice(n); setEditing(false); };
 
   return (
-    <div onClick={onPreview} style={{ background: "#fff", border: `1.5px solid ${selected ? "#14203a" : "#e8e3d5"}`, borderRadius: 14, overflow: "hidden", cursor: "pointer", display: "flex", flexDirection: "column", opacity: hidden ? 0.5 : 1, transition: "border-color .12s, opacity .12s" }}>
+    <div onClick={onPreview} style={{ background: "#fff", border: `1.5px solid ${selected ? "#0D1117" : "#e8e3d5"}`, borderRadius: 14, overflow: "hidden", cursor: "pointer", display: "flex", flexDirection: "column", opacity: hidden ? 0.5 : 1, transition: "border-color .12s, opacity .12s" }}>
       <div style={{ position: "relative", width: "100%", aspectRatio: "3 / 4", background: "#f1ede4" }}>
         <img src={p.image} alt={p.name} loading="lazy" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
         {tag && <span style={{ position: "absolute", bottom: 10, left: 10, fontSize: 8.5, letterSpacing: "0.1em", fontWeight: 800, color: tag.color, background: tag.bg, padding: "3px 8px", borderRadius: 5 }}>{tag.label}</span>}
         {out && <span style={{ position: "absolute", bottom: 10, right: 10, fontSize: 8.5, fontWeight: 800, color: "#fff", background: "rgba(20,32,58,0.75)", padding: "3px 8px", borderRadius: 5 }}>HABIS</span>}
         <div style={{ position: "absolute", top: 8, left: 8, display: "flex", gap: 6 }}>
-          <button onClick={(e) => { e.stopPropagation(); onToggleFeatured(); }} title={featured ? "Batal unggulkan" : "Unggulkan (tampil pertama)"} style={{ width: 30, height: 30, borderRadius: 8, border: "none", background: featured ? "#f4d58a" : "rgba(255,255,255,0.92)", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", color: "#14203a", boxShadow: "0 2px 6px rgba(20,32,58,0.15)" }}>
-            <svg width="15" height="15" viewBox="0 0 24 24" fill={featured ? "#14203a" : "none"} stroke="currentColor" strokeWidth="1.8"><polygon points="12 2 15 9 22 9 16 14 18 21 12 17 6 21 8 14 2 9 9 9"/></svg>
+          <button onClick={(e) => { e.stopPropagation(); onToggleFeatured(); }} title={featured ? "Batal unggulkan" : "Unggulkan (tampil pertama)"} style={{ width: 30, height: 30, borderRadius: 8, border: "none", background: featured ? "#f4d58a" : "rgba(255,255,255,0.92)", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", color: "#0D1117", boxShadow: "0 2px 6px rgba(20,32,58,0.15)" }}>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill={featured ? "#0D1117" : "none"} stroke="currentColor" strokeWidth="1.8"><polygon points="12 2 15 9 22 9 16 14 18 21 12 17 6 21 8 14 2 9 9 9"/></svg>
           </button>
         </div>
-        <button onClick={(e) => { e.stopPropagation(); onToggleHidden(); }} title={hidden ? "Tampilkan di etalase" : "Sembunyikan dari etalase"} style={{ position: "absolute", top: 8, right: 8, width: 30, height: 30, borderRadius: 8, border: "none", background: "rgba(255,255,255,0.92)", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", color: hidden ? "#b0492f" : "#14203a", boxShadow: "0 2px 6px rgba(20,32,58,0.15)" }}>
+        <button onClick={(e) => { e.stopPropagation(); onToggleHidden(); }} title={hidden ? "Tampilkan di etalase" : "Sembunyikan dari etalase"} style={{ position: "absolute", top: 8, right: 8, width: 30, height: 30, borderRadius: 8, border: "none", background: "rgba(255,255,255,0.92)", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", color: hidden ? "#b0492f" : "#0D1117", boxShadow: "0 2px 6px rgba(20,32,58,0.15)" }}>
           {hidden ? <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19M1 1l22 22"/></svg>
                  : <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>}
         </button>
@@ -105,16 +105,16 @@ function Card({ p, selected, hidden, featured, onPreview, onToggleHidden, onTogg
       <div style={{ padding: "12px 13px 14px", display: "flex", flexDirection: "column", gap: 7, flex: 1 }}>
         <div>
           <span style={{ fontSize: 9, letterSpacing: "0.1em", textTransform: "uppercase", color: "#96762f", fontWeight: 700 }}>{p.brand}</span>
-          <p style={{ fontSize: 13, fontWeight: 600, color: "#14203a", lineHeight: 1.3, marginTop: 2 }}>{p.name}</p>
+          <p style={{ fontSize: 13, fontWeight: 600, color: "#0D1117", lineHeight: 1.3, marginTop: 2 }}>{p.name}</p>
         </div>
         {/* Editable price */}
         {editing ? (
-          <div onClick={(e) => e.stopPropagation()} style={{ display: "flex", alignItems: "center", gap: 4, border: "1.5px solid #14203a", borderRadius: 8, padding: "0 8px", height: 32 }}>
+          <div onClick={(e) => e.stopPropagation()} style={{ display: "flex", alignItems: "center", gap: 4, border: "1.5px solid #0D1117", borderRadius: 8, padding: "0 8px", height: 32 }}>
             <span style={{ fontSize: 12, color: "#8f897a" }}>Rp</span>
-            <input autoFocus value={val} onChange={(e) => setVal(e.target.value)} onBlur={commit} onKeyDown={(e) => e.key === "Enter" && commit()} inputMode="numeric" style={{ flex: 1, border: "none", outline: "none", fontSize: 14, fontWeight: 600, color: "#14203a", background: "transparent", width: 70 }} />
+            <input autoFocus value={val} onChange={(e) => setVal(e.target.value)} onBlur={commit} onKeyDown={(e) => e.key === "Enter" && commit()} inputMode="numeric" style={{ flex: 1, border: "none", outline: "none", fontSize: 14, fontWeight: 600, color: "#0D1117", background: "transparent", width: 70 }} />
           </div>
         ) : (
-          <button onClick={(e) => { e.stopPropagation(); setVal(String(p.price)); setEditing(true); }} title="Ubah harga" style={{ background: "none", border: "none", padding: 0, cursor: "pointer", textAlign: "left", fontFamily: "var(--font-garamond)", fontSize: 17, fontWeight: 600, color: "#14203a" }}>{rupiah(p.price)}</button>
+          <button onClick={(e) => { e.stopPropagation(); setVal(String(p.price)); setEditing(true); }} title="Ubah harga" style={{ background: "none", border: "none", padding: 0, cursor: "pointer", textAlign: "left", fontFamily: "var(--font-garamond)", fontSize: 17, fontWeight: 600, color: "#0D1117" }}>{rupiah(p.price)}</button>
         )}
         {/* Sizes — steppers when selected, else static */}
         <div style={{ display: "flex", flexWrap: "wrap", gap: 5, marginTop: "auto" }} onClick={(e) => selected && e.stopPropagation()}>
@@ -123,9 +123,9 @@ function Card({ p, selected, hidden, featured, onPreview, onToggleHidden, onTogg
             if (selected) {
               return (
                 <span key={s.size} style={{ display: "inline-flex", alignItems: "center", gap: 3, border: "1px solid #e0dacb", borderRadius: 7, padding: "1px 3px", background: "#faf8f3" }}>
-                  <span style={{ fontSize: 10, fontWeight: 700, color: "#14203a", minWidth: 20, textAlign: "center" }}>{s.size}</span>
+                  <span style={{ fontSize: 10, fontWeight: 700, color: "#0D1117", minWidth: 20, textAlign: "center" }}>{s.size}</span>
                   <button onClick={() => onBump(s.size, -1)} style={stepBtn}>−</button>
-                  <span style={{ fontSize: 11, fontWeight: 700, color: so ? "#b0492f" : "#14203a", minWidth: 14, textAlign: "center", fontVariantNumeric: "tabular-nums" }}>{s.stock}</span>
+                  <span style={{ fontSize: 11, fontWeight: 700, color: so ? "#b0492f" : "#0D1117", minWidth: 14, textAlign: "center", fontVariantNumeric: "tabular-nums" }}>{s.stock}</span>
                   <button onClick={() => onBump(s.size, 1)} style={stepBtn}>+</button>
                 </span>
               );
@@ -142,4 +142,4 @@ function Card({ p, selected, hidden, featured, onPreview, onToggleHidden, onTogg
   );
 }
 
-const stepBtn: React.CSSProperties = { width: 18, height: 18, borderRadius: 5, border: "1px solid #d8d2c4", background: "#fff", color: "#14203a", fontSize: 12, fontWeight: 700, cursor: "pointer", lineHeight: 1, display: "flex", alignItems: "center", justifyContent: "center", padding: 0 };
+const stepBtn: React.CSSProperties = { width: 18, height: 18, borderRadius: 5, border: "1px solid #d8d2c4", background: "#fff", color: "#0D1117", fontSize: 12, fontWeight: 700, cursor: "pointer", lineHeight: 1, display: "flex", alignItems: "center", justifyContent: "center", padding: 0 };

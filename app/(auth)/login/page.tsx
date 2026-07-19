@@ -83,7 +83,7 @@ export default function LoginPage() {
             <div style={{ height: 1, width: 32, background: "#b8934a", opacity: 0.6 }} />
           </div>
 
-          <h1 style={{ fontFamily: "var(--font-garamond)", fontSize: 22, fontWeight: 500, color: "#14203a", marginBottom: 5, lineHeight: 1.25 }}>
+          <h1 style={{ fontFamily: "var(--font-garamond)", fontSize: 22, fontWeight: 500, color: "#0D1117", marginBottom: 5, lineHeight: 1.25 }}>
             Premium Member Only
           </h1>
           <p style={{ fontSize: 12, color: "#8f897a", lineHeight: 1.5, margin: 0 }}>
@@ -111,7 +111,7 @@ export default function LoginPage() {
                   width: "100%", height: 46, boxSizing: "border-box",
                   border: "1.5px solid #ddd9cc", borderRadius: 10,
                   padding: "0 14px 0 42px",
-                  fontSize: 13, color: "#14203a",
+                  fontSize: 13, color: "#0D1117",
                   background: "#fff", fontFamily: "inherit", outline: "none",
                 }}
               />
@@ -136,7 +136,7 @@ export default function LoginPage() {
                   width: "100%", height: 46, boxSizing: "border-box",
                   border: "1.5px solid #ddd9cc", borderRadius: 10,
                   padding: "0 44px 0 42px",
-                  fontSize: 13, color: "#14203a",
+                  fontSize: 13, color: "#0D1117",
                   background: "#fff", fontFamily: "inherit", outline: "none",
                 }}
               />
@@ -182,7 +182,7 @@ export default function LoginPage() {
             type="submit"
             disabled={loading}
             style={{
-              height: 48, background: "#e7c987", color: "#14203a",
+              height: 48, background: "#e7c987", color: "#0D1117",
               border: "none", borderRadius: 10, fontSize: 11,
               fontWeight: 700, cursor: loading ? "not-allowed" : "pointer",
               opacity: loading ? 0.7 : 1, marginTop: 4,

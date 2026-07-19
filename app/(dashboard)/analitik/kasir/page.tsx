@@ -34,8 +34,8 @@ export default function CashierPerformancePage() {
                       <div style={{ width: 36, height: 36, borderRadius: "50%", background: "#f0ebe1", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 700, color: "#8f897a", flexShrink: 0 }}>{initials(c.cashierName)}</div>
                       <div style={{ flex: 1, minWidth: 0 }}>
                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 6 }}>
-                          <span style={{ fontSize: 14, fontWeight: 600, color: "#14203a" }}>{c.cashierName}</span>
-                          <span style={{ fontSize: 13, color: "#14203a", fontVariantNumeric: "tabular-nums" }}>{fmtRpFull(c.revenue)}</span>
+                          <span style={{ fontSize: 14, fontWeight: 600, color: "#0D1117" }}>{c.cashierName}</span>
+                          <span style={{ fontSize: 13, color: "#0D1117", fontVariantNumeric: "tabular-nums" }}>{fmtRpFull(c.revenue)}</span>
                         </div>
                         {/* revenue bar, segmented by shift */}
                         <div style={{ height: 9, background: "#f1ede1", borderRadius: 99, overflow: "hidden", display: "flex", width: `${Math.max((c.revenue / maxRev) * 100, 3)}%` }}>

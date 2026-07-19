@@ -67,7 +67,7 @@ export default function RiwayatPage() {
         <p style={{ fontSize: 10, letterSpacing: "0.2em", textTransform: "uppercase", color: "#96762f", fontWeight: 600, marginBottom: 8 }}>
           INVENTORI · RIWAYAT STOK
         </p>
-        <h1 style={{ fontFamily: "var(--font-garamond)", fontSize: 34, fontWeight: 500, color: "#14203a", lineHeight: 1.15, marginBottom: 6 }}>
+        <h1 style={{ fontFamily: "var(--font-garamond)", fontSize: 34, fontWeight: 500, color: "#0D1117", lineHeight: 1.15, marginBottom: 6 }}>
           Riwayat pergerakan stok
         </h1>
         <p style={{ fontSize: 13, color: "#8f897a", lineHeight: 1.6 }}>
@@ -83,9 +83,9 @@ export default function RiwayatPage() {
           return (
             <button key={t} onClick={() => setTypeFilter(t)} style={{
               height: 32, padding: "0 14px", borderRadius: 99,
-              background: active ? "#14203a" : "#fff",
-              border: `1.5px solid ${active ? "#14203a" : "#e8e3d5"}`,
-              color: active ? "#f8f6ef" : (style?.color ?? "#14203a"),
+              background: active ? "#0D1117" : "#fff",
+              border: `1.5px solid ${active ? "#0D1117" : "#e8e3d5"}`,
+              color: active ? "#f8f6ef" : (style?.color ?? "#0D1117"),
               fontSize: 12.5, fontWeight: active ? 600 : 400,
               cursor: "pointer", fontFamily: "var(--font-hanken)",
             }}>
@@ -134,7 +134,7 @@ export default function RiwayatPage() {
               return (
                 <tr key={m.id} style={{ borderBottom: "1px solid #f8f5ef" }}>
                   <td style={{ padding: "14px 16px" }}>
-                    <span style={{ fontFamily: "var(--font-garamond)", fontSize: 15, color: "#14203a" }}>{fmtTime(m.createdAt)}</span>
+                    <span style={{ fontFamily: "var(--font-garamond)", fontSize: 15, color: "#0D1117" }}>{fmtTime(m.createdAt)}</span>
                   </td>
                   <td style={{ padding: "14px 16px" }}>
                     <span style={{ fontSize: 11.5, fontWeight: 600, color: ts.color, background: ts.bg, padding: "3px 10px", borderRadius: 99 }}>
@@ -142,11 +142,11 @@ export default function RiwayatPage() {
                     </span>
                   </td>
                   <td style={{ padding: "14px 16px" }}>
-                    <p style={{ fontSize: 13.5, fontWeight: 500, color: "#14203a" }}>{m.product?.name ?? "—"}</p>
+                    <p style={{ fontSize: 13.5, fontWeight: 500, color: "#0D1117" }}>{m.product?.name ?? "—"}</p>
                     <p style={{ fontSize: 11.5, color: "#8f897a", marginTop: 1 }}>{m.product?.sku}</p>
                   </td>
                   <td style={{ padding: "14px 16px" }}>
-                    <span style={{ fontFamily: "var(--font-garamond)", fontSize: 18, fontWeight: 500, color: qtySign === "-" ? "#b0492f" : "#14203a" }}>
+                    <span style={{ fontFamily: "var(--font-garamond)", fontSize: 18, fontWeight: 500, color: qtySign === "-" ? "#b0492f" : "#0D1117" }}>
                       {qtySign}{Math.abs(m.qty)}
                     </span>
                   </td>

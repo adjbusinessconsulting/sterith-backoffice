@@ -52,7 +52,7 @@ export default function ProdukPage() {
           <p style={{ fontSize: 10, letterSpacing: "0.2em", textTransform: "uppercase", color: "#96762f", fontWeight: 600, marginBottom: 8 }}>
             KATALOG · {products.length} ITEM
           </p>
-          <h1 style={{ fontFamily: "var(--font-garamond)", fontSize: 34, fontWeight: 500, color: "#14203a", lineHeight: 1.15, marginBottom: 6 }}>
+          <h1 style={{ fontFamily: "var(--font-garamond)", fontSize: 34, fontWeight: 500, color: "#0D1117", lineHeight: 1.15, marginBottom: 6 }}>
             Produk toko
           </h1>
           <p style={{ fontSize: 13, color: "#8f897a", lineHeight: 1.6, maxWidth: 400 }}>
@@ -63,7 +63,7 @@ export default function ProdukPage() {
           onClick={() => openModal("produk")}
           style={{
             height: 40, padding: "0 18px",
-            background: "#14203a", border: "none",
+            background: "#0D1117", border: "none",
             borderRadius: 10, fontSize: 13, fontWeight: 600,
             color: "#f8f6ef", cursor: "pointer", display: "flex", alignItems: "center", gap: 7,
             fontFamily: "var(--font-hanken)", flexShrink: 0,
@@ -83,7 +83,7 @@ export default function ProdukPage() {
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#b8934a" strokeWidth="1.8" style={{ flexShrink: 0, marginTop: 1 }}>
           <circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/>
         </svg>
-        <p style={{ fontSize: 12.5, color: "#14203a", lineHeight: 1.6 }}>
+        <p style={{ fontSize: 12.5, color: "#0D1117", lineHeight: 1.6 }}>
           Tampilan ini <strong>sama persis</strong> dengan tampilan kasir di POS. Klik kartu produk untuk ubah harga, stok, atau foto.
         </p>
       </div>
@@ -99,7 +99,7 @@ export default function ProdukPage() {
         <input
           value={query} onChange={e => setQuery(e.target.value)}
           placeholder="Cari produk..."
-          style={{ flex: 1, border: "none", fontSize: 13.5, color: "#14203a", fontFamily: "var(--font-hanken)", background: "transparent" }}
+          style={{ flex: 1, border: "none", fontSize: 13.5, color: "#0D1117", fontFamily: "var(--font-hanken)", background: "transparent" }}
         />
         <span style={{ fontSize: 10.5, color: "#8f897a", background: "#e8e3d5", padding: "2px 7px", borderRadius: 5 }}>CTRL + K</span>
       </div>
@@ -109,9 +109,9 @@ export default function ProdukPage() {
         {CATS.map(c => (
           <button key={c} onClick={() => setCat(c)} style={{
             height: 34, padding: "0 14px", borderRadius: 99,
-            background: cat === c ? "#14203a" : "#fff",
-            border: `1.5px solid ${cat === c ? "#14203a" : "#e8e3d5"}`,
-            color: cat === c ? "#f8f6ef" : "#14203a",
+            background: cat === c ? "#0D1117" : "#fff",
+            border: `1.5px solid ${cat === c ? "#0D1117" : "#e8e3d5"}`,
+            color: cat === c ? "#f8f6ef" : "#0D1117",
             fontSize: 13, fontWeight: cat === c ? 600 : 400,
             cursor: "pointer", fontFamily: "var(--font-hanken)",
           }}>
@@ -145,11 +145,11 @@ export default function ProdukPage() {
               </span>
             </div>
             <div style={{ background: "#fff", borderTop: "1px solid #e8d9b8", padding: "10px 12px" }}>
-              <p style={{ fontSize: 12.5, fontWeight: 600, color: "#14203a", marginBottom: 2, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+              <p style={{ fontSize: 12.5, fontWeight: 600, color: "#0D1117", marginBottom: 2, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
                 {p.name}
               </p>
               <p style={{ fontSize: 11, color: "#8f897a", marginBottom: 4 }}>{p.category}</p>
-              <p style={{ fontFamily: "var(--font-garamond)", fontSize: 14, color: "#14203a", fontWeight: 500 }}>{fmtPrice(p.price)}</p>
+              <p style={{ fontFamily: "var(--font-garamond)", fontSize: 14, color: "#0D1117", fontWeight: 500 }}>{fmtPrice(p.price)}</p>
             </div>
           </button>
         ))}

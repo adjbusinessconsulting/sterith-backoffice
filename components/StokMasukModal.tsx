@@ -97,11 +97,11 @@ export default function StokMasukModal() {
       }}>
         {/* Modal header */}
         <div style={{ padding: "20px 24px", borderBottom: "1px solid #f0ebe0", display: "flex", alignItems: "center", gap: 14, flexShrink: 0 }}>
-          <div style={{ width: 40, height: 40, borderRadius: 11, background: "#14203a", display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <div style={{ width: 40, height: 40, borderRadius: 11, background: "#0D1117", display: "flex", alignItems: "center", justifyContent: "center" }}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f8f6ef" strokeWidth="1.8"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>
           </div>
           <div style={{ flex: 1 }}>
-            <p style={{ fontSize: 16, fontWeight: 700, color: "#14203a" }}>Stok Masuk ke Gudang</p>
+            <p style={{ fontSize: 16, fontWeight: 700, color: "#0D1117" }}>Stok Masuk ke Gudang</p>
             <p style={{ fontSize: 12.5, color: "#8f897a", marginTop: 1 }}>
               {step === "method" ? "Pilih metode input"
                : step === "upload" ? "Unggah faktur supplier"
@@ -134,10 +134,10 @@ export default function StokMasukModal() {
                   fontSize: 9.5, fontWeight: 700, letterSpacing: "0.08em",
                   color: "#b8934a", background: "#f1e7cd", padding: "2px 8px", borderRadius: 99,
                 }}>DIREKOMENDASI</span>
-                <div style={{ width: 44, height: 44, borderRadius: 12, background: "#14203a", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 16 }}>
+                <div style={{ width: 44, height: 44, borderRadius: 12, background: "#0D1117", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 16 }}>
                   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#f8f6ef" strokeWidth="1.6"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
                 </div>
-                <p style={{ fontSize: 16, fontWeight: 700, color: "#14203a", marginBottom: 8 }}>Scan struk / faktur</p>
+                <p style={{ fontSize: 16, fontWeight: 700, color: "#0D1117", marginBottom: 8 }}>Scan struk / faktur</p>
                 <p style={{ fontSize: 12.5, color: "#8f897a", lineHeight: 1.6 }}>Foto faktur supplier, AI membaca nama, jumlah, dan harga otomatis.</p>
                 <p style={{ fontSize: 11.5, color: "#b8934a", marginTop: 12, fontWeight: 500 }}>✦ Didukung Claude Haiku 4.5</p>
               </button>
@@ -149,7 +149,7 @@ export default function StokMasukModal() {
                 <div style={{ width: 44, height: 44, borderRadius: 12, background: "#f8f6ef", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 16 }}>
                   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#8f897a" strokeWidth="1.6"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                 </div>
-                <p style={{ fontSize: 16, fontWeight: 700, color: "#14203a", marginBottom: 8 }}>Input manual</p>
+                <p style={{ fontSize: 16, fontWeight: 700, color: "#0D1117", marginBottom: 8 }}>Input manual</p>
                 <p style={{ fontSize: 12.5, color: "#8f897a", lineHeight: 1.6 }}>Ketik produk, jumlah, dan harga satu per satu.</p>
                 <p style={{ fontSize: 11.5, color: "#8f897a", marginTop: 12 }}>Cocok untuk 1–2 item</p>
               </button>
@@ -171,7 +171,7 @@ export default function StokMasukModal() {
                   <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#b8934a" strokeWidth="1.5" style={{ margin: "0 auto 12px" }}>
                     <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
                   </svg>
-                  <p style={{ fontSize: 14, fontWeight: 500, color: "#14203a", marginBottom: 6 }}>Seret foto faktur ke sini</p>
+                  <p style={{ fontSize: 14, fontWeight: 500, color: "#0D1117", marginBottom: 6 }}>Seret foto faktur ke sini</p>
                   <p style={{ fontSize: 12, color: "#8f897a" }}>atau klik untuk unggah · JPG, PNG, HEIC</p>
                 </div>
                 <input ref={fileRef} type="file" accept="image/*" style={{ display: "none" }}
@@ -180,7 +180,7 @@ export default function StokMasukModal() {
                   <div style={{ display: "flex", alignItems: "center", gap: 10, background: "#f8f6ef", border: "1px solid #e8e3d5", borderRadius: 10, padding: "10px 14px" }}>
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8f897a" strokeWidth="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
                     <div style={{ flex: 1 }}>
-                      <p style={{ fontSize: 12.5, fontWeight: 500, color: "#14203a" }}>{file.name}</p>
+                      <p style={{ fontSize: 12.5, fontWeight: 500, color: "#0D1117" }}>{file.name}</p>
                       <p style={{ fontSize: 11, color: "#8f897a" }}>{Math.round(file.size / 1024)} KB · siap dibaca</p>
                     </div>
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3f7d54" strokeWidth="2.5"><path d="M20 6L9 17l-5-5"/></svg>
@@ -190,12 +190,12 @@ export default function StokMasukModal() {
 
               {/* Sample invoice preview */}
               <div style={{ background: "#f8f6ef", border: "1px solid #e8e3d5", borderRadius: 12, padding: "16px 18px" }}>
-                <p style={{ fontSize: 12, fontWeight: 700, color: "#14203a", marginBottom: 4 }}>PT SINAR SEMBAKO JAYA</p>
+                <p style={{ fontSize: 12, fontWeight: 700, color: "#0D1117", marginBottom: 4 }}>PT SINAR SEMBAKO JAYA</p>
                 <p style={{ fontSize: 10.5, color: "#8f897a", marginBottom: 12 }}>Jl. Industri No. 12 · Faktur #INV-2291</p>
                 {[["Beras Pandan 5kg ×20", "1.420.000"], ["Minyak Bimoli 2L ×24", "840.000"], ["Gula Pasir 1kg ×30", "405.000"], ["Telur Ayam 1kg ×15", "390.000"], ["Kecap Bango 220ml ×12", "114.000"]].map(([n, p]) => (
                   <div key={n} style={{ display: "flex", justifyContent: "space-between", marginBottom: 5 }}>
-                    <span style={{ fontSize: 11.5, color: "#14203a" }}>{n}</span>
-                    <span style={{ fontSize: 11.5, color: "#14203a" }}>{p}</span>
+                    <span style={{ fontSize: 11.5, color: "#0D1117" }}>{n}</span>
+                    <span style={{ fontSize: 11.5, color: "#0D1117" }}>{p}</span>
                   </div>
                 ))}
               </div>
@@ -206,15 +206,15 @@ export default function StokMasukModal() {
           {step === "reading" && (
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center", padding: "40px 20px", textAlign: "center" }}>
               <div style={{ width: 260, background: "#f8f6ef", border: "1px solid #e8e3d5", borderRadius: 12, padding: "24px 20px", marginBottom: 32 }}>
-                <p style={{ fontSize: 13, fontWeight: 700, color: "#14203a", marginBottom: 4 }}>PT SINAR SEMBAKO JAYA</p>
+                <p style={{ fontSize: 13, fontWeight: 700, color: "#0D1117", marginBottom: 4 }}>PT SINAR SEMBAKO JAYA</p>
                 <p style={{ fontSize: 11, color: "#8f897a", marginBottom: 16 }}>Faktur #INV-2291</p>
                 {[1, 2, 3, 4, 5].map(i => (
                   <div key={i} style={{ height: 10, background: "#e8e3d5", borderRadius: 4, marginBottom: 8, opacity: 0.5 + i * 0.1 }} />
                 ))}
               </div>
               <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
-                <div style={{ width: 20, height: 20, borderRadius: "50%", border: "2px solid #e7c987", borderTopColor: "#14203a", animation: "spin 0.8s linear infinite" }} />
-                <p style={{ fontSize: 14, color: "#14203a", fontWeight: 500 }}>Claude sedang membaca faktur...</p>
+                <div style={{ width: 20, height: 20, borderRadius: "50%", border: "2px solid #e7c987", borderTopColor: "#0D1117", animation: "spin 0.8s linear infinite" }} />
+                <p style={{ fontSize: 14, color: "#0D1117", fontWeight: 500 }}>Claude sedang membaca faktur...</p>
               </div>
               <div style={{ width: 280, height: 5, background: "#f0ebe0", borderRadius: 99, marginBottom: 12, overflow: "hidden" }}>
                 <div style={{ height: "100%", background: "#e7c987", borderRadius: 99, width: `${readPct}%`, transition: "width 0.4s ease" }} />
@@ -237,7 +237,7 @@ export default function StokMasukModal() {
                 <div style={{ display: "flex", alignItems: "center", gap: 8, background: "#fff", border: "1.5px solid #e8e3d5", borderRadius: 8, padding: "6px 12px" }}>
                   <span style={{ fontSize: 11.5, color: "#8f897a" }}>Supplier</span>
                   <input value={supplier} onChange={e => setSupplier(e.target.value)}
-                    style={{ border: "none", fontSize: 13, color: "#14203a", fontFamily: "var(--font-hanken)", background: "transparent", minWidth: 160 }} />
+                    style={{ border: "none", fontSize: 13, color: "#0D1117", fontFamily: "var(--font-hanken)", background: "transparent", minWidth: 160 }} />
                 </div>
                 <span style={{ marginLeft: "auto", fontSize: 12, color: "#8f897a" }}>Periksa & sesuaikan sebelum simpan</span>
               </div>
@@ -255,24 +255,24 @@ export default function StokMasukModal() {
                     {lines.map((l, i) => (
                       <tr key={i} style={{ borderBottom: "1px solid #f8f5ef" }}>
                         <td style={{ padding: "12px 14px" }}>
-                          <p style={{ fontSize: 13.5, fontWeight: 500, color: "#14203a" }}>{l.name}</p>
+                          <p style={{ fontSize: 13.5, fontWeight: 500, color: "#0D1117" }}>{l.name}</p>
                         </td>
                         <td style={{ padding: "10px 14px" }}>
                           <input
                             type="number" value={l.qty}
                             onChange={e => setLines(prev => prev.map((x, j) => j === i ? { ...x, qty: parseInt(e.target.value) || 0 } : x))}
-                            style={{ width: 60, height: 34, border: "1.5px solid #e8e3d5", borderRadius: 8, padding: "0 8px", textAlign: "center", fontSize: 14, fontFamily: "var(--font-garamond)", color: "#14203a", background: "#fff" }}
+                            style={{ width: 60, height: 34, border: "1.5px solid #e8e3d5", borderRadius: 8, padding: "0 8px", textAlign: "center", fontSize: 14, fontFamily: "var(--font-garamond)", color: "#0D1117", background: "#fff" }}
                           />
                         </td>
                         <td style={{ padding: "10px 14px" }}>
                           <input
                             type="number" value={l.unitPrice}
                             onChange={e => setLines(prev => prev.map((x, j) => j === i ? { ...x, unitPrice: parseInt(e.target.value) || 0 } : x))}
-                            style={{ width: 90, height: 34, border: "1.5px solid #e8e3d5", borderRadius: 8, padding: "0 8px", textAlign: "right", fontSize: 14, fontFamily: "var(--font-garamond)", color: "#14203a", background: "#fff" }}
+                            style={{ width: 90, height: 34, border: "1.5px solid #e8e3d5", borderRadius: 8, padding: "0 8px", textAlign: "right", fontSize: 14, fontFamily: "var(--font-garamond)", color: "#0D1117", background: "#fff" }}
                           />
                         </td>
                         <td style={{ padding: "12px 14px" }}>
-                          <span style={{ fontFamily: "var(--font-garamond)", fontSize: 14, color: "#14203a" }}>Rp {(l.qty * l.unitPrice).toLocaleString("id-ID")}</span>
+                          <span style={{ fontFamily: "var(--font-garamond)", fontSize: 14, color: "#0D1117" }}>Rp {(l.qty * l.unitPrice).toLocaleString("id-ID")}</span>
                         </td>
                         <td style={{ padding: "12px 14px" }}>
                           <span style={{ fontSize: 11.5, fontWeight: 600, padding: "3px 10px", borderRadius: 99, color: l.isNew ? "#2a5f78" : "#3f7d54", background: l.isNew ? "#e4f0f5" : "#e9f1ea" }}>
@@ -299,7 +299,7 @@ export default function StokMasukModal() {
                 <label style={{ display: "block", fontSize: 10.5, letterSpacing: "0.15em", textTransform: "uppercase", color: "#8f897a", fontWeight: 600, marginBottom: 7 }}>NAMA SUPPLIER</label>
                 <input value={supplier} onChange={e => setSupplier(e.target.value)}
                   placeholder="mis. PT Sinar Sembako Jaya"
-                  style={{ width: "100%", height: 42, border: "1.5px solid #e8e3d5", borderRadius: 10, padding: "0 14px", fontSize: 14, color: "#14203a", fontFamily: "var(--font-hanken)", background: "#fff" }} />
+                  style={{ width: "100%", height: 42, border: "1.5px solid #e8e3d5", borderRadius: 10, padding: "0 14px", fontSize: 14, color: "#0D1117", fontFamily: "var(--font-hanken)", background: "#fff" }} />
               </div>
 
               <div style={{ border: "1px solid #e8e3d5", borderRadius: 12, overflow: "hidden", marginBottom: 14 }}>
@@ -316,19 +316,19 @@ export default function StokMasukModal() {
                       <tr key={i} style={{ borderBottom: "1px solid #f8f5ef" }}>
                         <td style={{ padding: "10px 14px" }}>
                           <input value={l.name} onChange={e => setManualLines(prev => prev.map((x, j) => j === i ? { ...x, name: e.target.value } : x))}
-                            placeholder="Nama produk..." style={{ width: "100%", border: "1.5px solid #e8e3d5", borderRadius: 8, height: 36, padding: "0 10px", fontSize: 13.5, color: "#14203a", fontFamily: "var(--font-hanken)", background: "#fff" }} />
+                            placeholder="Nama produk..." style={{ width: "100%", border: "1.5px solid #e8e3d5", borderRadius: 8, height: 36, padding: "0 10px", fontSize: 13.5, color: "#0D1117", fontFamily: "var(--font-hanken)", background: "#fff" }} />
                         </td>
                         <td style={{ padding: "10px 10px" }}>
                           <input value={l.sku} onChange={e => setManualLines(prev => prev.map((x, j) => j === i ? { ...x, sku: e.target.value } : x))}
-                            placeholder="SKU" style={{ width: 80, border: "1.5px solid #e8e3d5", borderRadius: 8, height: 36, padding: "0 8px", fontSize: 13, color: "#14203a", fontFamily: "var(--font-hanken)", background: "#fff" }} />
+                            placeholder="SKU" style={{ width: 80, border: "1.5px solid #e8e3d5", borderRadius: 8, height: 36, padding: "0 8px", fontSize: 13, color: "#0D1117", fontFamily: "var(--font-hanken)", background: "#fff" }} />
                         </td>
                         <td style={{ padding: "10px 10px" }}>
                           <input type="number" value={l.qty} onChange={e => setManualLines(prev => prev.map((x, j) => j === i ? { ...x, qty: e.target.value } : x))}
-                            placeholder="0" style={{ width: 64, border: "1.5px solid #e8e3d5", borderRadius: 8, height: 36, padding: "0 8px", textAlign: "center", fontSize: 14, fontFamily: "var(--font-garamond)", color: "#14203a", background: "#fff" }} />
+                            placeholder="0" style={{ width: 64, border: "1.5px solid #e8e3d5", borderRadius: 8, height: 36, padding: "0 8px", textAlign: "center", fontSize: 14, fontFamily: "var(--font-garamond)", color: "#0D1117", background: "#fff" }} />
                         </td>
                         <td style={{ padding: "10px 10px" }}>
                           <input type="number" value={l.price} onChange={e => setManualLines(prev => prev.map((x, j) => j === i ? { ...x, price: e.target.value } : x))}
-                            placeholder="0" style={{ width: 100, border: "1.5px solid #e8e3d5", borderRadius: 8, height: 36, padding: "0 8px", textAlign: "right", fontSize: 14, fontFamily: "var(--font-garamond)", color: "#14203a", background: "#fff" }} />
+                            placeholder="0" style={{ width: 100, border: "1.5px solid #e8e3d5", borderRadius: 8, height: 36, padding: "0 8px", textAlign: "right", fontSize: 14, fontFamily: "var(--font-garamond)", color: "#0D1117", background: "#fff" }} />
                         </td>
                         <td style={{ padding: "10px 8px", width: 32 }}>
                           {manualLines.length > 1 && (
@@ -355,7 +355,7 @@ export default function StokMasukModal() {
           <div style={{ padding: "16px 24px", borderTop: "1px solid #f0ebe0", display: "flex", gap: 10, justifyContent: "flex-end", flexShrink: 0 }}>
             <button
               onClick={() => { if (step === "upload") setStep("method"); else if (step === "review") setStep("upload"); else setStep("method"); }}
-              style={{ height: 40, padding: "0 18px", background: "#fff", border: "1.5px solid #e8e3d5", borderRadius: 10, fontSize: 13, color: "#14203a", cursor: "pointer", fontFamily: "var(--font-hanken)" }}
+              style={{ height: 40, padding: "0 18px", background: "#fff", border: "1.5px solid #e8e3d5", borderRadius: 10, fontSize: 13, color: "#0D1117", cursor: "pointer", fontFamily: "var(--font-hanken)" }}
             >
               Kembali
             </button>
@@ -363,7 +363,7 @@ export default function StokMasukModal() {
               <button
                 onClick={startAIScan}
                 disabled={!file}
-                style={{ height: 40, padding: "0 20px", background: !file ? "#e8e3d5" : "#14203a", border: "none", borderRadius: 10, fontSize: 13, fontWeight: 600, color: !file ? "#8f897a" : "#f8f6ef", cursor: !file ? "not-allowed" : "pointer", display: "flex", alignItems: "center", gap: 8, fontFamily: "var(--font-hanken)" }}
+                style={{ height: 40, padding: "0 20px", background: !file ? "#e8e3d5" : "#0D1117", border: "none", borderRadius: 10, fontSize: 13, fontWeight: 600, color: !file ? "#8f897a" : "#f8f6ef", cursor: !file ? "not-allowed" : "pointer", display: "flex", alignItems: "center", gap: 8, fontFamily: "var(--font-hanken)" }}
               >
                 ✦ Baca dengan AI →
               </button>
@@ -372,7 +372,7 @@ export default function StokMasukModal() {
               <button
                 onClick={confirmStokMasuk}
                 disabled={submitting || lines.length === 0}
-                style={{ height: 40, padding: "0 20px", background: "#14203a", border: "none", borderRadius: 10, fontSize: 13, fontWeight: 600, color: "#f8f6ef", cursor: "pointer", fontFamily: "var(--font-hanken)" }}
+                style={{ height: 40, padding: "0 20px", background: "#0D1117", border: "none", borderRadius: 10, fontSize: 13, fontWeight: 600, color: "#f8f6ef", cursor: "pointer", fontFamily: "var(--font-hanken)" }}
               >
                 {submitting ? "Menyimpan…" : "Konfirmasi stok masuk →"}
               </button>
@@ -381,7 +381,7 @@ export default function StokMasukModal() {
               <button
                 onClick={confirmManual}
                 disabled={submitting || manualLines.every(l => !l.name.trim())}
-                style={{ height: 40, padding: "0 20px", background: "#14203a", border: "none", borderRadius: 10, fontSize: 13, fontWeight: 600, color: "#f8f6ef", cursor: "pointer", fontFamily: "var(--font-hanken)" }}
+                style={{ height: 40, padding: "0 20px", background: "#0D1117", border: "none", borderRadius: 10, fontSize: 13, fontWeight: 600, color: "#f8f6ef", cursor: "pointer", fontFamily: "var(--font-hanken)" }}
               >
                 {submitting ? "Menyimpan…" : "Simpan stok masuk →"}
               </button>

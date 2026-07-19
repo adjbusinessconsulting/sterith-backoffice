@@ -79,7 +79,7 @@ export default function ProdukModal() {
             <p style={{ fontSize: 10, letterSpacing: "0.18em", textTransform: "uppercase", color: "#b8934a", fontWeight: 600 }}>
               {isEdit ? "EDIT PRODUK" : "PRODUK BARU"}
             </p>
-            <p style={{ fontSize: 18, fontWeight: 700, color: "#14203a", marginTop: 3 }}>
+            <p style={{ fontSize: 18, fontWeight: 700, color: "#0D1117", marginTop: 3 }}>
               {isEdit ? (form.name || "Produk") : "Tambah produk baru"}
             </p>
           </div>
@@ -111,7 +111,7 @@ export default function ProdukModal() {
             <label style={{ display: "block", fontSize: 10, letterSpacing: "0.16em", textTransform: "uppercase", color: "#8f897a", fontWeight: 600, marginBottom: 7 }}>NAMA PRODUK</label>
             <input value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
               placeholder="mis. Beras Pandan 5kg"
-              style={{ width: "100%", height: 44, border: "1.5px solid #e8e3d5", borderRadius: 10, padding: "0 14px", fontSize: 14, color: "#14203a", fontFamily: "var(--font-hanken)", background: "#fff" }} />
+              style={{ width: "100%", height: 44, border: "1.5px solid #e8e3d5", borderRadius: 10, padding: "0 14px", fontSize: 14, color: "#0D1117", fontFamily: "var(--font-hanken)", background: "#fff" }} />
           </div>
 
           {/* SKU + Unit */}
@@ -120,13 +120,13 @@ export default function ProdukModal() {
               <label style={{ display: "block", fontSize: 10, letterSpacing: "0.16em", textTransform: "uppercase", color: "#8f897a", fontWeight: 600, marginBottom: 7 }}>SKU</label>
               <input value={form.sku} onChange={e => setForm(f => ({ ...f, sku: e.target.value }))}
                 placeholder="mis. BRS001"
-                style={{ width: "100%", height: 44, border: "1.5px solid #e8e3d5", borderRadius: 10, padding: "0 14px", fontSize: 14, color: "#14203a", fontFamily: "var(--font-hanken)", background: "#fff" }} />
+                style={{ width: "100%", height: 44, border: "1.5px solid #e8e3d5", borderRadius: 10, padding: "0 14px", fontSize: 14, color: "#0D1117", fontFamily: "var(--font-hanken)", background: "#fff" }} />
             </div>
             <div>
               <label style={{ display: "block", fontSize: 10, letterSpacing: "0.16em", textTransform: "uppercase", color: "#8f897a", fontWeight: 600, marginBottom: 7 }}>SATUAN</label>
               <input value={form.unit} onChange={e => setForm(f => ({ ...f, unit: e.target.value }))}
                 placeholder="mis. karung"
-                style={{ width: "100%", height: 44, border: "1.5px solid #e8e3d5", borderRadius: 10, padding: "0 14px", fontSize: 14, color: "#14203a", fontFamily: "var(--font-hanken)", background: "#fff" }} />
+                style={{ width: "100%", height: 44, border: "1.5px solid #e8e3d5", borderRadius: 10, padding: "0 14px", fontSize: 14, color: "#0D1117", fontFamily: "var(--font-hanken)", background: "#fff" }} />
             </div>
           </div>
 
@@ -137,9 +137,9 @@ export default function ProdukModal() {
               {CATS.map(c => (
                 <button key={c} onClick={() => setForm(f => ({ ...f, category: c })) } style={{
                   height: 34, padding: "0 14px", borderRadius: 99,
-                  background: form.category === c ? "#14203a" : "#fff",
-                  border: `1.5px solid ${form.category === c ? "#14203a" : "#e8e3d5"}`,
-                  color: form.category === c ? "#f8f6ef" : "#14203a",
+                  background: form.category === c ? "#0D1117" : "#fff",
+                  border: `1.5px solid ${form.category === c ? "#0D1117" : "#e8e3d5"}`,
+                  color: form.category === c ? "#f8f6ef" : "#0D1117",
                   fontSize: 13, fontWeight: form.category === c ? 600 : 400,
                   cursor: "pointer", fontFamily: "var(--font-hanken)",
                 }}>
@@ -155,13 +155,13 @@ export default function ProdukModal() {
               <label style={{ display: "block", fontSize: 10, letterSpacing: "0.16em", textTransform: "uppercase", color: "#8f897a", fontWeight: 600, marginBottom: 7 }}>HARGA JUAL (Rp)</label>
               <input type="number" value={form.price} onChange={e => setForm(f => ({ ...f, price: e.target.value }))}
                 placeholder="0"
-                style={{ width: "100%", height: 44, border: "1.5px solid #e8e3d5", borderRadius: 10, padding: "0 14px", fontSize: 14, color: "#14203a", fontFamily: "var(--font-garamond)", background: "#fff" }} />
+                style={{ width: "100%", height: 44, border: "1.5px solid #e8e3d5", borderRadius: 10, padding: "0 14px", fontSize: 14, color: "#0D1117", fontFamily: "var(--font-garamond)", background: "#fff" }} />
             </div>
             <div>
               <label style={{ display: "block", fontSize: 10, letterSpacing: "0.16em", textTransform: "uppercase", color: "#8f897a", fontWeight: 600, marginBottom: 7 }}>STOK TOKO</label>
               <input type="number" value={form.storeQty} onChange={e => setForm(f => ({ ...f, storeQty: e.target.value }))}
                 placeholder="0"
-                style={{ width: "100%", height: 44, border: "1.5px solid #e8e3d5", borderRadius: 10, padding: "0 14px", fontSize: 14, color: "#14203a", fontFamily: "var(--font-garamond)", background: "#fff" }} />
+                style={{ width: "100%", height: 44, border: "1.5px solid #e8e3d5", borderRadius: 10, padding: "0 14px", fontSize: 14, color: "#0D1117", fontFamily: "var(--font-garamond)", background: "#fff" }} />
             </div>
           </div>
         </div>
@@ -177,11 +177,11 @@ export default function ProdukModal() {
           )}
           <div style={{ flex: 1 }} />
           <div style={{ display: "flex", gap: 10 }}>
-            <button onClick={handleClose} style={{ height: 40, padding: "0 18px", background: "#fff", border: "1.5px solid #e8e3d5", borderRadius: 10, fontSize: 13, color: "#14203a", cursor: "pointer", fontFamily: "var(--font-hanken)" }}>
+            <button onClick={handleClose} style={{ height: 40, padding: "0 18px", background: "#fff", border: "1.5px solid #e8e3d5", borderRadius: 10, fontSize: 13, color: "#0D1117", cursor: "pointer", fontFamily: "var(--font-hanken)" }}>
               Batal
             </button>
             <button onClick={handleSave} disabled={submitting || !form.name.trim()}
-              style={{ height: 40, padding: "0 20px", background: form.name.trim() ? "#14203a" : "#e8e3d5", border: "none", borderRadius: 10, fontSize: 13, fontWeight: 600, color: form.name.trim() ? "#f8f6ef" : "#8f897a", cursor: form.name.trim() ? "pointer" : "not-allowed", display: "flex", alignItems: "center", gap: 7, fontFamily: "var(--font-hanken)" }}>
+              style={{ height: 40, padding: "0 20px", background: form.name.trim() ? "#0D1117" : "#e8e3d5", border: "none", borderRadius: 10, fontSize: 13, fontWeight: 600, color: form.name.trim() ? "#f8f6ef" : "#8f897a", cursor: form.name.trim() ? "pointer" : "not-allowed", display: "flex", alignItems: "center", gap: 7, fontFamily: "var(--font-hanken)" }}>
               {submitting ? "Menyimpan…" : "Simpan →"}
             </button>
           </div>

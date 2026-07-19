@@ -7,7 +7,7 @@ interface Row {
   stock: number; stockAwal: number; stockTambahan: number; stockTerjual: number;
 }
 
-const NAVY = "#14203a", GOLD = "#b8934a", GREEN = "#3f7d54", MUTE = "#8f897a",
+const NAVY = "#0D1117", GOLD = "#b8934a", GREEN = "#3f7d54", MUTE = "#8f897a",
   BORDER = "#e8e3d5", CREAM = "#f8f6ef", CARD = "#ffffff", DANGER = "#b0492f";
 const F = "var(--font-hanken)";
 

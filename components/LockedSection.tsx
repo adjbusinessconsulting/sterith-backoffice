@@ -25,7 +25,7 @@ export default function LockedSection({ requiredTier, requiredAddOn }: Props) {
       <span style={{ fontSize: 9, letterSpacing: "0.22em", textTransform: "uppercase", color: "#b8934a", fontWeight: 700, background: "#f1e7cd", padding: "3px 10px", borderRadius: 99, marginBottom: 16, display: "inline-block" }}>
         {label.toUpperCase()} DIPERLUKAN
       </span>
-      <h2 style={{ fontFamily: "var(--font-garamond)", fontSize: 30, fontWeight: 500, color: "#14203a", marginBottom: 10, lineHeight: 1.2 }}>
+      <h2 style={{ fontFamily: "var(--font-garamond)", fontSize: 30, fontWeight: 500, color: "#0D1117", marginBottom: 10, lineHeight: 1.2 }}>
         Fitur ini terkunci
       </h2>
       <p style={{ fontSize: 13.5, color: "#8f897a", maxWidth: 360, lineHeight: 1.7 }}>

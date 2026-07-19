@@ -21,7 +21,7 @@ export default function FeaturePreview({
       {/* Header */}
       <div style={{ marginBottom: 22 }}>
         <p style={{ fontSize: 10, letterSpacing: "0.2em", textTransform: "uppercase", color: "#96762f", fontWeight: 600, marginBottom: 8 }}>{eyebrow}</p>
-        <h1 style={{ fontFamily: "var(--font-garamond)", fontSize: 34, fontWeight: 500, color: "#14203a", lineHeight: 1.15, marginBottom: 6 }}>{title}</h1>
+        <h1 style={{ fontFamily: "var(--font-garamond)", fontSize: 34, fontWeight: 500, color: "#0D1117", lineHeight: 1.15, marginBottom: 6 }}>{title}</h1>
         <p style={{ fontSize: 13, color: "#8f897a", lineHeight: 1.6, maxWidth: 460 }}>{desc}</p>
       </div>
 
@@ -34,7 +34,7 @@ export default function FeaturePreview({
           <div style={{ flex: 1 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", marginBottom: 3 }}>
               <span style={{ fontSize: 9, letterSpacing: "0.14em", textTransform: "uppercase", color: "#b8934a", fontWeight: 700 }}>Add-on Berbayar</span>
-              <span style={{ fontSize: 15, fontWeight: 700, color: "#14203a", fontFamily: "var(--font-hanken)" }}>{ADDON_LABEL[addOn]}</span>
+              <span style={{ fontSize: 15, fontWeight: 700, color: "#0D1117", fontFamily: "var(--font-hanken)" }}>{ADDON_LABEL[addOn]}</span>
             </div>
             <p style={{ fontSize: 12.5, color: "#7a6f57", lineHeight: 1.6, margin: 0 }}>
               Lihat kemampuannya di bawah. Untuk mulai memakainya, aktifkan add-on ini (biaya tambahan per bulan) lewat tombol <b>Paket</b> di atas — tim Sterith akan memprosesnya.
@@ -49,7 +49,7 @@ export default function FeaturePreview({
           <div key={c.title} style={{ background: "#fff", border: "1px solid #e8e3d5", borderRadius: 12, padding: "16px 16px", opacity: owned ? 1 : 0.96 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 9, marginBottom: 7 }}>
               <span style={{ width: 22, height: 22, borderRadius: 6, background: "#f1e7cd", color: "#96762f", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 700, fontFamily: "var(--font-garamond)", flexShrink: 0 }}>{i + 1}</span>
-              <p style={{ fontSize: 13.5, fontWeight: 600, color: "#14203a", fontFamily: "var(--font-hanken)" }}>{c.title}</p>
+              <p style={{ fontSize: 13.5, fontWeight: 600, color: "#0D1117", fontFamily: "var(--font-hanken)" }}>{c.title}</p>
             </div>
             <p style={{ fontSize: 12, color: "#8f897a", lineHeight: 1.6, margin: 0 }}>{c.desc}</p>
           </div>

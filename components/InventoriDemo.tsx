@@ -35,7 +35,7 @@ export default function InventoriDemo({ section }: { section: Section }) {
       <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 16, marginBottom: 20, flexWrap: "wrap" }}>
         <div>
           <p style={{ fontSize: 10, letterSpacing: "0.2em", textTransform: "uppercase", color: "#96762f", fontWeight: 600, marginBottom: 8 }}>{m.eyebrow}</p>
-          <h1 style={{ fontFamily: "var(--font-garamond)", fontSize: 34, fontWeight: 500, color: "#14203a", lineHeight: 1.15, marginBottom: 6 }}>{m.title}</h1>
+          <h1 style={{ fontFamily: "var(--font-garamond)", fontSize: 34, fontWeight: 500, color: "#0D1117", lineHeight: 1.15, marginBottom: 6 }}>{m.title}</h1>
           <p style={{ fontSize: 13, color: "#8f897a", lineHeight: 1.6, maxWidth: 460 }}>{m.desc}</p>
         </div>
         {section === "gudang" && (
@@ -56,7 +56,7 @@ export default function InventoriDemo({ section }: { section: Section }) {
         <>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))", gap: 12, marginBottom: 24 }}>
             {[
-              { v: INV_PRODUCTS.length, l: "Item aktif", c: "#14203a" },
+              { v: INV_PRODUCTS.length, l: "Item aktif", c: "#0D1117" },
               { v: low, l: "Stok rendah", c: "#a5772a" },
               { v: rusak, l: "Rusak & hilang (bln ini)", c: "#b0492f" },
               { v: rupiahShort(stockValue), l: "Nilai stok", c: "#3f7d54" },
@@ -95,12 +95,12 @@ export default function InventoriDemo({ section }: { section: Section }) {
                           <div style={{ width: 34, height: 34, borderRadius: 8, background: "#f1e7cd", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
                             <span style={{ fontFamily: "var(--font-garamond)", fontSize: 12, fontWeight: 600, color: "#b8934a" }}>{initials(p.name)}</span>
                           </div>
-                          <div><p style={{ fontSize: 13.5, fontWeight: 500, color: "#14203a" }}>{p.name}</p><p style={{ fontSize: 11, color: "#8f897a" }}>{p.category} · {p.unit}</p></div>
+                          <div><p style={{ fontSize: 13.5, fontWeight: 500, color: "#0D1117" }}>{p.name}</p><p style={{ fontSize: 11, color: "#8f897a" }}>{p.category} · {p.unit}</p></div>
                         </div>
                       </td>
                       <td style={{ padding: "13px 16px", fontSize: 12, color: "#8f897a" }}>{p.sku}</td>
                       <td style={{ padding: "13px 16px" }}>
-                        <span style={{ fontFamily: "var(--font-garamond)", fontSize: 19, fontWeight: 500, color: "#14203a" }}>{qty}</span>
+                        <span style={{ fontFamily: "var(--font-garamond)", fontSize: 19, fontWeight: 500, color: "#0D1117" }}>{qty}</span>
                         <span style={{ fontSize: 11, color: "#8f897a", marginLeft: 6 }}>{section === "gudang" ? `di toko ${p.storeQty}` : `di gudang ${p.warehouseQty}`}</span>
                       </td>
                       <td style={{ padding: "13px 16px" }}><span style={{ fontSize: 11.5, fontWeight: 600, color: st.color, background: st.bg, padding: "3px 10px", borderRadius: 99 }}>{st.label}</span></td>
@@ -130,9 +130,9 @@ export default function InventoriDemo({ section }: { section: Section }) {
                 const col = d === 0 ? "#3f7d54" : d > 0 ? "#2a6f78" : "#b0492f";
                 return (
                   <tr key={r.name} style={{ borderBottom: "1px solid #f8f5ef" }}>
-                    <td style={{ padding: "13px 16px", fontSize: 13.5, fontWeight: 500, color: "#14203a" }}>{r.name}</td>
+                    <td style={{ padding: "13px 16px", fontSize: 13.5, fontWeight: 500, color: "#0D1117" }}>{r.name}</td>
                     <td style={{ padding: "13px 16px", textAlign: "right", fontSize: 13, color: "#8f897a" }}>{r.sistem}</td>
-                    <td style={{ padding: "13px 16px", textAlign: "right", fontSize: 14, fontWeight: 600, color: "#14203a" }}>{r.hitung}</td>
+                    <td style={{ padding: "13px 16px", textAlign: "right", fontSize: 14, fontWeight: 600, color: "#0D1117" }}>{r.hitung}</td>
                     <td style={{ padding: "13px 16px", textAlign: "right", fontSize: 13.5, fontWeight: 700, color: col }}>{d > 0 ? `+${d}` : d}</td>
                   </tr>
                 );
@@ -146,7 +146,7 @@ export default function InventoriDemo({ section }: { section: Section }) {
       {section === "riwayat" && <MovementList onGate={softGate} limit={INV_MOVEMENTS.length} />}
 
       {nudge && (
-        <div style={{ position: "fixed", left: "50%", bottom: 28, transform: "translateX(-50%)", zIndex: 1000, background: "#14203a", color: "#f8f6ef", fontSize: 13, fontWeight: 500, padding: "11px 18px", borderRadius: 11, boxShadow: "0 12px 40px rgba(20,32,58,0.4)", fontFamily: "var(--font-hanken)" }}>{nudge}</div>
+        <div style={{ position: "fixed", left: "50%", bottom: 28, transform: "translateX(-50%)", zIndex: 1000, background: "#0D1117", color: "#f8f6ef", fontSize: 13, fontWeight: 500, padding: "11px 18px", borderRadius: 11, boxShadow: "0 12px 40px rgba(20,32,58,0.4)", fontFamily: "var(--font-hanken)" }}>{nudge}</div>
       )}
     </div>
   );
@@ -161,7 +161,7 @@ function MovementList({ limit }: { onGate: (s: string) => void; limit: number })
           <div key={mv.id} style={{ display: "flex", alignItems: "center", gap: 13, padding: "13px 16px", borderBottom: i < limit - 1 ? "1px solid #f4f1ea" : "none" }}>
             <span style={{ fontSize: 9.5, fontWeight: 700, color: meta.color, background: meta.bg, padding: "3px 9px", borderRadius: 5, textTransform: "uppercase", letterSpacing: "0.06em", width: 66, textAlign: "center", flexShrink: 0 }}>{meta.label}</span>
             <div style={{ flex: 1, minWidth: 0 }}>
-              <p style={{ fontSize: 13, fontWeight: 600, color: "#14203a" }}>{mv.name}</p>
+              <p style={{ fontSize: 13, fontWeight: 600, color: "#0D1117" }}>{mv.name}</p>
               <p style={{ fontSize: 11, color: "#8f897a" }}>{mv.note} · {mv.date} · {mv.by}</p>
             </div>
             <span style={{ fontFamily: "var(--font-garamond)", fontSize: 17, fontWeight: 600, color: mv.type === "MASUK" ? "#3f7d54" : mv.type === "TRANSFER" ? "#2a6f78" : "#b0492f", flexShrink: 0 }}>
@@ -179,5 +179,5 @@ const subhead: React.CSSProperties = { fontSize: 10, letterSpacing: "0.16em", te
 const tableWrap: React.CSSProperties = { background: "#fff", border: "1px solid #e8e3d5", borderRadius: 12, overflow: "hidden" };
 const table: React.CSSProperties = { width: "100%", borderCollapse: "collapse", minWidth: 620 };
 const th: React.CSSProperties = { padding: "11px 16px", textAlign: "left", fontSize: 9.5, letterSpacing: "0.14em", textTransform: "uppercase", color: "#8f897a", fontWeight: 600, fontFamily: "var(--font-hanken)", whiteSpace: "nowrap" };
-const btnDark: React.CSSProperties = { height: 40, padding: "0 16px", background: "#14203a", border: "none", borderRadius: 10, fontSize: 13, fontWeight: 600, color: "#f8f6ef", cursor: "pointer", fontFamily: "var(--font-hanken)" };
-const btnGhost: React.CSSProperties = { height: 40, padding: "0 16px", background: "#fff", border: "1.5px solid #e8e3d5", borderRadius: 10, fontSize: 13, fontWeight: 500, color: "#14203a", cursor: "pointer", fontFamily: "var(--font-hanken)" };
+const btnDark: React.CSSProperties = { height: 40, padding: "0 16px", background: "#0D1117", border: "none", borderRadius: 10, fontSize: 13, fontWeight: 600, color: "#f8f6ef", cursor: "pointer", fontFamily: "var(--font-hanken)" };
+const btnGhost: React.CSSProperties = { height: 40, padding: "0 16px", background: "#fff", border: "1.5px solid #e8e3d5", borderRadius: 10, fontSize: 13, fontWeight: 500, color: "#0D1117", cursor: "pointer", fontFamily: "var(--font-hanken)" };

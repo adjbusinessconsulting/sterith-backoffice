@@ -62,7 +62,7 @@ export default function GudangPage() {
           <p style={{ fontSize: 10, letterSpacing: "0.2em", textTransform: "uppercase", color: "#96762f", fontWeight: 600, marginBottom: 8 }}>
             INVENTORI · GUDANG
           </p>
-          <h1 style={{ fontFamily: "var(--font-garamond)", fontSize: 34, fontWeight: 500, color: "#14203a", lineHeight: 1.15, marginBottom: 6 }}>
+          <h1 style={{ fontFamily: "var(--font-garamond)", fontSize: 34, fontWeight: 500, color: "#0D1117", lineHeight: 1.15, marginBottom: 6 }}>
             Stok gudang
           </h1>
           <p style={{ fontSize: 13, color: "#8f897a", lineHeight: 1.6, maxWidth: 340 }}>
@@ -76,7 +76,7 @@ export default function GudangPage() {
               height: 40, padding: "0 18px",
               background: "#fff", border: "1.5px solid #e8e3d5",
               borderRadius: 10, fontSize: 13, fontWeight: 500,
-              color: "#14203a", cursor: "pointer", display: "flex", alignItems: "center", gap: 7,
+              color: "#0D1117", cursor: "pointer", display: "flex", alignItems: "center", gap: 7,
               fontFamily: "var(--font-hanken)",
             }}
           >
@@ -87,7 +87,7 @@ export default function GudangPage() {
             onClick={() => openModal("stokMasuk")}
             style={{
               height: 40, padding: "0 18px",
-              background: "#14203a", border: "none",
+              background: "#0D1117", border: "none",
               borderRadius: 10, fontSize: 13, fontWeight: 600,
               color: "#f8f6ef", cursor: "pointer", display: "flex", alignItems: "center", gap: 7,
               fontFamily: "var(--font-hanken)",
@@ -110,7 +110,7 @@ export default function GudangPage() {
           <input
             value={query} onChange={e => setQuery(e.target.value)}
             placeholder="Cari produk atau SKU..."
-            style={{ flex: 1, border: "none", fontSize: 13.5, color: "#14203a", fontFamily: "var(--font-hanken)", background: "transparent" }}
+            style={{ flex: 1, border: "none", fontSize: 13.5, color: "#0D1117", fontFamily: "var(--font-hanken)", background: "transparent" }}
           />
         </div>
         <button
@@ -119,7 +119,7 @@ export default function GudangPage() {
             height: 42, padding: "0 16px",
             background: "#fff", border: "1.5px solid #e8e3d5",
             borderRadius: 10, fontSize: 13, fontWeight: 500,
-            color: "#14203a", cursor: "pointer", display: "flex", alignItems: "center", gap: 8,
+            color: "#0D1117", cursor: "pointer", display: "flex", alignItems: "center", gap: 8,
             fontFamily: "var(--font-hanken)",
           }}
         >
@@ -133,9 +133,9 @@ export default function GudangPage() {
         {CATS.map(c => (
           <button key={c} onClick={() => setCat(c)} style={{
             height: 34, padding: "0 14px", borderRadius: 99,
-            background: cat === c ? "#14203a" : "#fff",
-            border: `1.5px solid ${cat === c ? "#14203a" : "#e8e3d5"}`,
-            color: cat === c ? "#f8f6ef" : "#14203a",
+            background: cat === c ? "#0D1117" : "#fff",
+            border: `1.5px solid ${cat === c ? "#0D1117" : "#e8e3d5"}`,
+            color: cat === c ? "#f8f6ef" : "#0D1117",
             fontSize: 13, fontWeight: cat === c ? 600 : 400,
             cursor: "pointer", fontFamily: "var(--font-hanken)",
             whiteSpace: "nowrap",
@@ -179,7 +179,7 @@ export default function GudangPage() {
                         <span style={{ fontFamily: "var(--font-garamond)", fontSize: 13, fontWeight: 600, color: "#b8934a" }}>{initials(p.name)}</span>
                       </div>
                       <div>
-                        <p style={{ fontSize: 13.5, fontWeight: 500, color: "#14203a" }}>{p.name}</p>
+                        <p style={{ fontSize: 13.5, fontWeight: 500, color: "#0D1117" }}>{p.name}</p>
                         <p style={{ fontSize: 11.5, color: "#8f897a", marginTop: 1 }}>{p.category} · {p.unit}</p>
                       </div>
                     </div>
@@ -188,7 +188,7 @@ export default function GudangPage() {
                     <span style={{ fontSize: 12.5, color: "#8f897a", fontFamily: "var(--font-hanken)" }}>{p.sku}</span>
                   </td>
                   <td style={{ padding: "14px 16px" }}>
-                    <p style={{ fontFamily: "var(--font-garamond)", fontSize: 20, fontWeight: 500, color: "#14203a", fontFeatureSettings: '"onum"' }}>{p.warehouseQty}</p>
+                    <p style={{ fontFamily: "var(--font-garamond)", fontSize: 20, fontWeight: 500, color: "#0D1117", fontFeatureSettings: '"onum"' }}>{p.warehouseQty}</p>
                     <p style={{ fontSize: 11.5, color: "#8f897a", marginTop: 1 }}>di toko {p.storeQty}</p>
                   </td>
                   <td style={{ padding: "14px 16px" }}>

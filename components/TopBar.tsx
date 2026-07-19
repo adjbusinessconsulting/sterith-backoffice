@@ -87,7 +87,7 @@ export default function TopBar() {
       <button
         style={{
           position: "relative", background: "transparent", border: "none",
-          cursor: "pointer", padding: 6, borderRadius: 8, color: "#14203a",
+          cursor: "pointer", padding: 6, borderRadius: 8, color: "#0D1117",
         }}
         title="Notifikasi"
       >
