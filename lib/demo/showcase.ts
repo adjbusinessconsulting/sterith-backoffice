@@ -7,14 +7,14 @@ export type DemoSize = { size: string; stock: number };
 export type DemoTag = "drop" | "restock" | "member";
 export type DemoProduct = {
   id: string;
-  brand: "Uniqlo" | "Nike";
+  brand: string;            // free text (owner's own brand/label)
   name: string;
   dept: "apparel" | "footwear";
   category: string;
   price: number;
   sizes: DemoSize[];
   tag?: DemoTag;
-  image: string; // royalty-free Unsplash lookbook photo
+  image: string; // royalty-free Unsplash lookbook photo (or owner-uploaded)
 };
 
 export const SHOWCASE_DEMO_STORE = "Kanso Lifestyle";
