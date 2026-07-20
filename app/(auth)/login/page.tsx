@@ -50,7 +50,8 @@ export default function LoginPage() {
     e.preventDefault();
     setLoading(true);
     setError("");
-    try { await fetch("/api/auth/forgot", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email }) }); } catch { /* ignore */ }
+    // Issue a fresh Back Office setup link (resets the Back Office password specifically).
+    try { await fetch("https://masteroffice.sterith.com/api/app-auth/forgot", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email, app: "backoffice" }) }); } catch { /* ignore */ }
     setLoading(false);
     setSent(true);
   }
