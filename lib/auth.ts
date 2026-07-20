@@ -3,6 +3,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { db } from "@/lib/prisma";
 import { isAtLeast } from "@/lib/tier";
+import { verifyAppPassword } from "@/lib/app-cred";
 
 declare module "next-auth" {
   interface Session {
@@ -73,8 +74,20 @@ export const authOptions: NextAuthOptions = {
         if (!credentials?.email || !credentials?.password) return null;
         const email = credentials.email;
 
-        // If the owner set a SEPARATE Back Office password (Settings), verify against
-        // it instead of the shared Supabase/POS password. Email is always shared.
+        // 1) New per-app password: the owner set an independent Back Office password
+        //    via its setup link (app_credentials, scrypt). Same email, own password.
+        const credRows = await db.$queryRaw<Array<{ owner_id: string; hash: string }>>`
+          SELECT ac.owner_id AS owner_id, ac.password_hash AS hash
+          FROM app_credentials ac
+          JOIN auth.users u ON u.id = ac.owner_id
+          WHERE ac.app = 'backoffice' AND lower(u.email) = lower(${email})
+          LIMIT 1`;
+        if (credRows[0]?.hash) {
+          if (!verifyAppPassword(credentials.password, credRows[0].hash)) return null;
+          return resolveOwner(credRows[0].owner_id, email);
+        }
+
+        // 2) Legacy separate Back Office password (bcrypt, from Settings).
         const boRows = await db.$queryRaw<Array<{ owner_id: string; hash: string }>>`
           SELECT owner_id, backoffice_password_hash AS hash
           FROM stores

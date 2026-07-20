@@ -5,13 +5,16 @@ import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
   const router = useRouter();
+  const [setupToken] = useState(() => typeof window !== "undefined" ? new URLSearchParams(window.location.search).get("setup_token") || "" : "");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirm, setConfirm] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [mode, setMode] = useState<"login" | "forgot">("login");
+  const [mode, setMode] = useState<"login" | "forgot" | "setup">(setupToken ? "setup" : "login");
   const [sent, setSent] = useState(false);
+  const [setupOk, setSetupOk] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -21,6 +24,26 @@ export default function LoginPage() {
     setLoading(false);
     if (res?.error) setError("Email atau password salah.");
     else window.location.href = "/inventori/ringkasan";
+  }
+
+  // New per-app setup link (?setup_token) → set the Back Office password.
+  async function handleSetup(e: React.FormEvent) {
+    e.preventDefault();
+    if (password.length < 8) { setError("Kata sandi minimal 8 karakter."); return; }
+    if (password !== confirm) { setError("Kata sandi tidak cocok."); return; }
+    setLoading(true); setError("");
+    try {
+      const res = await fetch("https://masteroffice.sterith.com/api/app-auth/setup", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token: setupToken, password }),
+      });
+      const j = await res.json().catch(() => ({}));
+      setLoading(false);
+      if (!res.ok || !j.ok) { setError(j.error || "Gagal menyimpan kata sandi."); return; }
+      if (j.email) setEmail(j.email);
+      setPassword(""); setConfirm(""); setMode("login"); setSetupOk(true);
+      try { window.history.replaceState(null, "", window.location.pathname); } catch { /* ignore */ }
+    } catch { setLoading(false); setError("Tidak dapat terhubung ke server."); }
   }
 
   async function handleForgot(e: React.FormEvent) {
@@ -92,8 +115,8 @@ export default function LoginPage() {
         </div>
 
         {/* Form */}
-        <form onSubmit={mode === "forgot" ? handleForgot : handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 12, marginTop: 20 }}>
-          <div>
+        <form onSubmit={mode === "forgot" ? handleForgot : mode === "setup" ? handleSetup : handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 12, marginTop: 20 }}>
+          {mode !== "setup" && <div>
             <label style={{ display: "block", fontSize: 9, letterSpacing: "0.2em", textTransform: "uppercase", color: "#8f897a", fontWeight: 600, marginBottom: 6 }}>
               Email Pemilik
             </label>
@@ -116,11 +139,11 @@ export default function LoginPage() {
                 }}
               />
             </div>
-          </div>
+          </div>}
 
-          {mode === "login" && <div>
+          {mode !== "forgot" && <div>
             <label style={{ display: "block", fontSize: 9, letterSpacing: "0.2em", textTransform: "uppercase", color: "#8f897a", fontWeight: 600, marginBottom: 6 }}>
-              Password
+              {mode === "setup" ? "Kata Sandi Baru" : "Password"}
             </label>
             <div style={{ position: "relative" }}>
               <svg style={{ position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)", color: "#8f897a" }} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -161,9 +184,34 @@ export default function LoginPage() {
             </div>
           </div>}
 
+          {mode === "setup" && <div>
+            <label style={{ display: "block", fontSize: 9, letterSpacing: "0.2em", textTransform: "uppercase", color: "#8f897a", fontWeight: 600, marginBottom: 6 }}>
+              Ulangi Kata Sandi
+            </label>
+            <div style={{ position: "relative" }}>
+              <svg style={{ position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)", color: "#8f897a" }} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+              </svg>
+              <input type={showPassword ? "text" : "password"} value={confirm} onChange={e => setConfirm(e.target.value)} placeholder="••••••••••••" required
+                style={{ width: "100%", height: 46, boxSizing: "border-box", border: "1.5px solid #ddd9cc", borderRadius: 10, padding: "0 14px 0 42px", fontSize: 13, color: "#0D1117", background: "#fff", fontFamily: "inherit", outline: "none" }} />
+            </div>
+          </div>}
+
+          {mode === "setup" && (
+            <p style={{ fontSize: 12, color: "#8f897a", lineHeight: 1.5, margin: 0 }}>
+              Buat kata sandi khusus Back Office. Boleh sama atau beda dengan aplikasi Sterith Anda yang lain.
+            </p>
+          )}
+
           {mode === "forgot" && (
             <p style={{ fontSize: 12, color: "#8f897a", lineHeight: 1.5, margin: 0 }}>
               Masukkan email akun Anda. Kami kirim tautan untuk membuat kata sandi baru — ini juga menyamakan kembali kata sandi Back Office dengan akun.
+            </p>
+          )}
+
+          {setupOk && (
+            <p style={{ fontSize: 12, color: "#3f7d54", background: "#e9f1ea", padding: "9px 12px", borderRadius: 8, margin: 0 }}>
+              Kata sandi Back Office tersimpan. Silakan masuk.
             </p>
           )}
 
@@ -190,16 +238,16 @@ export default function LoginPage() {
               textTransform: "uppercase",
             }}
           >
-            {loading ? "MEMUAT…" : mode === "forgot" ? "KIRIM TAUTAN RESET →" : "MASUK KE BACKOFFICE →"}
+            {loading ? "MEMUAT…" : mode === "forgot" ? "KIRIM TAUTAN RESET →" : mode === "setup" ? "BUAT KATA SANDI →" : "MASUK KE BACKOFFICE →"}
           </button>
 
-          <button
+          {mode !== "setup" && <button
             type="button"
             onClick={() => { setMode(mode === "forgot" ? "login" : "forgot"); setError(""); setSent(false); }}
             style={{ background: "none", border: "none", cursor: "pointer", color: "#8f897a", fontSize: 12, fontFamily: "inherit", textDecoration: "underline", textUnderlineOffset: 3, marginTop: 2 }}
           >
             {mode === "forgot" ? "← Kembali ke login" : "Lupa password?"}
-          </button>
+          </button>}
         </form>
 
         {/* Footer */}
