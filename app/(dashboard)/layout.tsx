@@ -31,7 +31,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       <Sidebar />
       <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
         <TopBar />
-        <main style={{ flex: 1, overflowY: "auto", background: "#eceadf" }}>
+        <main style={{ flex: 1, overflowY: "auto", background: "#FAFAF7" }}>
           {children}
         </main>
       </div>
