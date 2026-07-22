@@ -7,7 +7,7 @@ export default function KeuanganPage() {
   const { data: session } = useSession();
   const userTier = session?.user?.tier ?? 'premium';
 
-  if (!isAtLeast(userTier, 'enterprise')) return <LockedSection requiredTier="enterprise" />;
+  if (!isAtLeast(userTier, 'premium')) return <LockedSection requiredTier="enterprise" />;
 
   return (
     <div style={{ padding: "32px 36px", display: "flex", alignItems: "center", justifyContent: "center", minHeight: "60vh" }}>

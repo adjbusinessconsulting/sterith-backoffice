@@ -53,11 +53,11 @@ const SHOWCASE: NavItem[] = [
 ];
 
 const MANAJEMEN: NavItem[] = [
-  { href: "/manajemen/staf",     label: "Staf & Akses", Icon: Users,    lockTier: "business" },
+  { href: "/manajemen/staf",     label: "Staf & Akses", Icon: Users,    lockTier: null },
   { href: "/manajemen/produk",   label: "Produk",       Icon: Grid2X2,  lockTier: null },
   { href: "/manajemen/laporan",  label: "Laporan",      Icon: BarChart2, lockTier: null },
   { href: "/manajemen/log",      label: "Log Aktivitas", Icon: History,  lockTier: null },
-  { href: "/manajemen/keuangan", label: "Keuangan",     Icon: Wallet,   lockTier: "enterprise" },
+  { href: "/manajemen/keuangan", label: "Keuangan",     Icon: Wallet,   lockTier: null },
 ];
 
 const PENGATURAN: NavItem[] = [

@@ -33,7 +33,7 @@ export default function LoginPage() {
     const res = await signIn("credentials", { email, password, redirect: false });
     setLoading(false);
     if (res?.error) setError("Email atau password salah.");
-    else window.location.href = "/inventori/ringkasan";
+    else window.location.href = "/analitik/penjualan";
   }
 
   // New per-app setup link (?setup_token) → set the Back Office password.

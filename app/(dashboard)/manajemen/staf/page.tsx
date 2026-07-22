@@ -43,9 +43,9 @@ export default function StafPage() {
     fetch("/api/shifts").then(r => r.json()).then(d => { if (Array.isArray(d)) setShifts(d); }).catch(() => {});
   }, []);
 
-  useEffect(() => { if (isAtLeast(userTier, 'business')) load(); }, [load, userTier]);
+  useEffect(() => { if (isAtLeast(userTier, 'premium')) load(); }, [load, userTier]);
 
-  if (!isAtLeast(userTier, 'business')) return <LockedSection requiredTier="business" />;
+  if (!isAtLeast(userTier, 'premium')) return <LockedSection requiredTier="business" />;
 
   async function deleteStaff(id: string) {
     if (!confirm("Hapus akun ini?")) return;
