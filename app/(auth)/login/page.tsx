@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
@@ -7,6 +7,16 @@ export default function LoginPage() {
   const router = useRouter();
   const [setupToken] = useState(() => typeof window !== "undefined" ? new URLSearchParams(window.location.search).get("setup_token") || "" : "");
   const [email, setEmail] = useState("");
+
+  // Setup mode: resolve the registered email from the token so we can show it
+  // (read-only) — matching the POS "buat kata sandi" screen.
+  useEffect(() => {
+    if (!setupToken) return;
+    fetch(`https://masteroffice.sterith.com/api/app-auth/setup?token=${encodeURIComponent(setupToken)}`)
+      .then(r => r.json())
+      .then(j => { if (j?.email) setEmail(j.email); })
+      .catch(() => {});
+  }, [setupToken]);
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -71,13 +81,13 @@ export default function LoginPage() {
         maxWidth: 420,
         background: "#f8f6ef",
         borderRadius: 18,
-        padding: "24px 32px 20px",
+        padding: "18px 32px 16px",
         border: "1px solid #ddd9cc",
         boxShadow: "0 8px 40px rgba(20,32,58,0.09)",
       }}>
 
         {/* Top bar */}
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 7 }}>
             <div style={{
               width: 7, height: 7, borderRadius: "50%",
@@ -92,14 +102,14 @@ export default function LoginPage() {
         </div>
 
         {/* Branding */}
-        <div style={{ textAlign: "center", marginBottom: 20 }}>
+        <div style={{ textAlign: "center", marginBottom: 14 }}>
           <img
             src="/stacked-light.png"
             alt="Sterith"
-            style={{ width: 200, display: "block", margin: "0 auto 4px", mixBlendMode: "multiply" }}
+            style={{ width: 158, display: "block", margin: "0 auto 4px", mixBlendMode: "multiply" }}
           />
 
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 10, marginBottom: 16 }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 10, marginBottom: 12 }}>
             <div style={{ height: 1, width: 32, background: "#b8934a", opacity: 0.6 }} />
             <span style={{ fontSize: 9, letterSpacing: "0.25em", color: "#b8934a", textTransform: "uppercase", fontWeight: 600 }}>
               Backoffice
@@ -107,16 +117,16 @@ export default function LoginPage() {
             <div style={{ height: 1, width: 32, background: "#b8934a", opacity: 0.6 }} />
           </div>
 
-          <h1 style={{ fontFamily: "var(--font-garamond)", fontSize: 22, fontWeight: 500, color: "#0D1117", marginBottom: 5, lineHeight: 1.25 }}>
-            Premium Member Only
+          <h1 style={{ fontFamily: "var(--font-garamond)", fontSize: 22, fontWeight: 500, color: "#0D1117", marginBottom: 4, lineHeight: 1.25 }}>
+            {mode === "setup" ? "Buat Kata Sandi" : "Premium Member Only"}
           </h1>
           <p style={{ fontSize: 12, color: "#8f897a", lineHeight: 1.5, margin: 0 }}>
-            All access is logged and audited.
+            {mode === "setup" ? "Untuk Back Office — Premium." : "All access is logged and audited."}
           </p>
         </div>
 
         {/* Form */}
-        <form onSubmit={mode === "forgot" ? handleForgot : mode === "setup" ? handleSetup : handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 12, marginTop: 20 }}>
+        <form onSubmit={mode === "forgot" ? handleForgot : mode === "setup" ? handleSetup : handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 10, marginTop: 14 }}>
           {mode !== "setup" && <div>
             <label style={{ display: "block", fontSize: 9, letterSpacing: "0.2em", textTransform: "uppercase", color: "#8f897a", fontWeight: 600, marginBottom: 6 }}>
               Email Pemilik
@@ -139,6 +149,20 @@ export default function LoginPage() {
                   background: "#fff", fontFamily: "inherit", outline: "none",
                 }}
               />
+            </div>
+          </div>}
+
+          {mode === "setup" && <div>
+            <label style={{ display: "block", fontSize: 9, letterSpacing: "0.2em", textTransform: "uppercase", color: "#8f897a", fontWeight: 600, marginBottom: 6 }}>
+              Email Akun
+            </label>
+            <div style={{ position: "relative" }}>
+              <svg style={{ position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)", color: "#b8a88a" }} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+              </svg>
+              <div style={{ width: "100%", height: 46, boxSizing: "border-box", border: "1.5px solid #e6e1d3", borderRadius: 10, padding: "0 14px 0 42px", fontSize: 13, color: "#6f6a5c", background: "#f0ece2", display: "flex", alignItems: "center", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                {email || "…"}
+              </div>
             </div>
           </div>}
 
@@ -199,8 +223,8 @@ export default function LoginPage() {
           </div>}
 
           {mode === "setup" && (
-            <p style={{ fontSize: 12, color: "#8f897a", lineHeight: 1.5, margin: 0 }}>
-              Buat kata sandi khusus Back Office. Boleh sama atau beda dengan aplikasi Sterith Anda yang lain.
+            <p style={{ fontSize: 11.5, color: "#8f897a", lineHeight: 1.45, margin: 0 }}>
+              Khusus Back Office — boleh sama atau beda dengan aplikasi Sterith lainnya.
             </p>
           )}
 
@@ -254,7 +278,7 @@ export default function LoginPage() {
         {/* Footer */}
         <div style={{
           display: "flex", justifyContent: "space-between", alignItems: "center",
-          marginTop: 20, paddingTop: 16, borderTop: "1px solid #ddd9cc",
+          marginTop: 14, paddingTop: 12, borderTop: "1px solid #ddd9cc",
         }}>
           <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
             <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#b8a88a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
