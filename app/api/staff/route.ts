@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
   const { name, pin, role } = await req.json();
 
   if (!name?.trim()) return NextResponse.json({ error: "Name required" }, { status: 400 });
-  if (!pin || String(pin).length !== 4) return NextResponse.json({ error: "PIN must be 4 digits" }, { status: 400 });
+  if (!pin || String(pin).length !== 6) return NextResponse.json({ error: "PIN must be 6 digits" }, { status: 400 });
 
   const parts = name.trim().split(/\s+/);
   const initials = ((parts[0]?.[0] ?? "") + (parts[1]?.[0] ?? parts[0]?.[1] ?? "")).toUpperCase();

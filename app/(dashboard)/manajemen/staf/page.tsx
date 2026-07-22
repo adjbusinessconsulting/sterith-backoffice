@@ -87,7 +87,7 @@ export default function StafPage() {
       <div style={{ background: "#fff", border: "1px solid #e8e3d5", borderRadius: 12, overflow: "hidden", marginBottom: 28 }}>
         <div style={{ padding: "14px 18px", borderBottom: "1px solid #f0ebe0", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <p style={{ fontSize: 12.5, fontWeight: 600, color: "#0D1117" }}>AKUN ({staff.length})</p>
-          <p style={{ fontSize: 11.5, color: "#8f897a" }}>Kasir masuk lewat POS dengan PIN 4-digit</p>
+          <p style={{ fontSize: 11.5, color: "#8f897a" }}>Kasir masuk lewat POS dengan PIN 6-digit</p>
         </div>
         <table style={{ width: "100%", borderCollapse: "collapse" }}>
           <thead>

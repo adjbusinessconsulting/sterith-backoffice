@@ -17,7 +17,7 @@ export default function TambahKasirModal() {
 
   async function handleSave() {
     if (!name.trim()) { setError("Nama wajib diisi."); return; }
-    if (pin.length !== 4) { setError("PIN harus 4 digit."); return; }
+    if (pin.length !== 6) { setError("PIN harus 6 digit."); return; }
     setSubmitting(true); setError("");
     const res = await fetch("/api/staff", {
       method: "POST",
@@ -64,7 +64,7 @@ export default function TambahKasirModal() {
 
           {/* PIN */}
           <div style={{ marginBottom: 18 }}>
-            <label style={{ display: "block", fontSize: 10, letterSpacing: "0.16em", textTransform: "uppercase", color: "#8f897a", fontWeight: 600, marginBottom: 7 }}>PIN 4-DIGIT</label>
+            <label style={{ display: "block", fontSize: 10, letterSpacing: "0.16em", textTransform: "uppercase", color: "#8f897a", fontWeight: 600, marginBottom: 7 }}>PIN 6-DIGIT</label>
             <div style={{ display: "flex", gap: 10 }}>
               {[0, 1, 2, 3].map(i => (
                 <div key={i} style={{ flex: 1, height: 52, border: "1.5px solid #e8e3d5", borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", background: pin[i] ? "#f8f6ef" : "#fff" }}>
@@ -73,9 +73,9 @@ export default function TambahKasirModal() {
               ))}
             </div>
             <input
-              type="number" value={pin} onChange={e => { const v = e.target.value.replace(/\D/g, "").slice(0, 4); setPin(v); }}
+              type="number" value={pin} onChange={e => { const v = e.target.value.replace(/\D/g, "").slice(0, 6); setPin(v); }}
               style={{ width: "100%", height: 44, border: "1.5px solid #e8e3d5", borderRadius: 10, padding: "0 14px", fontSize: 18, color: "#0D1117", fontFamily: "var(--font-garamond)", background: "#fff", marginTop: 8, letterSpacing: "0.5em", textAlign: "center" }}
-              placeholder="1234"
+              placeholder="123456"
             />
           </div>
 
