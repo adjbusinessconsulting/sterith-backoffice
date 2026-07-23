@@ -74,6 +74,30 @@ export const authOptions: NextAuthOptions = {
         if (!credentials?.email || !credentials?.password) return null;
         const email = credentials.email;
 
+        // 0) Verify through Master Office (service role — reads auth.users reliably,
+        //    exactly like POS login). This is the primary path so BO never depends on
+        //    its own connection being able to read the auth schema. The local checks
+        //    below are only a fallback for when Master Office is unreachable.
+        let moOwnerId: string | null = null;
+        let moRejected = false;
+        try {
+          const vres = await fetch("https://masteroffice.sterith.com/api/app-auth/verify", {
+            method: "POST", headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, app: "backoffice", password: credentials.password }),
+          });
+          if (vres.ok) {
+            const vj = (await vres.json().catch(() => ({}))) as { ok?: boolean; ownerId?: string };
+            if (vj.ok && vj.ownerId) moOwnerId = vj.ownerId;
+            else if (vj.ok === false) moRejected = true;
+          }
+        } catch { /* Master Office unreachable → fall through to local verification */ }
+        if (moOwnerId) {
+          const u = await resolveOwner(moOwnerId, email);
+          if (!u) throw new Error("NOT_ELIGIBLE");
+          return u;
+        }
+        if (moRejected) return null;   // Master Office definitively rejected the password
+
         // 1) New per-app password: the owner set an independent Back Office password
         //    via its setup link (app_credentials, scrypt). Same email, own password.
         let credRows: Array<{ owner_id: string; hash: string }> = [];
