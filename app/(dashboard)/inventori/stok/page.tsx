@@ -108,7 +108,7 @@ export default function StokHarianPage() {
                     </div>
                     <span style={{ flexShrink: 0, fontSize: 10.5, fontWeight: 700, color: s.color, background: s.bg, borderRadius: 6, padding: "3px 9px", letterSpacing: "0.04em" }}>{s.label}</span>
                   </div>
-                  <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 6, marginBottom: 12 }}>
+                  <div className="bo-cols-4" style={{ gap: 6, marginBottom: 12 }}>
                     {[{ l: "Awal", v: r.stockAwal }, { l: "Tambah", v: r.stockTambahan > 0 ? `+${r.stockTambahan}` : "0", g: r.stockTambahan > 0 }, { l: "Terjual", v: r.stockTerjual }, { l: "Sisa", v: r.stock, a: true }].map(c => (
                       <div key={c.l} style={{ border: `1px solid ${BORDER}`, borderRadius: 9, padding: "7px 2px", textAlign: "center", background: c.a ? "rgba(63,125,84,0.06)" : CREAM }}>
                         <div style={{ fontSize: 8, letterSpacing: "0.08em", textTransform: "uppercase", color: MUTE, fontWeight: 700 }}>{c.l}</div>
@@ -188,7 +188,7 @@ export default function StokHarianPage() {
               <button onClick={() => setTarget(null)} style={{ border: 0, background: "transparent", cursor: "pointer", color: MUTE }}><X size={18} /></button>
             </div>
             <div style={{ padding: "10px 20px" }}>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 8, marginBottom: 14 }}>
+              <div className="bo-cols-4" style={{ gap: 8, marginBottom: 14 }}>
                 {[{ l: "Awal", v: target.stockAwal }, { l: "Tambahan", v: target.stockTambahan }, { l: "Terjual", v: target.stockTerjual }, { l: "Sisa", v: target.stock, a: true }].map(c => (
                   <div key={c.l} style={{ border: `1px solid ${BORDER}`, borderRadius: 10, padding: "8px 4px", textAlign: "center", background: c.a ? "rgba(63,125,84,0.06)" : CARD }}>
                     <div style={{ fontSize: 8.5, letterSpacing: "0.1em", textTransform: "uppercase", color: MUTE, fontWeight: 700 }}>{c.l}</div>

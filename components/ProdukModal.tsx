@@ -115,7 +115,7 @@ export default function ProdukModal() {
           </div>
 
           {/* SKU + Unit */}
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 16 }}>
+          <div className="bo-cols-2" style={{ gap: 12, marginBottom: 16 }}>
             <div>
               <label style={{ display: "block", fontSize: 10, letterSpacing: "0.16em", textTransform: "uppercase", color: "#8f897a", fontWeight: 600, marginBottom: 7 }}>SKU</label>
               <input value={form.sku} onChange={e => setForm(f => ({ ...f, sku: e.target.value }))}
@@ -150,7 +150,7 @@ export default function ProdukModal() {
           </div>
 
           {/* Price + Stock */}
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+          <div className="bo-cols-2" style={{ gap: 12 }}>
             <div>
               <label style={{ display: "block", fontSize: 10, letterSpacing: "0.16em", textTransform: "uppercase", color: "#8f897a", fontWeight: 600, marginBottom: 7 }}>HARGA JUAL (Rp)</label>
               <input type="number" value={form.price} onChange={e => setForm(f => ({ ...f, price: e.target.value }))}

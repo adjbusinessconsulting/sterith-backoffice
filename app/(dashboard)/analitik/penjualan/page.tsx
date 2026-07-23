@@ -40,7 +40,7 @@ export default function SalesDashboardPage() {
               </div>
             </Panel>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1.4fr 1fr", gap: 16 }}>
+            <div className="bo-cols-chart" style={{ gap: 16 }}>
               {/* Busiest hours */}
               <Panel title="Jam tersibuk" hint="omzet per jam">
                 <div style={{ display: "flex", alignItems: "flex-end", gap: 2, height: 130 }}>

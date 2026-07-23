@@ -82,7 +82,7 @@ export default function TambahKasirModal() {
           {/* Role */}
           <div style={{ marginBottom: 22 }}>
             <label style={{ display: "block", fontSize: 10, letterSpacing: "0.16em", textTransform: "uppercase", color: "#8f897a", fontWeight: 600, marginBottom: 10 }}>PERAN</label>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+            <div className="bo-cols-2" style={{ gap: 10 }}>
               {([
                 { value: "KASIR" as const, label: "Kasir", desc: "Hanya jual di POS dan mengelola kas laci." },
                 { value: "MANAJER" as const, label: "Manajer", desc: "Kasir + akses laporan dan stok toko." },

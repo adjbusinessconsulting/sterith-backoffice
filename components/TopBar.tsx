@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { usePathname } from "next/navigation";
-import { Bell, Search, Sparkles, Puzzle } from "lucide-react";
+import { Bell, Search, Sparkles, Puzzle, Menu } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useUIStore } from "@/store/ui";
 import UpgradeModal from "@/components/UpgradeModal";
@@ -10,6 +10,7 @@ const INV_ADDON_ROUTES = ["/inventori/ringkasan", "/inventori/gudang", "/invento
 
 export default function TopBar() {
   const openModal = useUIStore(s => s.openModal);
+  const toggleSidebar = useUIStore(s => s.toggleSidebar);
   const { data: session } = useSession();
   const tier = (session?.user?.tier as string) ?? "premium";
   const [upgradeOpen, setUpgradeOpen] = useState(false);
@@ -26,6 +27,21 @@ export default function TopBar() {
       gap: 16,
       flexShrink: 0,
     }}>
+      {/* Hamburger — mobile only, toggles the sidebar drawer */}
+      <button
+        className="bo-hamburger"
+        onClick={toggleSidebar}
+        aria-label="Buka menu"
+        style={{
+          alignItems: "center", justifyContent: "center",
+          width: 38, height: 38, borderRadius: 9,
+          background: "transparent", border: "1px solid #e8e3d5",
+          cursor: "pointer", color: "#0D1117", flexShrink: 0,
+        }}
+      >
+        <Menu size={18} strokeWidth={1.8} />
+      </button>
+
       {/* Search */}
       <div style={{
         flex: 1, maxWidth: 440,

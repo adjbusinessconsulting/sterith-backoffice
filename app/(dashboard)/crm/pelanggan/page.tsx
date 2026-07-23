@@ -130,7 +130,7 @@ export default function PelangganPage() {
               <button onClick={() => setSel(null)} style={{ width: 30, height: 30, borderRadius: 8, border: "1px solid #e8e3d5", background: "#fff", cursor: "pointer", color: "#8f897a" }}>✕</button>
             </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8, marginBottom: 18 }}>
+            <div className="bo-cols-3" style={{ gap: 8, marginBottom: 18 }}>
               {[{ v: rupiahShort(sel.spent), l: "Belanja" }, { v: sel.orders, l: "Order" }, { v: sel.points.toLocaleString("id-ID"), l: "Poin" }].map((s) => (
                 <div key={s.l} style={{ background: "#fff", border: "1px solid #e8e3d5", borderRadius: 10, padding: "10px 12px", textAlign: "center" }}>
                   <p style={{ fontFamily: "var(--font-garamond)", fontSize: 18, fontWeight: 600, color: "#0D1117", lineHeight: 1 }}>{s.v}</p>

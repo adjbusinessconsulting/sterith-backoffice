@@ -120,7 +120,7 @@ export default function StokMasukModal() {
 
           {/* STEP: METHOD */}
           {step === "method" && (
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+            <div className="bo-cols-2" style={{ gap: 16 }}>
               <button
                 onClick={() => setStep("upload")}
                 style={{
@@ -158,7 +158,7 @@ export default function StokMasukModal() {
 
           {/* STEP: UPLOAD */}
           {step === "upload" && (
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+            <div className="bo-cols-2" style={{ gap: 16 }}>
               <div>
                 <div
                   onClick={() => fileRef.current?.click()}
@@ -242,7 +242,7 @@ export default function StokMasukModal() {
                 <span style={{ marginLeft: "auto", fontSize: 12, color: "#8f897a" }}>Periksa & sesuaikan sebelum simpan</span>
               </div>
 
-              <div style={{ border: "1px solid #e8e3d5", borderRadius: 12, overflow: "hidden" }}>
+              <div className="bo-table-scroll" style={{ border: "1px solid #e8e3d5", borderRadius: 12 }}>
                 <table style={{ width: "100%", borderCollapse: "collapse" }}>
                   <thead>
                     <tr style={{ borderBottom: "1px solid #f0ebe0" }}>
@@ -302,7 +302,7 @@ export default function StokMasukModal() {
                   style={{ width: "100%", height: 42, border: "1.5px solid #e8e3d5", borderRadius: 10, padding: "0 14px", fontSize: 14, color: "#0D1117", fontFamily: "var(--font-hanken)", background: "#fff" }} />
               </div>
 
-              <div style={{ border: "1px solid #e8e3d5", borderRadius: 12, overflow: "hidden", marginBottom: 14 }}>
+              <div className="bo-table-scroll" style={{ border: "1px solid #e8e3d5", borderRadius: 12, marginBottom: 14 }}>
                 <table style={{ width: "100%", borderCollapse: "collapse" }}>
                   <thead>
                     <tr style={{ borderBottom: "1px solid #f0ebe0" }}>

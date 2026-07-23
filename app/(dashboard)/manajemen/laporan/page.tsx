@@ -146,9 +146,8 @@ export default function LaporanPage() {
         <>
           {/* Summary strip */}
           {summary && (
-            <div style={{
+            <div className="bo-cols-4" style={{
               background: "#0D1117", borderRadius: 14, padding: "20px 24px",
-              display: "grid", gridTemplateColumns: "repeat(4, 1fr)",
               gap: 0, marginBottom: 24,
             }}>
               {[
@@ -168,7 +167,7 @@ export default function LaporanPage() {
           )}
 
           {/* Transaction table */}
-          <div style={{ background: "#fff", border: "1px solid #e8e3d5", borderRadius: 12, overflow: "hidden" }}>
+          <div className="bo-table-scroll" style={{ background: "#fff", border: "1px solid #e8e3d5", borderRadius: 12 }}>
             <table style={{ width: "100%", borderCollapse: "collapse" }}>
               <thead>
                 <tr style={{ borderBottom: "1px solid #f0ebe0" }}>
@@ -222,7 +221,7 @@ export default function LaporanPage() {
 
       {/* === KASIR TAB === */}
       {tab === "kasir" && summary && (
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
+        <div className="bo-cols-2" style={{ gap: 20 }}>
           {/* Saldo laci card */}
           <div style={{ background: "#0D1117", borderRadius: 14, padding: "24px 28px" }}>
             <p style={{ fontSize: 9.5, letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(248,246,239,0.5)", fontWeight: 600, marginBottom: 12 }}>

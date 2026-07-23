@@ -144,6 +144,8 @@ export default function Sidebar() {
   const pathname = usePathname();
   const { data: session } = useSession();
   const openModal = useUIStore(s => s.openModal);
+  const sidebarOpen = useUIStore(s => s.sidebarOpen);
+  const closeSidebar = useUIStore(s => s.closeSidebar);
   const [feedbackOpen, setFeedbackOpen] = useState(false);
 
   const name = session?.user?.name ?? "User";
@@ -155,7 +157,10 @@ export default function Sidebar() {
   const canTransfer = hasAddOn(addOns, "inventori");
 
   return (
-    <aside style={{
+    <>
+    {/* Backdrop — only visible on mobile when the drawer is open */}
+    <div className={`bo-backdrop${sidebarOpen ? " bo-open" : ""}`} onClick={closeSidebar} />
+    <aside className={`bo-sidebar${sidebarOpen ? " bo-open" : ""}`} style={{
       width: 248, flexShrink: 0,
       background: "#f6f3ea",
       borderRight: "1px solid #e8e3d5",
@@ -210,8 +215,8 @@ export default function Sidebar() {
         <ChevronDown size={13} color="#8f897a" />
       </div>
 
-      {/* Nav (scrollable) */}
-      <div style={{ flex: 1, overflowY: "auto", paddingBottom: 8 }}>
+      {/* Nav (scrollable) — clicking any link closes the mobile drawer */}
+      <div style={{ flex: 1, overflowY: "auto", paddingBottom: 8 }} onClick={closeSidebar}>
         <NavSection label="UTAMA" items={UTAMA} pathname={pathname} userTier={userTier} addOns={addOns} />
 
         <NavSection label="ANALITIK" items={ANALITIK} pathname={pathname} userTier={userTier} addOns={addOns} />
@@ -235,7 +240,7 @@ export default function Sidebar() {
             <span style={{ fontSize: 13, fontWeight: 400, color: "#0D1117", fontFamily: "var(--font-hanken)", flex: 1 }}>
               Transfer
             </span>
-            {!canTransfer && <span style={BADGE_STYLE}>Business</span>}
+            {!canTransfer && <span style={BADGE_STYLE}>Add-on</span>}
           </button>
         </div>
 
@@ -296,5 +301,6 @@ export default function Sidebar() {
         </button>
       </div>
     </aside>
+    </>
   );
 }
