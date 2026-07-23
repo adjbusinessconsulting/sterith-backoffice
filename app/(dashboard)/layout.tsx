@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { signOut } from "next-auth/react";
 import Sidebar from "@/components/Sidebar";
 import TopBar from "@/components/TopBar";
+import DeviceGate from "@/components/DeviceGate";
 import StokMasukModal from "@/components/StokMasukModal";
 import TransferModal from "@/components/TransferModal";
 import ProdukModal from "@/components/ProdukModal";
@@ -27,18 +28,20 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   }, []);
 
   return (
-    <div style={{ display: "flex", height: "100vh", overflow: "hidden" }}>
-      <Sidebar />
-      <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
-        <TopBar />
-        <main style={{ flex: 1, overflowY: "auto", background: "#FAFAF7" }}>
-          {children}
-        </main>
+    <DeviceGate>
+      <div style={{ display: "flex", height: "100vh", overflow: "hidden" }}>
+        <Sidebar />
+        <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
+          <TopBar />
+          <main style={{ flex: 1, overflowY: "auto", background: "#FAFAF7" }}>
+            {children}
+          </main>
+        </div>
+        <StokMasukModal />
+        <TransferModal />
+        <ProdukModal />
+        <TambahKasirModal />
       </div>
-      <StokMasukModal />
-      <TransferModal />
-      <ProdukModal />
-      <TambahKasirModal />
-    </div>
+    </DeviceGate>
   );
 }

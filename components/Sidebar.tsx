@@ -14,6 +14,7 @@ import {
 import { useUIStore } from "@/store/ui";
 import FeedbackDrawer from "./FeedbackDrawer";
 import CheckUpdate from "./CheckUpdate";
+import { boDeviceId } from "@/lib/boDevice";
 import { isAtLeast, tierLabel } from "@/lib/tier";
 import { hasAddOn, type AddOnKey } from "@/lib/addons";
 
@@ -295,7 +296,7 @@ export default function Sidebar() {
           {tierLabel(userTier)}
         </span>
         <button
-          onClick={() => signOut({ callbackUrl: "/login" })}
+          onClick={async () => { try { await fetch("/api/bo-device", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "release", deviceId: boDeviceId() }) }); } catch { /* stale lock times out anyway */ } signOut({ callbackUrl: "/login" }); }}
           title="Keluar"
           style={{ background: "transparent", border: "none", cursor: "pointer", padding: 4, color: "#8f897a", borderRadius: 6, marginLeft: 2 }}
         >
