@@ -33,8 +33,11 @@ export default function LoginPage() {
     setError("");
     const res = await signIn("credentials", { email, password, redirect: false });
     setLoading(false);
-    if (res?.error) setError("Email atau password salah.");
-    else window.location.href = "/analitik/penjualan";
+    if (res?.error) {
+      setError(res.error.includes("NOT_ELIGIBLE")
+        ? "Kata sandi benar, tapi akun ini belum bisa masuk Back Office — khusus Premium yang aktif. Hubungi admin."
+        : "Email atau password salah.");
+    } else window.location.href = "/analitik/penjualan";
   }
 
   // New per-app setup link (?setup_token) → set the Back Office password.

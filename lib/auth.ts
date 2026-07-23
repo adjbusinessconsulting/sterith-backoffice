@@ -76,15 +76,32 @@ export const authOptions: NextAuthOptions = {
 
         // 1) New per-app password: the owner set an independent Back Office password
         //    via its setup link (app_credentials, scrypt). Same email, own password.
-        const credRows = await db.$queryRaw<Array<{ owner_id: string; hash: string }>>`
-          SELECT ac.owner_id AS owner_id, ac.password_hash AS hash
-          FROM app_credentials ac
-          JOIN auth.users u ON u.id = ac.owner_id
-          WHERE ac.app = 'backoffice' AND lower(u.email) = lower(${email})
-          LIMIT 1`;
+        let credRows: Array<{ owner_id: string; hash: string }> = [];
+        try {
+          credRows = await db.$queryRaw<Array<{ owner_id: string; hash: string }>>`
+            SELECT ac.owner_id AS owner_id, ac.password_hash AS hash
+            FROM app_credentials ac
+            JOIN auth.users u ON u.id = ac.owner_id
+            WHERE ac.app = 'backoffice' AND lower(u.email) = lower(${email})
+            LIMIT 1`;
+        } catch { credRows = []; }
+        // Fallback if auth.users isn't reachable from this connection: resolve the
+        // owner via stores.owner_email instead (same credential table).
+        if (!credRows[0]?.hash) {
+          try {
+            credRows = await db.$queryRaw<Array<{ owner_id: string; hash: string }>>`
+              SELECT ac.owner_id AS owner_id, ac.password_hash AS hash
+              FROM app_credentials ac
+              JOIN stores s ON s.owner_id = ac.owner_id
+              WHERE ac.app = 'backoffice' AND lower(s.owner_email) = lower(${email})
+              LIMIT 1`;
+          } catch { /* ignore */ }
+        }
         if (credRows[0]?.hash) {
           if (!verifyAppPassword(credentials.password, credRows[0].hash)) return null;
-          return resolveOwner(credRows[0].owner_id, email);
+          const u = await resolveOwner(credRows[0].owner_id, email);
+          if (!u) throw new Error("NOT_ELIGIBLE");   // password OK, but not Premium/active
+          return u;
         }
 
         // 2) Legacy separate Back Office password (bcrypt, from Settings).
@@ -96,7 +113,9 @@ export const authOptions: NextAuthOptions = {
         if (boRows[0]?.hash) {
           const ok = await bcrypt.compare(credentials.password, boRows[0].hash);
           if (!ok) return null;
-          return resolveOwner(boRows[0].owner_id, email);
+          const u = await resolveOwner(boRows[0].owner_id, email);
+          if (!u) throw new Error("NOT_ELIGIBLE");
+          return u;
         }
 
         // Otherwise verify against Supabase Auth — same credentials as the POS login.
@@ -119,8 +138,10 @@ export const authOptions: NextAuthOptions = {
         const { user } = await res.json() as { user: { id: string; email: string } };
         if (!user?.id) return null;
 
-        // Store lookup, tier, add-ons, Premium gate.
-        return resolveOwner(user.id, user.email ?? credentials.email);
+        // Supabase password was correct — the only remaining gate is eligibility.
+        const u = await resolveOwner(user.id, user.email ?? credentials.email);
+        if (!u) throw new Error("NOT_ELIGIBLE");
+        return u;
       },
     }),
   ],
