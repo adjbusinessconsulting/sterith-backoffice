@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import CheckUpdate from "@/components/CheckUpdate";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -275,10 +276,15 @@ export default function LoginPage() {
           </button>}
         </form>
 
+        {/* Manual update check */}
+        <div style={{ display: "flex", justifyContent: "center", marginTop: 10 }}>
+          <CheckUpdate />
+        </div>
+
         {/* Footer */}
         <div style={{
           display: "flex", justifyContent: "space-between", alignItems: "center",
-          marginTop: 14, paddingTop: 12, borderTop: "1px solid #ddd9cc",
+          marginTop: 10, paddingTop: 12, borderTop: "1px solid #ddd9cc",
         }}>
           <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
             <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#b8a88a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { useUIStore } from "@/store/ui";
 import FeedbackDrawer from "./FeedbackDrawer";
+import CheckUpdate from "./CheckUpdate";
 import { isAtLeast, tierLabel } from "@/lib/tier";
 import { hasAddOn, type AddOnKey } from "@/lib/addons";
 
@@ -262,6 +263,7 @@ export default function Sidebar() {
           <MessageSquare size={13} strokeWidth={1.7} />
           <span style={{ fontSize: 12, fontWeight: 600, color: "#0D1117" }}>Kritik & Saran</span>
         </button>
+        <CheckUpdate style={{ width: "100%", justifyContent: "center", marginTop: 6 }} />
       </div>
       <FeedbackDrawer open={feedbackOpen} onClose={() => setFeedbackOpen(false)} />
 

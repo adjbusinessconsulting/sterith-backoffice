@@ -47,6 +47,8 @@ select:focus {
   outline: none;
 }
 
+@keyframes spin360 { to { transform: rotate(360deg); } }
+
 /* ============================================================
    Responsive / mobile (Back Office)
    Desktop keeps the in-flow 248px sidebar; below 860px the
