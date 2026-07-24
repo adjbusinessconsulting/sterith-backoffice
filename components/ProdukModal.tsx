@@ -9,6 +9,7 @@ interface Product {
 }
 
 const CATS = ["Sembako", "Minuman", "Snack", "Rokok"];
+const EMPTY = { name: "", sku: "", unit: "pcs", category: "Sembako", price: "", storeQty: "" };
 
 function initials(name: string) {
   return name.split(" ").slice(0, 2).map((w: string) => w[0]).join("").toUpperCase();
@@ -16,73 +17,92 @@ function initials(name: string) {
 
 export default function ProdukModal() {
   const { modal, editProductId, closeModal, bumpData } = useUIStore();
-  const [form, setForm] = useState({ name: "", sku: "", unit: "pcs", category: "Sembako", price: "", storeQty: "" });
+  const [form, setForm] = useState({ ...EMPTY });
   const [submitting, setSubmitting] = useState(false);
   const [deleting, setDeleting] = useState(false);
-  const [savedCount, setSavedCount] = useState(0);
+  // Items saved this session via "Simpan & tambah lagi" — click one to fix it.
+  const [added, setAdded] = useState<{ id: string; name: string }[]>([]);
+  const [localEditId, setLocalEditId] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
   const nameRef = useRef<HTMLInputElement>(null);
 
   const open = modal === "produk";
-  const isEdit = !!editProductId;
+  const activeId = editProductId ?? localEditId;   // whichever product we're editing
+  const isEdit = !!activeId;
+  const inSessionEdit = !!localEditId;
 
+  // Fresh open: reset everything (or load the product when opened from the grid).
   useEffect(() => {
-    if (open && editProductId) {
-      fetch(`/api/products/${editProductId}`)
-        .then(r => r.json())
-        .then((p: Product) => {
-          if (p?.id) setForm({ name: p.name, sku: p.sku, unit: p.unit, category: p.category, price: String(p.price), storeQty: String(p.storeQty) });
-        })
-        .catch(() => {});
-    } else if (open && !editProductId) {
-      setForm({ name: "", sku: "", unit: "pcs", category: "Sembako", price: "", storeQty: "" });
-      setSavedCount(0);
+    if (!open) return;
+    setAdded([]); setLocalEditId(null);
+    if (editProductId) {
+      fetch(`/api/products/${editProductId}`).then(r => r.json()).then((p: Product) => {
+        if (p?.id) setForm({ name: p.name, sku: p.sku, unit: p.unit, category: p.category, price: String(p.price), storeQty: String(p.storeQty) });
+      }).catch(() => {});
+    } else {
+      setForm({ ...EMPTY });
     }
   }, [open, editProductId]);
 
+  // Clicking a saved chip loads that product into the form for an in-session edit.
+  useEffect(() => {
+    if (!open || !localEditId) return;
+    fetch(`/api/products/${localEditId}`).then(r => r.json()).then((p: Product) => {
+      if (p?.id) setForm({ name: p.name, sku: p.sku, unit: p.unit, category: p.category, price: String(p.price), storeQty: String(p.storeQty) });
+    }).catch(() => {});
+  }, [open, localEditId]);
+
   function handleClose() { closeModal(); }
+  function backToAdd() { setLocalEditId(null); setForm(f => ({ ...EMPTY, unit: f.unit, category: f.category })); nameRef.current?.focus(); }
 
   async function handleSave(addAnother = false) {
     if (!form.name.trim()) return;
     setSubmitting(true);
     const body = { name: form.name, sku: form.sku, unit: form.unit, category: form.category, price: parseInt(form.price) || 0, storeQty: parseInt(form.storeQty) || 0 };
-    if (isEdit) {
-      await fetch(`/api/products/${editProductId}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
-    } else {
-      await fetch("/api/products", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
-    }
+    let saved: Product | null = null;
+    try {
+      const res = activeId
+        ? await fetch(`/api/products/${activeId}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) })
+        : await fetch("/api/products", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+      saved = await res.json().catch(() => null);
+    } catch { /* ignore */ }
     setSubmitting(false);
     bumpData();
-    if (addAnother && !isEdit) {
-      // Keep the modal open for rapid entry: clear the item fields but keep unit +
-      // category (usually shared across a batch), then refocus the name field.
-      setForm(f => ({ name: "", sku: "", unit: f.unit, category: f.category, price: "", storeQty: "" }));
-      setSavedCount(c => c + 1);
-      nameRef.current?.focus();
+
+    if (localEditId) {
+      // Finished fixing a just-added item → update its chip label, return to adding.
+      setAdded(list => list.map(x => x.id === localEditId ? { ...x, name: form.name } : x));
+      backToAdd();
+    } else if (editProductId) {
+      handleClose();                       // edit opened from the grid → close on save
     } else {
-      handleClose();
+      if (saved?.id) setAdded(list => [...list, { id: saved!.id, name: form.name }]);
+      if (addAnother) { setForm(f => ({ ...EMPTY, unit: f.unit, category: f.category })); nameRef.current?.focus(); }
+      else handleClose();
     }
   }
 
   async function handleDelete() {
-    if (!editProductId || !confirm("Hapus produk ini?")) return;
+    if (!activeId || !confirm("Hapus produk ini?")) return;
     setDeleting(true);
-    await fetch(`/api/products/${editProductId}`, { method: "DELETE" });
+    await fetch(`/api/products/${activeId}`, { method: "DELETE" }).catch(() => {});
     setDeleting(false);
-    handleClose();
+    bumpData();
+    if (localEditId) { setAdded(list => list.filter(x => x.id !== localEditId)); backToAdd(); }
+    else handleClose();
   }
 
   if (!open) return null;
 
   return (
     <>
-      <div onClick={handleClose} style={{ position: "fixed", inset: 0, background: "rgba(20,32,58,0.45)", zIndex: 1000 }} />
+      <div onClick={handleClose} style={{ position: "fixed", inset: 0, background: "rgba(13,17,23,0.45)", zIndex: 1000 }} />
       <div style={{
         position: "fixed", top: "50%", left: "50%", transform: "translate(-50%,-50%)",
         width: 480, maxWidth: "95vw", maxHeight: "90vh",
         background: "#fff", borderRadius: 16, zIndex: 1001,
         display: "flex", flexDirection: "column",
-        boxShadow: "0 20px 80px rgba(20,32,58,0.22)",
+        boxShadow: "0 20px 80px rgba(13,17,23,0.22)",
         overflow: "hidden",
       }}>
         {/* Header */}
@@ -102,6 +122,29 @@ export default function ProdukModal() {
 
         {/* Content */}
         <div style={{ flex: 1, overflowY: "auto", padding: "22px" }}>
+          {/* Saved-this-session chips — click to fix a mistake */}
+          {added.length > 0 && (
+            <div style={{ marginBottom: 20 }}>
+              <p style={{ fontSize: 10, letterSpacing: "0.16em", textTransform: "uppercase", color: "#8f897a", fontWeight: 600, marginBottom: 8 }}>Sudah ditambahkan · {added.length}</p>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+                {added.map(a => {
+                  const editing = localEditId === a.id;
+                  return (
+                    <button key={a.id} onClick={() => setLocalEditId(a.id)} title="Klik untuk ubah" style={{
+                      display: "inline-flex", alignItems: "center", gap: 6, height: 30, padding: "0 12px", borderRadius: 99,
+                      background: editing ? "#0D1117" : "#f4ecd4",
+                      border: `1px solid ${editing ? "#0D1117" : "#e2d4ad"}`,
+                      color: editing ? "#f8f6ef" : "#0D1117",
+                      fontSize: 12, fontWeight: 500, cursor: "pointer", fontFamily: "var(--font-hanken)", maxWidth: "100%",
+                    }}>
+                      <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{a.name}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
           {/* Photo + upload */}
           <div style={{ display: "flex", gap: 14, alignItems: "flex-start", marginBottom: 22 }}>
             <div style={{ width: 80, height: 80, borderRadius: 12, background: "#f1e7cd", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
@@ -167,13 +210,13 @@ export default function ProdukModal() {
               <label style={{ display: "block", fontSize: 10, letterSpacing: "0.16em", textTransform: "uppercase", color: "#8f897a", fontWeight: 600, marginBottom: 7 }}>HARGA JUAL (Rp)</label>
               <input type="number" value={form.price} onChange={e => setForm(f => ({ ...f, price: e.target.value }))}
                 placeholder="0"
-                style={{ width: "100%", height: 44, border: "1.5px solid #e8e3d5", borderRadius: 10, padding: "0 14px", fontSize: 14, color: "#0D1117", fontFamily: "var(--font-garamond)", background: "#fff" }} />
+                style={{ width: "100%", height: 44, border: "1.5px solid #e8e3d5", borderRadius: 10, padding: "0 14px", fontSize: 14, color: "#0D1117", fontFamily: "var(--font-hanken)", background: "#fff" }} />
             </div>
             <div>
               <label style={{ display: "block", fontSize: 10, letterSpacing: "0.16em", textTransform: "uppercase", color: "#8f897a", fontWeight: 600, marginBottom: 7 }}>STOK TOKO</label>
               <input type="number" value={form.storeQty} onChange={e => setForm(f => ({ ...f, storeQty: e.target.value }))}
                 placeholder="0"
-                style={{ width: "100%", height: 44, border: "1.5px solid #e8e3d5", borderRadius: 10, padding: "0 14px", fontSize: 14, color: "#0D1117", fontFamily: "var(--font-garamond)", background: "#fff" }} />
+                style={{ width: "100%", height: 44, border: "1.5px solid #e8e3d5", borderRadius: 10, padding: "0 14px", fontSize: 14, color: "#0D1117", fontFamily: "var(--font-hanken)", background: "#fff" }} />
             </div>
           </div>
         </div>
@@ -187,26 +230,41 @@ export default function ProdukModal() {
               Hapus produk
             </button>
           )}
-          {!isEdit && savedCount > 0 && (
-            <p style={{ fontSize: 12, color: "#3f7d54", fontWeight: 500, fontFamily: "var(--font-hanken)" }}>
-              ✓ {savedCount} produk ditambahkan
-            </p>
-          )}
           <div style={{ flex: 1, minWidth: 8 }} />
           <div style={{ display: "flex", gap: 10, flexWrap: "wrap", justifyContent: "flex-end" }}>
-            <button onClick={handleClose} style={{ height: 40, padding: "0 18px", background: "#fff", border: "1.5px solid #e8e3d5", borderRadius: 10, fontSize: 13, color: "#0D1117", cursor: "pointer", fontFamily: "var(--font-hanken)" }}>
-              {savedCount > 0 ? "Selesai" : "Batal"}
-            </button>
-            {!isEdit && (
-              <button onClick={() => handleSave(true)} disabled={submitting || !form.name.trim()}
-                style={{ height: 40, padding: "0 16px", background: "#fff", border: `1.5px solid ${form.name.trim() ? "#0D1117" : "#e8e3d5"}`, borderRadius: 10, fontSize: 13, fontWeight: 600, color: form.name.trim() ? "#0D1117" : "#8f897a", cursor: form.name.trim() ? "pointer" : "not-allowed", fontFamily: "var(--font-hanken)" }}>
-                {submitting ? "Menyimpan…" : "Simpan & tambah lagi"}
-              </button>
+            {inSessionEdit ? (
+              <>
+                <button onClick={backToAdd} style={{ height: 40, padding: "0 18px", background: "#fff", border: "1.5px solid #e8e3d5", borderRadius: 10, fontSize: 13, color: "#0D1117", cursor: "pointer", fontFamily: "var(--font-hanken)" }}>
+                  Kembali
+                </button>
+                <button onClick={() => handleSave(false)} disabled={submitting || !form.name.trim()}
+                  style={{ height: 40, padding: "0 20px", background: form.name.trim() ? "#0D1117" : "#e8e3d5", border: "none", borderRadius: 10, fontSize: 13, fontWeight: 600, color: form.name.trim() ? "#f8f6ef" : "#8f897a", cursor: form.name.trim() ? "pointer" : "not-allowed", fontFamily: "var(--font-hanken)" }}>
+                  {submitting ? "Menyimpan…" : "Simpan perubahan →"}
+                </button>
+              </>
+            ) : editProductId ? (
+              <>
+                <button onClick={handleClose} style={{ height: 40, padding: "0 18px", background: "#fff", border: "1.5px solid #e8e3d5", borderRadius: 10, fontSize: 13, color: "#0D1117", cursor: "pointer", fontFamily: "var(--font-hanken)" }}>Batal</button>
+                <button onClick={() => handleSave(false)} disabled={submitting || !form.name.trim()}
+                  style={{ height: 40, padding: "0 20px", background: form.name.trim() ? "#0D1117" : "#e8e3d5", border: "none", borderRadius: 10, fontSize: 13, fontWeight: 600, color: form.name.trim() ? "#f8f6ef" : "#8f897a", cursor: form.name.trim() ? "pointer" : "not-allowed", display: "flex", alignItems: "center", gap: 7, fontFamily: "var(--font-hanken)" }}>
+                  {submitting ? "Menyimpan…" : "Simpan →"}
+                </button>
+              </>
+            ) : (
+              <>
+                <button onClick={handleClose} style={{ height: 40, padding: "0 18px", background: "#fff", border: "1.5px solid #e8e3d5", borderRadius: 10, fontSize: 13, color: "#0D1117", cursor: "pointer", fontFamily: "var(--font-hanken)" }}>
+                  {added.length > 0 ? "Selesai" : "Batal"}
+                </button>
+                <button onClick={() => handleSave(true)} disabled={submitting || !form.name.trim()}
+                  style={{ height: 40, padding: "0 16px", background: "#fff", border: `1.5px solid ${form.name.trim() ? "#0D1117" : "#e8e3d5"}`, borderRadius: 10, fontSize: 13, fontWeight: 600, color: form.name.trim() ? "#0D1117" : "#8f897a", cursor: form.name.trim() ? "pointer" : "not-allowed", fontFamily: "var(--font-hanken)" }}>
+                  {submitting ? "Menyimpan…" : "Simpan & tambah lagi"}
+                </button>
+                <button onClick={() => handleSave(false)} disabled={submitting || !form.name.trim()}
+                  style={{ height: 40, padding: "0 20px", background: form.name.trim() ? "#0D1117" : "#e8e3d5", border: "none", borderRadius: 10, fontSize: 13, fontWeight: 600, color: form.name.trim() ? "#f8f6ef" : "#8f897a", cursor: form.name.trim() ? "pointer" : "not-allowed", display: "flex", alignItems: "center", gap: 7, fontFamily: "var(--font-hanken)" }}>
+                  {submitting ? "Menyimpan…" : "Simpan →"}
+                </button>
+              </>
             )}
-            <button onClick={() => handleSave(false)} disabled={submitting || !form.name.trim()}
-              style={{ height: 40, padding: "0 20px", background: form.name.trim() ? "#0D1117" : "#e8e3d5", border: "none", borderRadius: 10, fontSize: 13, fontWeight: 600, color: form.name.trim() ? "#f8f6ef" : "#8f897a", cursor: form.name.trim() ? "pointer" : "not-allowed", display: "flex", alignItems: "center", gap: 7, fontFamily: "var(--font-hanken)" }}>
-              {submitting ? "Menyimpan…" : "Simpan →"}
-            </button>
           </div>
         </div>
       </div>

@@ -10,6 +10,19 @@ const inputStyle: React.CSSProperties = {
   padding: "0 14px", fontSize: 14, color: "#0D1117", fontFamily: "var(--font-hanken)", background: "#fff",
 };
 
+// Typed 24-hour time entry (no native AM/PM picker): insert the colon as digits are
+// typed, then clamp to a valid HH:MM on blur.
+function formatTime(v: string): string {
+  const digits = v.replace(/\D/g, "").slice(0, 4);
+  return digits.length <= 2 ? digits : `${digits.slice(0, 2)}:${digits.slice(2)}`;
+}
+function normalizeTime(v: string): string {
+  const digits = v.replace(/\D/g, "").padEnd(4, "0").slice(0, 4);
+  const h = Math.min(23, parseInt(digits.slice(0, 2), 10) || 0);
+  const m = Math.min(59, parseInt(digits.slice(2), 10) || 0);
+  return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
+}
+
 export default function TambahShiftModal() {
   const { modal, closeModal, bumpData } = useUIStore();
   const [name, setName] = useState("");
@@ -77,17 +90,26 @@ export default function TambahShiftModal() {
               style={inputStyle} />
           </div>
 
-          {/* Times */}
-          <div className="bo-cols-2" style={{ gap: 12, marginBottom: 18 }}>
+          {/* Times — typed 24-hour HH:MM, like the POS (no native AM/PM picker) */}
+          <div className="bo-cols-2" style={{ gap: 12, marginBottom: 6 }}>
             <div>
               <label style={{ display: "block", fontSize: 10, letterSpacing: "0.16em", textTransform: "uppercase", color: "#8f897a", fontWeight: 600, marginBottom: 7 }}>JAM MULAI</label>
-              <input type="time" value={startTime} onChange={e => setStartTime(e.target.value)} style={inputStyle} />
+              <input type="text" inputMode="numeric" placeholder="08:00" maxLength={5}
+                value={startTime}
+                onChange={e => setStartTime(formatTime(e.target.value))}
+                onBlur={() => setStartTime(v => normalizeTime(v))}
+                style={inputStyle} />
             </div>
             <div>
               <label style={{ display: "block", fontSize: 10, letterSpacing: "0.16em", textTransform: "uppercase", color: "#8f897a", fontWeight: 600, marginBottom: 7 }}>JAM SELESAI</label>
-              <input type="time" value={endTime} onChange={e => setEndTime(e.target.value)} style={inputStyle} />
+              <input type="text" inputMode="numeric" placeholder="16:00" maxLength={5}
+                value={endTime}
+                onChange={e => setEndTime(formatTime(e.target.value))}
+                onBlur={() => setEndTime(v => normalizeTime(v))}
+                style={inputStyle} />
             </div>
           </div>
+          <p style={{ fontSize: 11, color: "#8f897a", margin: "0 0 18px" }}>Format 24 jam, mis. 08:00 atau 16:30.</p>
 
           {/* Assign cashier */}
           <div style={{ marginBottom: 18 }}>
