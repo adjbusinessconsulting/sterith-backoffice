@@ -20,7 +20,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
     where: { id: params.id, storeId },
     data: {
       ...(body.name !== undefined && { name: body.name }),
-      ...(body.sku !== undefined && { sku: body.sku }),
+      ...(body.sku !== undefined && { sku: body.sku?.trim() || null }),
       ...(body.unit !== undefined && { unit: body.unit }),
       ...(body.category !== undefined && { category: body.category }),
       ...(body.price !== undefined && { price: body.price }),

@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
   const { storeId } = session.user;
   const body = await req.json();
 
-  const sku = body.sku?.trim() || `NEW${Date.now()}`;
+  const sku = body.sku?.trim() || null;   // SKU is optional — don't fabricate one
   const id = `prod_${Date.now()}`;
   try {
     const product = await db.product.create({
