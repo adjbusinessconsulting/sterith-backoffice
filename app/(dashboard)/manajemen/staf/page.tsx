@@ -5,6 +5,7 @@ import { useUIStore } from "@/store/ui";
 import { useSession } from "next-auth/react";
 import { isAtLeast } from "@/lib/tier";
 import LockedSection from "@/components/LockedSection";
+import ManagerAccessPanel from "@/components/ManagerAccessPanel";
 
 interface StaffMember {
   id: string; name: string; role: string; createdAt: string;
@@ -196,6 +197,8 @@ export default function StafPage() {
           )}
         </div>
       </div>
+
+      <ManagerAccessPanel />
     </div>
   );
 }
