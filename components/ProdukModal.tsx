@@ -141,29 +141,6 @@ export default function ProdukModal() {
 
         {/* Content */}
         <div style={{ flex: 1, overflowY: "auto", padding: "22px" }}>
-          {/* Saved-this-session chips — click to fix a mistake */}
-          {added.length > 0 && (
-            <div style={{ marginBottom: 20 }}>
-              <p style={{ fontSize: 10, letterSpacing: "0.16em", textTransform: "uppercase", color: "#8f897a", fontWeight: 600, marginBottom: 8 }}>Sudah ditambahkan · {added.length}</p>
-              <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-                {added.map(a => {
-                  const editing = localEditId === a.id;
-                  return (
-                    <button key={a.id} onClick={() => setLocalEditId(a.id)} title="Klik untuk ubah" style={{
-                      display: "inline-flex", alignItems: "center", gap: 6, height: 30, padding: "0 12px", borderRadius: 99,
-                      background: editing ? "#0D1117" : "#f4ecd4",
-                      border: `1px solid ${editing ? "#0D1117" : "#e2d4ad"}`,
-                      color: editing ? "#f8f6ef" : "#0D1117",
-                      fontSize: 12, fontWeight: 500, cursor: "pointer", fontFamily: "var(--font-hanken)", maxWidth: "100%",
-                    }}>
-                      <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{a.name}</span>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-
           {/* Photo + upload */}
           <div style={{ display: "flex", gap: 14, alignItems: "flex-start", marginBottom: 22 }}>
             <div style={{ width: 80, height: 80, borderRadius: 12, background: "#f1e7cd", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
@@ -255,6 +232,29 @@ export default function ProdukModal() {
             </div>
           </div>
         </div>
+
+        {/* Saved this session — pinned above the footer so it's always visible; click a chip to fix it */}
+        {added.length > 0 && (
+          <div style={{ padding: "11px 22px", borderTop: "1px solid #f0ebe0", background: "#fbfaf5", flexShrink: 0, maxHeight: 116, overflowY: "auto" }}>
+            <p style={{ fontSize: 10, letterSpacing: "0.16em", textTransform: "uppercase", color: "#8f897a", fontWeight: 600, marginBottom: 8 }}>Sudah ditambahkan · {added.length} — klik untuk ubah</p>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+              {added.map(a => {
+                const editing = localEditId === a.id;
+                return (
+                  <button key={a.id} onClick={() => setLocalEditId(a.id)} title="Klik untuk ubah" style={{
+                    display: "inline-flex", alignItems: "center", gap: 6, height: 30, padding: "0 12px", borderRadius: 99,
+                    background: editing ? "#0D1117" : "#f4ecd4",
+                    border: `1px solid ${editing ? "#0D1117" : "#e2d4ad"}`,
+                    color: editing ? "#f8f6ef" : "#0D1117",
+                    fontSize: 12, fontWeight: 500, cursor: "pointer", fontFamily: "var(--font-hanken)", maxWidth: "100%",
+                  }}>
+                    <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{a.name}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
         {/* Footer */}
         <div style={{ padding: "14px 22px", borderTop: "1px solid #f0ebe0", display: "flex", alignItems: "center", gap: 10, flexShrink: 0, flexWrap: "wrap" }}>
