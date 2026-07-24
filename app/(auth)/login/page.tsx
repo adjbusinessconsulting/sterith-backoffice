@@ -34,9 +34,14 @@ export default function LoginPage() {
     const res = await signIn("credentials", { email, password, redirect: false });
     setLoading(false);
     if (res?.error) {
-      setError(res.error.includes("NOT_ELIGIBLE")
-        ? "Kata sandi benar, tapi akun ini belum bisa masuk Back Office — khusus Premium yang aktif. Hubungi admin."
-        : "Email atau password salah.");
+      const e = res.error;
+      setError(
+        e.includes("RATE_LIMITED")
+          ? "Terlalu banyak percobaan masuk. Demi keamanan, akun dikunci sementara. Tunggu 15 menit — tanpa mencoba lagi — lalu masuk sekali dengan kata sandi yang benar."
+        : e.includes("NOT_ELIGIBLE")
+          ? "Kata sandi benar, tapi akun ini belum bisa masuk Back Office — khusus Premium yang aktif. Hubungi admin."
+          : "Email atau password salah."
+      );
     } else window.location.href = "/analitik/penjualan";
   }
 

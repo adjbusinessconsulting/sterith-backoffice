@@ -80,17 +80,21 @@ export const authOptions: NextAuthOptions = {
         //    below are only a fallback for when Master Office is unreachable.
         let moOwnerId: string | null = null;
         let moRejected = false;
+        let moBlocked = false;
         try {
           const vres = await fetch("https://masteroffice.sterith.com/api/app-auth/verify", {
             method: "POST", headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email, app: "backoffice", password: credentials.password }),
           });
           if (vres.ok) {
-            const vj = (await vres.json().catch(() => ({}))) as { ok?: boolean; ownerId?: string };
-            if (vj.ok && vj.ownerId) moOwnerId = vj.ownerId;
+            const vj = (await vres.json().catch(() => ({}))) as { ok?: boolean; ownerId?: string; blocked?: boolean };
+            if (vj.blocked) moBlocked = true;                 // rate-limited, NOT a wrong password
+            else if (vj.ok && vj.ownerId) moOwnerId = vj.ownerId;
             else if (vj.ok === false) moRejected = true;
           }
         } catch { /* Master Office unreachable → fall through to local verification */ }
+        // Throw AFTER the try/catch so the message isn't swallowed by the catch above.
+        if (moBlocked) throw new Error("RATE_LIMITED");   // too many attempts — tell the user to wait
         if (moOwnerId) {
           const u = await resolveOwner(moOwnerId, email);
           if (!u) throw new Error("NOT_ELIGIBLE");
