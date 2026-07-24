@@ -38,6 +38,8 @@ export default function LoginPage() {
       setError(
         e.includes("RATE_LIMITED")
           ? "Terlalu banyak percobaan masuk. Demi keamanan, akun dikunci sementara. Tunggu 15 menit — tanpa mencoba lagi — lalu masuk sekali dengan kata sandi yang benar."
+        : e.includes("SERVER_ERROR")
+          ? "Sistem sedang bermasalah (koneksi database). Coba lagi sebentar. Jika terus terjadi, hubungi admin."
         : e.includes("NOT_ELIGIBLE")
           ? "Kata sandi benar, tapi akun ini belum bisa masuk Back Office — khusus Premium yang aktif. Hubungi admin."
           : "Email atau password salah."

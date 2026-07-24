@@ -55,6 +55,7 @@ export default function StafPage() {
 
   return (
     <div style={{ padding: "32px 36px", maxWidth: 1000 }}>
+      <style>{`@media (max-width: 640px){ .bo-akun-hint{ display: none; } }`}</style>
       {/* Header */}
       <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 28 }}>
         <div>
@@ -68,26 +69,28 @@ export default function StafPage() {
             Buat akun kasir, atur peran, dan jadwalkan shift.
           </p>
         </div>
-        <button
-          onClick={() => openModal("tambahKasir")}
-          style={{
-            height: 40, padding: "0 18px",
-            background: "#0D1117", border: "none",
-            borderRadius: 10, fontSize: 13, fontWeight: 600,
-            color: "#f8f6ef", cursor: "pointer", display: "flex", alignItems: "center", gap: 7,
-            fontFamily: "var(--font-hanken)", flexShrink: 0,
-          }}
-        >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2"><path d="M12 5v14M5 12h14"/></svg>
-          Tambah kasir
-        </button>
       </div>
 
       {/* Accounts table */}
       <div className="bo-table-scroll" style={{ background: "#fff", border: "1px solid #e8e3d5", borderRadius: 12, marginBottom: 28 }}>
-        <div style={{ padding: "14px 18px", borderBottom: "1px solid #f0ebe0", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <div style={{ padding: "14px 18px", borderBottom: "1px solid #f0ebe0", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
           <p style={{ fontSize: 12.5, fontWeight: 600, color: "#0D1117" }}>AKUN ({staff.length})</p>
-          <p style={{ fontSize: 11.5, color: "#8f897a" }}>Kasir masuk lewat POS dengan PIN 6-digit</p>
+          <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+            <p className="bo-akun-hint" style={{ fontSize: 11.5, color: "#8f897a" }}>Kasir masuk lewat POS dengan PIN 6-digit</p>
+            <button
+              onClick={() => openModal("tambahKasir")}
+              style={{
+                height: 34, padding: "0 14px",
+                background: "#f8f6ef", border: "1.5px solid #e8e3d5",
+                borderRadius: 8, fontSize: 12, fontWeight: 500,
+                color: "#0D1117", cursor: "pointer", display: "flex", alignItems: "center", gap: 6,
+                fontFamily: "var(--font-hanken)", flexShrink: 0,
+              }}
+            >
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2"><path d="M12 5v14M5 12h14"/></svg>
+              Tambah kasir
+            </button>
+          </div>
         </div>
         <table style={{ width: "100%", borderCollapse: "collapse" }}>
           <thead>

@@ -74,6 +74,10 @@ export const authOptions: NextAuthOptions = {
         if (!credentials?.email || !credentials?.password) return null;
         const email = credentials.email;
 
+        // Wrap the DB-touching logic so an unexpected failure (bad DATABASE_URL, a
+        // Prisma auth error, etc.) surfaces as a clean SERVER_ERROR the login page can
+        // explain — instead of leaking the raw error or masquerading as a wrong password.
+        try {
         // 0) Verify through Master Office (service role — reads auth.users reliably,
         //    exactly like POS login). This is the primary path so BO never depends on
         //    its own connection being able to read the auth schema. The local checks
@@ -170,6 +174,12 @@ export const authOptions: NextAuthOptions = {
         const u = await resolveOwner(user.id, user.email ?? credentials.email);
         if (!u) throw new Error("NOT_ELIGIBLE");
         return u;
+        } catch (e) {
+          const msg = e instanceof Error ? e.message : "";
+          if (msg === "NOT_ELIGIBLE" || msg === "RATE_LIMITED") throw e;  // known outcomes — surface as-is
+          console.error("BO authorize unexpected error:", e);
+          throw new Error("SERVER_ERROR");   // e.g. database unreachable — don't call it "wrong password"
+        }
       },
     }),
   ],
