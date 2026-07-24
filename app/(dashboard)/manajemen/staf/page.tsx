@@ -33,6 +33,7 @@ const ROLE_PERMS: Record<string, string> = {
 export default function StafPage() {
   const { data: session } = useSession();
   const openModal = useUIStore(s => s.openModal);
+  const dataVersion = useUIStore(s => s.dataVersion);
   const [staff, setStaff] = useState<StaffMember[]>([]);
   const [shifts, setShifts] = useState<Shift[]>([]);
 
@@ -43,7 +44,7 @@ export default function StafPage() {
     fetch("/api/shifts").then(r => r.json()).then(d => { if (Array.isArray(d)) setShifts(d); }).catch(() => {});
   }, []);
 
-  useEffect(() => { if (isAtLeast(userTier, 'premium')) load(); }, [load, userTier]);
+  useEffect(() => { if (isAtLeast(userTier, 'premium')) load(); }, [load, userTier, dataVersion]);
 
   if (!isAtLeast(userTier, 'premium')) return <LockedSection requiredTier="business" />;
 
@@ -158,7 +159,7 @@ export default function StafPage() {
       <div style={{ background: "#fff", border: "1px solid #e8e3d5", borderRadius: 12, overflow: "hidden" }}>
         <div style={{ padding: "14px 18px", borderBottom: "1px solid #f0ebe0", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <p style={{ fontSize: 12.5, fontWeight: 600, color: "#0D1117" }}>SHIFT TOKO</p>
-          <button style={{
+          <button onClick={() => openModal("tambahShift")} style={{
             height: 34, padding: "0 14px",
             background: "#f8f6ef", border: "1.5px solid #e8e3d5",
             borderRadius: 8, fontSize: 12, fontWeight: 500,

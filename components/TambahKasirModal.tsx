@@ -4,7 +4,7 @@ import { X } from "lucide-react";
 import { useUIStore } from "@/store/ui";
 
 export default function TambahKasirModal() {
-  const { modal, closeModal } = useUIStore();
+  const { modal, closeModal, bumpData } = useUIStore();
   const [name, setName] = useState("");
   const [pin, setPin] = useState("");
   const [role, setRole] = useState<"KASIR" | "MANAJER">("KASIR");
@@ -26,6 +26,7 @@ export default function TambahKasirModal() {
     });
     setSubmitting(false);
     if (!res.ok) { setError("Gagal menyimpan. Coba lagi."); return; }
+    bumpData();
     handleClose();
   }
 

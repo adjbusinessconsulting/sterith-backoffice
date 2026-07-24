@@ -8,6 +8,7 @@ import StokMasukModal from "@/components/StokMasukModal";
 import TransferModal from "@/components/TransferModal";
 import ProdukModal from "@/components/ProdukModal";
 import TambahKasirModal from "@/components/TambahKasirModal";
+import TambahShiftModal from "@/components/TambahShiftModal";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   // Auto-logout if the client gets suspended mid-session.
@@ -41,6 +42,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <TransferModal />
         <ProdukModal />
         <TambahKasirModal />
+        <TambahShiftModal />
       </div>
     </DeviceGate>
   );

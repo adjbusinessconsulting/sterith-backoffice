@@ -20,6 +20,7 @@ const CATS = ["Semua", "Sembako", "Minuman", "Snack", "Rokok"];
 
 export default function ProdukPage() {
   const openModal = useUIStore(s => s.openModal);
+  const dataVersion = useUIStore(s => s.dataVersion);
   const [products, setProducts] = useState<Product[]>([]);
   const [query, setQuery] = useState("");
   const [cat, setCat] = useState("Semua");
@@ -31,7 +32,7 @@ export default function ProdukPage() {
       .catch(() => {});
   }
 
-  useEffect(() => { refresh(); }, []);
+  useEffect(() => { refresh(); }, [dataVersion]);
 
   const filtered = products.filter(p => {
     const matchCat = cat === "Semua" || p.category === cat;

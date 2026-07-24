@@ -15,11 +15,13 @@ function initials(name: string) {
 }
 
 export default function ProdukModal() {
-  const { modal, editProductId, closeModal } = useUIStore();
+  const { modal, editProductId, closeModal, bumpData } = useUIStore();
   const [form, setForm] = useState({ name: "", sku: "", unit: "pcs", category: "Sembako", price: "", storeQty: "" });
   const [submitting, setSubmitting] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [savedCount, setSavedCount] = useState(0);
   const fileRef = useRef<HTMLInputElement>(null);
+  const nameRef = useRef<HTMLInputElement>(null);
 
   const open = modal === "produk";
   const isEdit = !!editProductId;
@@ -34,12 +36,13 @@ export default function ProdukModal() {
         .catch(() => {});
     } else if (open && !editProductId) {
       setForm({ name: "", sku: "", unit: "pcs", category: "Sembako", price: "", storeQty: "" });
+      setSavedCount(0);
     }
   }, [open, editProductId]);
 
   function handleClose() { closeModal(); }
 
-  async function handleSave() {
+  async function handleSave(addAnother = false) {
     if (!form.name.trim()) return;
     setSubmitting(true);
     const body = { name: form.name, sku: form.sku, unit: form.unit, category: form.category, price: parseInt(form.price) || 0, storeQty: parseInt(form.storeQty) || 0 };
@@ -49,7 +52,16 @@ export default function ProdukModal() {
       await fetch("/api/products", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
     }
     setSubmitting(false);
-    handleClose();
+    bumpData();
+    if (addAnother && !isEdit) {
+      // Keep the modal open for rapid entry: clear the item fields but keep unit +
+      // category (usually shared across a batch), then refocus the name field.
+      setForm(f => ({ name: "", sku: "", unit: f.unit, category: f.category, price: "", storeQty: "" }));
+      setSavedCount(c => c + 1);
+      nameRef.current?.focus();
+    } else {
+      handleClose();
+    }
   }
 
   async function handleDelete() {
@@ -109,7 +121,7 @@ export default function ProdukModal() {
           {/* Name */}
           <div style={{ marginBottom: 16 }}>
             <label style={{ display: "block", fontSize: 10, letterSpacing: "0.16em", textTransform: "uppercase", color: "#8f897a", fontWeight: 600, marginBottom: 7 }}>NAMA PRODUK</label>
-            <input value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
+            <input ref={nameRef} value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
               placeholder="mis. Beras Pandan 5kg"
               style={{ width: "100%", height: 44, border: "1.5px solid #e8e3d5", borderRadius: 10, padding: "0 14px", fontSize: 14, color: "#0D1117", fontFamily: "var(--font-hanken)", background: "#fff" }} />
           </div>
@@ -167,7 +179,7 @@ export default function ProdukModal() {
         </div>
 
         {/* Footer */}
-        <div style={{ padding: "14px 22px", borderTop: "1px solid #f0ebe0", display: "flex", alignItems: "center", flexShrink: 0 }}>
+        <div style={{ padding: "14px 22px", borderTop: "1px solid #f0ebe0", display: "flex", alignItems: "center", gap: 10, flexShrink: 0, flexWrap: "wrap" }}>
           {isEdit && (
             <button onClick={handleDelete} disabled={deleting}
               style={{ fontSize: 12.5, color: "#b0492f", background: "none", border: "none", cursor: "pointer", display: "flex", alignItems: "center", gap: 6, fontWeight: 500, fontFamily: "var(--font-hanken)" }}>
@@ -175,12 +187,23 @@ export default function ProdukModal() {
               Hapus produk
             </button>
           )}
-          <div style={{ flex: 1 }} />
-          <div style={{ display: "flex", gap: 10 }}>
+          {!isEdit && savedCount > 0 && (
+            <p style={{ fontSize: 12, color: "#3f7d54", fontWeight: 500, fontFamily: "var(--font-hanken)" }}>
+              ✓ {savedCount} produk ditambahkan
+            </p>
+          )}
+          <div style={{ flex: 1, minWidth: 8 }} />
+          <div style={{ display: "flex", gap: 10, flexWrap: "wrap", justifyContent: "flex-end" }}>
             <button onClick={handleClose} style={{ height: 40, padding: "0 18px", background: "#fff", border: "1.5px solid #e8e3d5", borderRadius: 10, fontSize: 13, color: "#0D1117", cursor: "pointer", fontFamily: "var(--font-hanken)" }}>
-              Batal
+              {savedCount > 0 ? "Selesai" : "Batal"}
             </button>
-            <button onClick={handleSave} disabled={submitting || !form.name.trim()}
+            {!isEdit && (
+              <button onClick={() => handleSave(true)} disabled={submitting || !form.name.trim()}
+                style={{ height: 40, padding: "0 16px", background: "#fff", border: `1.5px solid ${form.name.trim() ? "#0D1117" : "#e8e3d5"}`, borderRadius: 10, fontSize: 13, fontWeight: 600, color: form.name.trim() ? "#0D1117" : "#8f897a", cursor: form.name.trim() ? "pointer" : "not-allowed", fontFamily: "var(--font-hanken)" }}>
+                {submitting ? "Menyimpan…" : "Simpan & tambah lagi"}
+              </button>
+            )}
+            <button onClick={() => handleSave(false)} disabled={submitting || !form.name.trim()}
               style={{ height: 40, padding: "0 20px", background: form.name.trim() ? "#0D1117" : "#e8e3d5", border: "none", borderRadius: 10, fontSize: 13, fontWeight: 600, color: form.name.trim() ? "#f8f6ef" : "#8f897a", cursor: form.name.trim() ? "pointer" : "not-allowed", display: "flex", alignItems: "center", gap: 7, fontFamily: "var(--font-hanken)" }}>
               {submitting ? "Menyimpan…" : "Simpan →"}
             </button>
