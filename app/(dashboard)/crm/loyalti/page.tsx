@@ -33,7 +33,7 @@ export default function LoyaltiPage() {
       <DemoBanner owned={owned} addOn="crm" storeName="Kanso Lifestyle" />
 
       {/* Earn rule */}
-      <div style={{ display: "flex", alignItems: "center", gap: 14, background: "linear-gradient(180deg,#fff,#faf6ec)", border: "1px solid #efe6cf", borderRadius: 14, padding: "16px 20px", marginBottom: 20 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 14, background: "#faf8f1", border: "1px solid #efe6cf", borderRadius: 14, padding: "16px 20px", marginBottom: 20 }}>
         <div style={{ width: 40, height: 40, borderRadius: 11, background: "#f1e7cd", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
           <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#b8934a" strokeWidth="1.8"><polygon points="12 2 15 9 22 9 16 14 18 21 12 17 6 21 8 14 2 9 9 9"/></svg>
         </div>

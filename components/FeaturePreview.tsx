@@ -27,7 +27,7 @@ export default function FeaturePreview({
 
       {/* Upsell banner — shown when the store doesn't own this add-on */}
       {!owned && (
-        <div style={{ display: "flex", alignItems: "flex-start", gap: 14, background: "linear-gradient(180deg,#faf3e2,#f6ecd3)", border: "1px solid rgba(184,147,74,0.35)", borderRadius: 14, padding: "16px 18px", marginBottom: 22 }}>
+        <div style={{ display: "flex", alignItems: "flex-start", gap: 14, background: "#f4ecd4", border: "1px solid rgba(184,147,74,0.35)", borderRadius: 14, padding: "16px 18px", marginBottom: 22 }}>
           <div style={{ width: 38, height: 38, borderRadius: 10, background: "#f1e7cd", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#b8934a" strokeWidth="1.9"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
           </div>

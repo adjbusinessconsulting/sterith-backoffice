@@ -16,7 +16,7 @@ export default function DemoBanner({ owned, addOn, storeName }: { owned: boolean
     );
   }
   return (
-    <div style={{ display: "flex", alignItems: "flex-start", gap: 12, background: "linear-gradient(180deg,#faf3e2,#f6ecd3)", border: "1px solid rgba(184,147,74,0.35)", borderRadius: 14, padding: "13px 16px", marginBottom: 20 }}>
+    <div style={{ display: "flex", alignItems: "flex-start", gap: 12, background: "#f4ecd4", border: "1px solid rgba(184,147,74,0.35)", borderRadius: 14, padding: "13px 16px", marginBottom: 20 }}>
       <div style={{ width: 34, height: 34, borderRadius: 9, background: "#f1e7cd", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#b8934a" strokeWidth="1.9"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>
       </div>

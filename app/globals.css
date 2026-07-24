@@ -26,6 +26,19 @@ body {
   font-feature-settings: "onum";
 }
 
+/* Numeric values — Hanken tabular lining figures so digits are monospaced and
+   columns align (design system §3). Titles stay serif; numbers never do. */
+.num {
+  font-family: var(--font-hanken);
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+/* Gold selection highlight (design system global reset). */
+::selection {
+  background: #e7c987;
+  color: #0D1117;
+}
+
 ::-webkit-scrollbar {
   width: 4px;
   height: 4px;
