@@ -31,12 +31,20 @@ const ROLE_PERMS: Record<string, string> = {
   KASIR: "POS · Kas laci",
 };
 
+// Short labels for the manager-access summary shown in a manager's IZIN cell.
+const PERM_LABELS: Record<string, string> = {
+  void: "Void", discount: "Diskon", products: "Produk", shifts: "Shift",
+  cashDrawer: "Kas laci", stock: "Stok", reports: "Laporan",
+};
+
 export default function StafPage() {
   const { data: session } = useSession();
   const openModal = useUIStore(s => s.openModal);
   const dataVersion = useUIStore(s => s.dataVersion);
   const [staff, setStaff] = useState<StaffMember[]>([]);
   const [shifts, setShifts] = useState<Shift[]>([]);
+  const [mgr, setMgr] = useState<{ managerPerms: Record<string, boolean>; approvalMethod: string } | null>(null);
+  const [mgrOpen, setMgrOpen] = useState(false);
 
   const userTier = session?.user?.tier ?? 'premium';
 
@@ -46,6 +54,11 @@ export default function StafPage() {
   }, []);
 
   useEffect(() => { if (isAtLeast(userTier, 'premium')) load(); }, [load, userTier, dataVersion]);
+  useEffect(() => {
+    if (!isAtLeast(userTier, 'premium')) return;
+    fetch("/api/manager-settings").then(r => r.json()).then(d => { if (d?.managerPerms) setMgr(d); }).catch(() => {});
+  }, [userTier]);
+  const mgrSummary = mgr ? Object.keys(PERM_LABELS).filter(k => mgr.managerPerms[k]).map(k => PERM_LABELS[k]).join(" · ") : "";
 
   if (!isAtLeast(userTier, 'premium')) return <LockedSection requiredTier="business" />;
 
@@ -137,7 +150,14 @@ export default function StafPage() {
                     <span style={{ letterSpacing: "0.2em", fontSize: 14, color: "#8f897a" }}>• • • •</span>
                   </td>
                   <td style={{ padding: "14px 16px" }}>
-                    <span style={{ fontSize: 12.5, color: "#0D1117" }}>{ROLE_PERMS[s.role] ?? "—"}</span>
+                    {s.role?.toUpperCase() === "MANAJER" ? (
+                      <button onClick={() => setMgrOpen(true)} title="Atur izin manajer" style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "none", border: "none", padding: 0, cursor: "pointer", fontFamily: "var(--font-hanken)", textAlign: "left" }}>
+                        <span style={{ fontSize: 12.5, color: mgrSummary ? "#0D1117" : "#b8934a", fontWeight: mgrSummary ? 400 : 600 }}>{mgrSummary || "Atur akses"}</span>
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#8f897a" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                      </button>
+                    ) : (
+                      <span style={{ fontSize: 12.5, color: "#0D1117" }}>{ROLE_PERMS[s.role] ?? "—"}</span>
+                    )}
                   </td>
                   <td style={{ padding: "14px 10px", width: 40 }}>
                     {s.role !== "OWNER" && (
@@ -198,7 +218,7 @@ export default function StafPage() {
         </div>
       </div>
 
-      <ManagerAccessPanel />
+      <ManagerAccessPanel open={mgrOpen} onClose={() => setMgrOpen(false)} onSaved={setMgr} />
     </div>
   );
 }
