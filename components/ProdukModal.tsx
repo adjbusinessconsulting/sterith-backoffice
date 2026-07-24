@@ -116,10 +116,11 @@ export default function ProdukModal() {
   return (
     <>
       <div onClick={handleClose} style={{ position: "fixed", inset: 0, background: "rgba(13,17,23,0.45)", zIndex: 1000 }} />
+      <div style={{ position: "fixed", inset: 0, zIndex: 1001, display: "flex", alignItems: "center", justifyContent: "center", padding: 16, pointerEvents: "none" }}>
+      <div style={{ display: "flex", gap: 12, alignItems: "stretch", maxHeight: "92vh", pointerEvents: "auto" }}>
       <div style={{
-        position: "fixed", top: "50%", left: "50%", transform: "translate(-50%,-50%)",
-        width: 480, maxWidth: "95vw", maxHeight: "90vh",
-        background: "#fff", borderRadius: 16, zIndex: 1001,
+        width: 480, maxWidth: "95vw", maxHeight: "92vh",
+        background: "#fff", borderRadius: 16,
         display: "flex", flexDirection: "column",
         boxShadow: "0 20px 80px rgba(13,17,23,0.22)",
         overflow: "hidden",
@@ -235,7 +236,7 @@ export default function ProdukModal() {
 
         {/* Saved this session — pinned above the footer so it's always visible; click a chip to fix it */}
         {added.length > 0 && (
-          <div style={{ padding: "11px 22px", borderTop: "1px solid #f0ebe0", background: "#fbfaf5", flexShrink: 0, maxHeight: 116, overflowY: "auto" }}>
+          <div className="bo-added-strip" style={{ padding: "11px 22px", borderTop: "1px solid #f0ebe0", background: "#fbfaf5", flexShrink: 0, maxHeight: 116, overflowY: "auto" }}>
             <p style={{ fontSize: 10, letterSpacing: "0.16em", textTransform: "uppercase", color: "#8f897a", fontWeight: 600, marginBottom: 8 }}>Sudah ditambahkan · {added.length} — klik untuk ubah</p>
             <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
               {added.map(a => {
@@ -302,6 +303,33 @@ export default function ProdukModal() {
             )}
           </div>
         </div>
+      </div>
+
+      {/* Side panel — products added this session (desktop); tap to re-edit */}
+      {added.length > 0 && (
+        <aside className="bo-added-side" style={{ width: 214, maxHeight: "92vh", background: "#fff", borderRadius: 16, boxShadow: "0 20px 80px rgba(13,17,23,0.22)", overflow: "hidden", flexDirection: "column" }}>
+          <div style={{ padding: "16px 18px 12px", borderBottom: "1px solid #f0ebe0" }}>
+            <p style={{ fontSize: 10, letterSpacing: "0.16em", textTransform: "uppercase", color: "#b8934a", fontWeight: 600 }}>Baru ditambahkan</p>
+            <p style={{ fontSize: 16, fontWeight: 700, color: "#0D1117", marginTop: 2 }}>{added.length} produk</p>
+          </div>
+          <div style={{ flex: 1, overflowY: "auto", padding: 10, display: "flex", flexDirection: "column", gap: 6 }}>
+            {[...added].reverse().map(a => {
+              const editing = localEditId === a.id;
+              return (
+                <button key={a.id} onClick={() => setLocalEditId(a.id)} title="Klik untuk ubah" style={{
+                  textAlign: "left", padding: "9px 11px", borderRadius: 9,
+                  background: editing ? "#0D1117" : "#faf8f1",
+                  border: `1px solid ${editing ? "#0D1117" : "#eee9dc"}`,
+                  color: editing ? "#f8f6ef" : "#0D1117",
+                  fontSize: 12.5, fontWeight: 500, cursor: "pointer", fontFamily: "var(--font-hanken)",
+                  whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis",
+                }}>{a.name}</button>
+              );
+            })}
+          </div>
+        </aside>
+      )}
+      </div>
       </div>
     </>
   );

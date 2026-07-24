@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
 import {
@@ -149,6 +149,13 @@ export default function Sidebar() {
   const sidebarOpen = useUIStore(s => s.sidebarOpen);
   const closeSidebar = useUIStore(s => s.closeSidebar);
   const [feedbackOpen, setFeedbackOpen] = useState(false);
+  const [store, setStore] = useState<{ name: string; address: string } | null>(null);
+  useEffect(() => {
+    fetch("/api/store").then(r => r.json()).then(d => { if (d && (d.name || d.address)) setStore({ name: d.name ?? "", address: d.address ?? "" }); }).catch(() => {});
+  }, []);
+  const storeName = store?.name || "Toko";
+  const storeInitials = (store?.name || "T").split(/\s+/).slice(0, 2).map((w: string) => w[0] ?? "").join("").toUpperCase() || "T";
+  const storeMeta = store?.address ? `${store.address} · 1 outlet` : "1 outlet";
 
   const name = session?.user?.name ?? "User";
   const role = session?.user?.role ?? "OWNER";
@@ -206,13 +213,13 @@ export default function Sidebar() {
           display: "flex", alignItems: "center", justifyContent: "center",
           flexShrink: 0,
         }}>
-          <span style={{ fontFamily: "var(--font-garamond)", fontSize: 12, fontWeight: 700, color: "#fff" }}>TS</span>
+          <span style={{ fontFamily: "var(--font-garamond)", fontSize: 12, fontWeight: 700, color: "#fff" }}>{storeInitials}</span>
         </div>
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ fontSize: 12.5, fontWeight: 600, color: "#0D1117", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-            Toko Sembako Maju
+            {storeName}
           </div>
-          <div style={{ fontSize: 10.5, color: "#8f897a", marginTop: 0.5 }}>Palu Timur · 1 outlet</div>
+          <div style={{ fontSize: 10.5, color: "#8f897a", marginTop: 0.5, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{storeMeta}</div>
         </div>
         <ChevronDown size={13} color="#8f897a" />
       </div>

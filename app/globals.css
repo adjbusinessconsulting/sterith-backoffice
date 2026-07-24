@@ -140,3 +140,12 @@ select:focus {
 @media (max-width: 640px) {
   .bo-page { padding-left: 18px !important; padding-right: 18px !important; }
 }
+
+/* Product modal: "added this session" list — side panel on desktop, an in-modal
+   strip on phones (where there's no room beside the modal). */
+.bo-added-side { display: flex; }
+.bo-added-strip { display: none; }
+@media (max-width: 760px) {
+  .bo-added-side { display: none !important; }
+  .bo-added-strip { display: block !important; }
+}
