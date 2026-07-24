@@ -8,7 +8,7 @@ interface Product {
   price: number; storeQty: number; warehouseQty: number; photoUrl: string | null;
 }
 
-const CATS = ["Sembako", "Minuman", "Snack", "Rokok"];
+const DEFAULT_CATS = ["Sembako", "Minuman", "Snack", "Rokok"];
 const EMPTY = { name: "", sku: "", unit: "pcs", category: "Sembako", price: "", storeQty: "" };
 
 function initials(name: string) {
@@ -23,6 +23,9 @@ export default function ProdukModal() {
   // Items saved this session via "Simpan & tambah lagi" — click one to fix it.
   const [added, setAdded] = useState<{ id: string; name: string }[]>([]);
   const [localEditId, setLocalEditId] = useState<string | null>(null);
+  const [cats, setCats] = useState<string[]>(DEFAULT_CATS);
+  const [addingCat, setAddingCat] = useState(false);
+  const [newCat, setNewCat] = useState("");
   const fileRef = useRef<HTMLInputElement>(null);
   const nameRef = useRef<HTMLInputElement>(null);
 
@@ -52,8 +55,24 @@ export default function ProdukModal() {
     }).catch(() => {});
   }, [open, localEditId]);
 
+  // Seed category pills with the defaults + any categories already on products,
+  // so a custom category added earlier keeps showing up.
+  useEffect(() => {
+    if (!open) return;
+    setAddingCat(false); setNewCat("");
+    fetch("/api/products").then(r => r.json()).then((ps: { category?: string }[]) => {
+      const extra = Array.isArray(ps) ? ps.map(p => p.category).filter((c): c is string => !!c) : [];
+      setCats(Array.from(new Set([...DEFAULT_CATS, ...extra])));
+    }).catch(() => {});
+  }, [open]);
+
   function handleClose() { closeModal(); }
   function backToAdd() { setLocalEditId(null); setForm(f => ({ ...EMPTY, unit: f.unit, category: f.category })); nameRef.current?.focus(); }
+  function commitCat() {
+    const v = newCat.trim();
+    if (v) { setCats(cs => Array.from(new Set([...cs, v]))); setForm(f => ({ ...f, category: v })); }
+    setNewCat(""); setAddingCat(false);
+  }
 
   async function handleSave(addAnother = false) {
     if (!form.name.trim()) return;
@@ -188,8 +207,8 @@ export default function ProdukModal() {
           {/* Category */}
           <div style={{ marginBottom: 16 }}>
             <label style={{ display: "block", fontSize: 10, letterSpacing: "0.16em", textTransform: "uppercase", color: "#8f897a", fontWeight: 600, marginBottom: 7 }}>KATEGORI</label>
-            <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-              {CATS.map(c => (
+            <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
+              {Array.from(new Set([...cats, form.category].filter(Boolean))).map(c => (
                 <button key={c} onClick={() => setForm(f => ({ ...f, category: c })) } style={{
                   height: 34, padding: "0 14px", borderRadius: 99,
                   background: form.category === c ? "#0D1117" : "#fff",
@@ -201,6 +220,22 @@ export default function ProdukModal() {
                   {c}
                 </button>
               ))}
+              {addingCat ? (
+                <span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
+                  <input autoFocus value={newCat} onChange={e => setNewCat(e.target.value)}
+                    onKeyDown={e => { if (e.key === "Enter") { e.preventDefault(); commitCat(); } if (e.key === "Escape") { setAddingCat(false); setNewCat(""); } }}
+                    onBlur={commitCat} placeholder="Kategori baru"
+                    style={{ height: 34, width: 130, padding: "0 12px", borderRadius: 99, border: "1.5px solid #0D1117", fontSize: 13, color: "#0D1117", fontFamily: "var(--font-hanken)", background: "#fff", outline: "none" }} />
+                </span>
+              ) : (
+                <button onClick={() => { setAddingCat(true); setNewCat(""); }} title="Tambah kategori" style={{
+                  height: 34, padding: "0 14px", borderRadius: 99, background: "#fff",
+                  border: "1.5px dashed #d8cfae", color: "#b8934a",
+                  fontSize: 13, fontWeight: 500, cursor: "pointer", fontFamily: "var(--font-hanken)",
+                }}>
+                  + Tambah
+                </button>
+              )}
             </div>
           </div>
 

@@ -1,3 +1,3 @@
 // Back Office build number — bump on every deploy so "Cek pembaruan" can tell
 // whether the running page is behind the latest deploy.
-export const BO_BUILD = "1.0";
+export const BO_BUILD = "1.1";
