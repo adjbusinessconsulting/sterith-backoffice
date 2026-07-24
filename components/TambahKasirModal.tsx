@@ -62,21 +62,35 @@ export default function TambahKasirModal() {
               style={{ width: "100%", height: 46, border: "1.5px solid #e8e3d5", borderRadius: 10, padding: "0 14px", fontSize: 14, color: "#0D1117", fontFamily: "var(--font-hanken)", background: "#fff" }} />
           </div>
 
-          {/* PIN */}
+          {/* PIN — 6 boxes driven by one transparent numeric input (no spinner field) */}
           <div style={{ marginBottom: 18 }}>
             <label style={{ display: "block", fontSize: 10, letterSpacing: "0.16em", textTransform: "uppercase", color: "#8f897a", fontWeight: 600, marginBottom: 7 }}>PIN 6-DIGIT</label>
-            <div style={{ display: "flex", gap: 10 }}>
-              {[0, 1, 2, 3].map(i => (
-                <div key={i} style={{ flex: 1, height: 52, border: "1.5px solid #e8e3d5", borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", background: pin[i] ? "#f8f6ef" : "#fff" }}>
-                  <span style={{ fontSize: 20, color: "#0D1117" }}>{pin[i] ? "•" : ""}</span>
-                </div>
-              ))}
+            <div style={{ position: "relative" }}>
+              <div style={{ display: "flex", gap: 8 }}>
+                {[0, 1, 2, 3, 4, 5].map(i => {
+                  const active = i === pin.length;
+                  return (
+                    <div key={i} style={{
+                      flex: 1, height: 52, borderRadius: 10,
+                      border: `1.5px solid ${active ? "#0D1117" : "#e8e3d5"}`,
+                      boxShadow: active ? "0 0 0 3px rgba(13,17,23,0.06)" : "none",
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                      background: pin[i] ? "#f8f6ef" : "#fff",
+                      transition: "border-color 0.12s, box-shadow 0.12s",
+                    }}>
+                      <span style={{ fontSize: 22, color: "#0D1117" }}>{pin[i] ? "•" : ""}</span>
+                    </div>
+                  );
+                })}
+              </div>
+              <input
+                type="text" inputMode="numeric" autoComplete="one-time-code" aria-label="PIN 6 digit"
+                value={pin}
+                onChange={e => setPin(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                style={{ position: "absolute", inset: 0, width: "100%", height: "100%", opacity: 0, border: "none", background: "transparent", cursor: "text", color: "transparent", font: "inherit" }}
+              />
             </div>
-            <input
-              type="number" value={pin} onChange={e => { const v = e.target.value.replace(/\D/g, "").slice(0, 6); setPin(v); }}
-              style={{ width: "100%", height: 44, border: "1.5px solid #e8e3d5", borderRadius: 10, padding: "0 14px", fontSize: 18, color: "#0D1117", fontFamily: "var(--font-garamond)", background: "#fff", marginTop: 8, letterSpacing: "0.5em", textAlign: "center" }}
-              placeholder="123456"
-            />
+            <p style={{ fontSize: 11, color: "#8f897a", marginTop: 7 }}>Kasir memakai PIN ini untuk masuk di POS.</p>
           </div>
 
           {/* Role */}
