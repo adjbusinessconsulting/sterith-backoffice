@@ -23,7 +23,22 @@ export async function GET(req: NextRequest) {
     },
     orderBy: { createdAt: "desc" },
     take: 100,
+    include: { items: { select: { productName: true, qty: true, price: true, subtotal: true } } },
   });
 
-  return NextResponse.json(sales);
+  // Shape it for the Laporan table (no / kasir / item / metode / total). The raw
+  // Prisma fields are trxId / cashierName / paymentMethod, and items is a relation
+  // that must be joined — without this the table only had waktu + total.
+  const rows = sales.map((s) => ({
+    id: s.id,
+    no: s.trxId,
+    createdAt: s.createdAt,
+    cashierName: s.cashierName,
+    method: s.paymentMethod,                      // "tunai" | "qris"
+    shift: s.shift,
+    total: s.total,
+    items: s.items.map((i) => ({ name: i.productName, qty: i.qty, price: i.price, subtotal: i.subtotal })),
+  }));
+
+  return NextResponse.json(rows);
 }

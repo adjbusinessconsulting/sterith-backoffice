@@ -2,9 +2,11 @@
 import { useState, useEffect, useCallback } from "react";
 
 interface Transaction {
-  id: string; no: string; kasirId: string; method: string; total: number; createdAt: string; items: unknown;
-  kasir?: { name: string };
+  id: string; no: string; cashierName: string; method: string; total: number; createdAt: string; shift: number | null;
+  items: { name: string; qty: number; price: number; subtotal: number }[];
 }
+
+const methodLabel = (m: string) => m?.toLowerCase() === "qris" ? "QRIS" : m?.toLowerCase() === "tunai" ? "Tunai" : (m || "—");
 
 interface CashEntry {
   id: string; entryType: string; amount: number; note: string | null; createdAt: string;
@@ -61,8 +63,8 @@ export default function LaporanPage() {
   useEffect(() => { loadData(); }, [loadData]);
 
   const totalTrx = transactions.length;
-  const tunaiCount = transactions.filter(t => t.method === "TUNAI").length;
-  const qrisCount = transactions.filter(t => t.method === "QRIS").length;
+  const tunaiCount = transactions.filter(t => t.method?.toLowerCase() === "tunai").length;
+  const qrisCount = transactions.filter(t => t.method?.toLowerCase() === "qris").length;
 
   return (
     <div style={{ padding: "32px 36px", maxWidth: 1100 }}>
@@ -198,15 +200,18 @@ export default function LaporanPage() {
                       <span style={{ fontFamily: "var(--font-garamond)", fontSize: 14, color: "#0D1117" }}>{fmtTime(t.createdAt)}</span>
                     </td>
                     <td style={{ padding: "13px 16px" }}>
-                      <span style={{ fontSize: 13, color: "#0D1117" }}>{t.kasir?.name ?? "—"}</span>
+                      <span style={{ fontSize: 13, color: "#0D1117" }}>{t.cashierName || "—"}</span>
                     </td>
                     <td style={{ padding: "13px 16px" }}>
-                      <span style={{ fontSize: 12, color: "#8f897a", maxWidth: 180, display: "block", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                        {Array.isArray(t.items) ? t.items.map((i: { name?: string }) => i.name).join(", ") : "—"}
+                      <span style={{ fontSize: 12, color: "#8f897a", maxWidth: 220, display: "block", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}
+                        title={Array.isArray(t.items) ? t.items.map(i => `${i.name} ×${i.qty}`).join(", ") : ""}>
+                        {Array.isArray(t.items) && t.items.length
+                          ? t.items.map(i => i.qty > 1 ? `${i.name} ×${i.qty}` : i.name).join(", ")
+                          : "—"}
                       </span>
                     </td>
                     <td style={{ padding: "13px 16px" }}>
-                      <span style={{ fontSize: 12, color: "#0D1117" }}>{t.method}</span>
+                      <span style={{ fontSize: 12, color: "#0D1117" }}>{methodLabel(t.method)}</span>
                     </td>
                     <td style={{ padding: "13px 16px", textAlign: "right" }}>
                       <span style={{ fontFamily: "var(--font-garamond)", fontSize: 14, fontWeight: 500, color: "#0D1117" }}>Rp {t.total.toLocaleString("id-ID")}</span>
