@@ -120,6 +120,7 @@ model Cashier {
   initials  String
   role      String   @default("kasir")  // kasir | manajer
   pin       String
+  password  String?  // optional manager password for POS approvals (Phase 2)
   active    Boolean  @default(true)
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
 

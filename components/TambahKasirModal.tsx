@@ -8,12 +8,13 @@ export default function TambahKasirModal() {
   const [name, setName] = useState("");
   const [pin, setPin] = useState("");
   const [role, setRole] = useState<"KASIR" | "MANAJER">("KASIR");
+  const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
 
   const open = modal === "tambahKasir";
 
-  function handleClose() { setName(""); setPin(""); setRole("KASIR"); setError(""); closeModal(); }
+  function handleClose() { setName(""); setPin(""); setRole("KASIR"); setPassword(""); setError(""); closeModal(); }
 
   async function handleSave() {
     if (!name.trim()) { setError("Nama wajib diisi."); return; }
@@ -22,7 +23,7 @@ export default function TambahKasirModal() {
     const res = await fetch("/api/staff", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, pin, role }),
+      body: JSON.stringify({ name, pin, role, password: role === "MANAJER" ? password : undefined }),
     });
     setSubmitting(false);
     if (!res.ok) { setError("Gagal menyimpan. Coba lagi."); return; }
@@ -114,6 +115,16 @@ export default function TambahKasirModal() {
               ))}
             </div>
           </div>
+
+          {role === "MANAJER" && (
+            <div style={{ marginBottom: 18 }}>
+              <label style={{ display: "block", fontSize: 10, letterSpacing: "0.16em", textTransform: "uppercase", color: "#8f897a", fontWeight: 600, marginBottom: 7 }}>Kata sandi manajer <span style={{ textTransform: "none", letterSpacing: 0, color: "#b3ac9a", fontWeight: 400 }}>(opsional)</span></label>
+              <input type="text" value={password} onChange={e => setPassword(e.target.value)}
+                placeholder="Untuk persetujuan di POS"
+                style={{ width: "100%", height: 46, border: "1.5px solid #e8e3d5", borderRadius: 10, padding: "0 14px", fontSize: 14, color: "#0D1117", fontFamily: "var(--font-hanken)", background: "#fff" }} />
+              <p style={{ fontSize: 11, color: "#8f897a", marginTop: 6, lineHeight: 1.5 }}>Dipakai kalau metode persetujuan di POS memakai Kata Sandi. Kosongkan untuk pakai PIN.</p>
+            </div>
+          )}
 
           {error && <p style={{ fontSize: 12.5, color: "#b0492f", marginBottom: 12 }}>{error}</p>}
 
