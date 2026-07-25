@@ -12,24 +12,32 @@ export interface AnalyticsData {
   deadStock: { id: string; name: string; emoji: string | null; category: string; stock: number }[];
 }
 
+export interface CustomRange { from: string; to: string }  // YYYY-MM-DD
+
 export function useAnalytics() {
-  const [days, setDays] = useState(30);
+  const [days, setDaysState] = useState(30);
+  const [custom, setCustomState] = useState<CustomRange | null>(null);
   const [data, setData] = useState<AnalyticsData | null>(null);
   const [loading, setLoading] = useState(true);
+
+  // Choosing a preset clears the custom range; choosing a custom range parks days at 0.
+  const setDays = useCallback((d: number) => { setCustomState(null); setDaysState(d); }, []);
+  const setCustom = useCallback((r: CustomRange) => { setDaysState(0); setCustomState(r); }, []);
 
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await fetch(`/api/analytics?days=${days}`);
+      const qs = custom ? `from=${custom.from}&to=${custom.to}` : `days=${days}`;
+      const res = await fetch(`/api/analytics?${qs}`);
       if (res.ok) setData(await res.json());
     } finally {
       setLoading(false);
     }
-  }, [days]);
+  }, [days, custom]);
 
   useEffect(() => { load(); }, [load]);
 
-  return { data, loading, days, setDays };
+  return { data, loading, days, setDays, custom, setCustom };
 }
 
 export const fmtRp = (n: number) => {

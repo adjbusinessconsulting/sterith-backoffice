@@ -11,13 +11,28 @@ export async function GET(req: NextRequest) {
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const { storeId } = session.user;
-  const daysParam = parseInt(new URL(req.url).searchParams.get("days") ?? "30", 10);
-  const days = [7, 30, 90].includes(daysParam) ? daysParam : 30;
+  const url = new URL(req.url);
+  const fromParam = url.searchParams.get("from");   // YYYY-MM-DD (custom range)
+  const toParam = url.searchParams.get("to");
 
-  const from = new Date();
-  from.setHours(0, 0, 0, 0);
-  from.setDate(from.getDate() - (days - 1));
-  const to = new Date();
+  let from = new Date();
+  let to = new Date();
+  let days: number;
+  if (fromParam && toParam) {
+    from = new Date(`${fromParam}T00:00:00`);
+    to = new Date(`${toParam}T23:59:59.999`);
+    if (isNaN(from.getTime()) || isNaN(to.getTime()) || to < from) {
+      from = new Date(); from.setHours(0, 0, 0, 0); from.setDate(from.getDate() - 29);
+      to = new Date();
+    }
+    from.setHours(0, 0, 0, 0);
+    days = Math.min(Math.floor((to.getTime() - from.getTime()) / 86400000) + 1, 400);
+  } else {
+    const daysParam = parseInt(url.searchParams.get("days") ?? "30", 10);
+    days = [1, 7, 30, 90, 365].includes(daysParam) ? daysParam : 30;
+    from.setHours(0, 0, 0, 0);
+    from.setDate(from.getDate() - (days - 1));
+  }
 
   const [sales, products] = await Promise.all([
     db.sale.findMany({
