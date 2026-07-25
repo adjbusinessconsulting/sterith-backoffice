@@ -136,9 +136,12 @@ select:focus {
   .bo-table-scroll > table { min-width: 560px; }
 }
 
-/* Trim generous page padding on phones */
+/* Trim generous page padding on phones. Pages render as `main > div` with an
+   inline "32px 36px" padding; on phones that eats too much width, so override the
+   horizontal padding for every page at once (top/bottom kept). */
 @media (max-width: 640px) {
   .bo-page { padding-left: 18px !important; padding-right: 18px !important; }
+  main > div { padding-left: 16px !important; padding-right: 16px !important; }
 }
 
 /* Top bar: declutter on phones — tighter padding, hide the ⌘K badge (no keyboard)
