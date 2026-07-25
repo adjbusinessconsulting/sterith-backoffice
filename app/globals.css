@@ -141,6 +141,14 @@ select:focus {
   .bo-page { padding-left: 18px !important; padding-right: 18px !important; }
 }
 
+/* Top bar: declutter on phones — tighter padding, hide the ⌘K badge (no keyboard)
+   and the "Tersinkron · time" text (the dot stays), so the search never wraps. */
+@media (max-width: 640px) {
+  .bo-topbar { padding-left: 14px !important; padding-right: 14px !important; gap: 10px !important; }
+  .bo-topbar-kbd { display: none !important; }
+  .bo-topbar-sync-text { display: none !important; }
+}
+
 /* Product modal: "added this session" list — side panel on desktop, an in-modal
    strip on phones (where there's no room beside the modal). */
 .bo-added-side { display: flex; }

@@ -18,7 +18,7 @@ export default function TopBar() {
   const showInvAddon = INV_ADDON_ROUTES.some(r => pathname.startsWith(r));
 
   return (
-    <header style={{
+    <header className="bo-topbar" style={{
       height: 56,
       background: "#fff",
       borderBottom: "1px solid #e8e3d5",
@@ -44,7 +44,7 @@ export default function TopBar() {
 
       {/* Search */}
       <div style={{
-        flex: 1, maxWidth: 440,
+        flex: 1, maxWidth: 440, minWidth: 0,
         height: 36,
         background: "#f8f6ef",
         border: "1px solid #e8e3d5",
@@ -54,15 +54,15 @@ export default function TopBar() {
         gap: 8,
         cursor: "text",
       }}>
-        <Search size={14} color="#8f897a" strokeWidth={1.8} />
-        <span style={{ flex: 1, fontSize: 13, color: "#8f897a", fontFamily: "var(--font-hanken)", userSelect: "none" }}>
+        <Search size={14} color="#8f897a" strokeWidth={1.8} style={{ flexShrink: 0 }} />
+        <span style={{ flex: 1, minWidth: 0, fontSize: 13, color: "#8f897a", fontFamily: "var(--font-hanken)", userSelect: "none", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
           Cari produk, SKU, atau supplier...
         </span>
-        <span style={{
+        <span className="bo-topbar-kbd" style={{
           fontSize: 10.5, color: "#8f897a",
           background: "#e8e3d5", padding: "2px 6px",
           borderRadius: 5, letterSpacing: "0.02em",
-          fontFamily: "var(--font-hanken)",
+          fontFamily: "var(--font-hanken)", flexShrink: 0,
         }}>
           ⌘K
         </span>
@@ -81,7 +81,7 @@ export default function TopBar() {
       {/* Sync status */}
       <div style={{ display: "flex", alignItems: "center", gap: 6, flexShrink: 0 }}>
         <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#3f7d54", display: "inline-block" }} />
-        <span style={{ fontSize: 12.5, color: "#8f897a", fontFamily: "var(--font-hanken)", whiteSpace: "nowrap" }}>
+        <span className="bo-topbar-sync-text" style={{ fontSize: 12.5, color: "#8f897a", fontFamily: "var(--font-hanken)", whiteSpace: "nowrap" }}>
           Tersinkron · {new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" })}
         </span>
       </div>
