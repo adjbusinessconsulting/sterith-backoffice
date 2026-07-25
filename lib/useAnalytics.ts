@@ -14,9 +14,9 @@ export interface AnalyticsData {
 
 export interface CustomRange { from: string; to: string }  // YYYY-MM-DD
 
-export function useAnalytics() {
+export function useAnalytics(initialCustom?: CustomRange) {
   const [days, setDaysState] = useState(30);
-  const [custom, setCustomState] = useState<CustomRange | null>(null);
+  const [custom, setCustomState] = useState<CustomRange | null>(initialCustom ?? null);
   const [data, setData] = useState<AnalyticsData | null>(null);
   const [loading, setLoading] = useState(true);
 

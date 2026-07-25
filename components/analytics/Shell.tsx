@@ -2,15 +2,24 @@
 import { ReactNode, useState } from "react";
 import { useAnalytics, AnalyticsData } from "@/lib/useAnalytics";
 
-const RANGES = [
-  { days: 1, label: "Hari ini" },
-  { days: 7, label: "7 hari" },
-  { days: 30, label: "30 hari" },
-  { days: 90, label: "90 hari" },
-  { days: 365, label: "1 thn" },
+// Local YYYY-MM-DD (not UTC) so ranges line up with the store's calendar day.
+const iso = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+const todayStr = () => iso(new Date());
+// Monday-based start of week.
+const startOfWeek = (d: Date) => { const x = new Date(d); x.setDate(x.getDate() - ((x.getDay() + 6) % 7)); return x; };
+const addDays = (d: Date, n: number) => { const x = new Date(d); x.setDate(x.getDate() + n); return x; };
+
+// Named calendar periods → concrete {from, to} the analytics API understands.
+const PERIODS: { id: string; label: string; range: () => { from: string; to: string } }[] = [
+  { id: "today",      label: "Hari ini",     range: () => { const t = new Date();               return { from: iso(t), to: iso(t) }; } },
+  { id: "yesterday",  label: "Kemarin",      range: () => { const y = addDays(new Date(), -1);   return { from: iso(y), to: iso(y) }; } },
+  { id: "thisWeek",   label: "Minggu ini",   range: () => { const s = startOfWeek(new Date());   return { from: iso(s), to: todayStr() }; } },
+  { id: "lastWeek",   label: "Minggu lalu",  range: () => { const s = startOfWeek(new Date());   return { from: iso(addDays(s, -7)), to: iso(addDays(s, -1)) }; } },
+  { id: "thisMonth",  label: "Bulan ini",    range: () => { const n = new Date();                return { from: iso(new Date(n.getFullYear(), n.getMonth(), 1)), to: todayStr() }; } },
+  { id: "lastMonth",  label: "Bulan lalu",   range: () => { const n = new Date();                return { from: iso(new Date(n.getFullYear(), n.getMonth() - 1, 1)), to: iso(new Date(n.getFullYear(), n.getMonth(), 0)) }; } },
 ];
 
-const todayStr = () => new Date().toISOString().slice(0, 10);
+const DEFAULT_PERIOD = PERIODS.find(p => p.id === "thisMonth")!;
 
 export default function Shell({ eyebrow, title, subtitle, children }: {
   eyebrow: string;
@@ -18,15 +27,23 @@ export default function Shell({ eyebrow, title, subtitle, children }: {
   subtitle: string;
   children: (data: AnalyticsData) => ReactNode;
 }) {
-  const { data, loading, days, setDays, custom, setCustom } = useAnalytics();
+  const { data, loading, custom, setCustom } = useAnalytics(DEFAULT_PERIOD.range());
+  const [periodId, setPeriodId] = useState(DEFAULT_PERIOD.id);
   const [showCustom, setShowCustom] = useState(false);
   const [cFrom, setCFrom] = useState(todayStr());
   const [cTo, setCTo] = useState(todayStr());
 
-  const fmtDay = (iso: string) => new Date(iso).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" });
-  const rangeLabel = custom
+  function pickPeriod(p: typeof PERIODS[number]) {
+    setPeriodId(p.id);
+    setShowCustom(false);
+    setCustom(p.range());
+  }
+
+  const fmtDay = (s: string) => new Date(`${s}T00:00:00`).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" });
+  const activeLabel = PERIODS.find(p => p.id === periodId)?.label;
+  const rangeLabel = periodId === "custom" && custom
     ? `${fmtDay(custom.from)} – ${fmtDay(custom.to)}`
-    : days === 1 ? "hari ini" : `${days} hari terakhir`;
+    : (activeLabel ?? "rentang ini").toLowerCase();
 
   return (
     <div style={{ padding: "32px 36px", maxWidth: 1100 }}>
@@ -40,23 +57,23 @@ export default function Shell({ eyebrow, title, subtitle, children }: {
       {/* Range selector */}
       <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 22, flexWrap: "wrap" }}>
         <div style={{ background: "#fff", border: "1px solid #e8e3d5", borderRadius: 10, padding: 3, display: "flex", gap: 2, flexWrap: "wrap" }}>
-          {RANGES.map(r => {
-            const on = !custom && days === r.days;
+          {PERIODS.map(p => {
+            const on = periodId === p.id;
             return (
-              <button key={r.days} onClick={() => { setShowCustom(false); setDays(r.days); }} style={{
+              <button key={p.id} onClick={() => pickPeriod(p)} style={{
                 height: 34, padding: "0 14px", borderRadius: 8,
                 background: on ? "#0D1117" : "transparent", border: "none",
                 color: on ? "#f8f6ef" : "#8f897a",
                 fontSize: 12.5, fontWeight: on ? 600 : 400,
                 cursor: "pointer", fontFamily: "var(--font-hanken)",
-              }}>{r.label}</button>
+              }}>{p.label}</button>
             );
           })}
           <button onClick={() => setShowCustom(v => !v)} style={{
             height: 34, padding: "0 14px", borderRadius: 8,
-            background: custom ? "#0D1117" : "transparent", border: "none",
-            color: custom ? "#f8f6ef" : "#8f897a",
-            fontSize: 12.5, fontWeight: custom ? 600 : 400,
+            background: periodId === "custom" ? "#0D1117" : "transparent", border: "none",
+            color: periodId === "custom" ? "#f8f6ef" : "#8f897a",
+            fontSize: 12.5, fontWeight: periodId === "custom" ? 600 : 400,
             cursor: "pointer", fontFamily: "var(--font-hanken)",
           }}>Pilih tanggal</button>
         </div>
@@ -76,7 +93,7 @@ export default function Shell({ eyebrow, title, subtitle, children }: {
             <input type="date" value={cTo} min={cFrom} max={todayStr()} onChange={e => setCTo(e.target.value)}
               style={{ height: 38, border: "1.5px solid #e8e3d5", borderRadius: 9, padding: "0 12px", fontSize: 13, color: "#0D1117", fontFamily: "var(--font-hanken)", background: "#fff" }} />
           </div>
-          <button onClick={() => { if (cFrom && cTo) setCustom({ from: cFrom, to: cTo }); }} style={{
+          <button onClick={() => { if (cFrom && cTo) { setPeriodId("custom"); setCustom({ from: cFrom, to: cTo }); } }} style={{
             height: 38, padding: "0 18px", background: "#0D1117", border: "none", borderRadius: 9,
             fontSize: 12.5, fontWeight: 600, color: "#f8f6ef", cursor: "pointer", fontFamily: "var(--font-hanken)",
           }}>Terapkan</button>
