@@ -12,26 +12,31 @@ export async function GET(req: NextRequest) {
 
   const { storeId } = session.user;
   const url = new URL(req.url);
-  const fromParam = url.searchParams.get("from");   // YYYY-MM-DD (custom range)
+  const fromParam = url.searchParams.get("from");   // YYYY-MM-DD (store-local day)
   const toParam = url.searchParams.get("to");
+  // Minutes east of UTC for the store's zone (WIB = 420), sent by the client. All
+  // day math runs in this zone so a picked date means the STORE's calendar day,
+  // not the server's UTC day.
+  const offMs = (parseInt(url.searchParams.get("tz") ?? "0", 10) || 0) * 60000;
+  const DAY = 86400000;
+  // Which local YYYY-MM-DD a UTC instant falls on, in the store's zone.
+  const localDayKey = (d: Date) => new Date(d.getTime() + offMs).toISOString().slice(0, 10);
+  // UTC instant of the local midnight that starts a given local YYYY-MM-DD.
+  const localMidnight = (ymd: string) => new Date(`${ymd}T00:00:00.000Z`).getTime() - offMs;
 
-  let from = new Date();
-  let to = new Date();
+  let from: Date;
+  let to: Date;
   let days: number;
-  if (fromParam && toParam) {
-    from = new Date(`${fromParam}T00:00:00`);
-    to = new Date(`${toParam}T23:59:59.999`);
-    if (isNaN(from.getTime()) || isNaN(to.getTime()) || to < from) {
-      from = new Date(); from.setHours(0, 0, 0, 0); from.setDate(from.getDate() - 29);
-      to = new Date();
-    }
-    from.setHours(0, 0, 0, 0);
-    days = Math.min(Math.floor((to.getTime() - from.getTime()) / 86400000) + 1, 400);
+  if (fromParam && toParam && !isNaN(localMidnight(fromParam)) && !isNaN(localMidnight(toParam))) {
+    from = new Date(localMidnight(fromParam));
+    to = new Date(localMidnight(toParam) + DAY - 1);       // through the end of the local 'to' day
+    if (to < from) { const t = from; from = to; to = t; }  // guard reversed input
+    days = Math.min(Math.floor((to.getTime() - from.getTime()) / DAY) + 1, 400);
   } else {
     const daysParam = parseInt(url.searchParams.get("days") ?? "30", 10);
     days = [1, 7, 30, 90, 365].includes(daysParam) ? daysParam : 30;
-    from.setHours(0, 0, 0, 0);
-    from.setDate(from.getDate() - (days - 1));
+    from = new Date(localMidnight(localDayKey(new Date())) - (days - 1) * DAY);
+    to = new Date();
   }
 
   const [sales, products] = await Promise.all([
@@ -52,12 +57,10 @@ export async function GET(req: NextRequest) {
   const itemsSold = sales.reduce((s, x) => s + x.items.reduce((a, i) => a + i.qty, 0), 0);
   const avgBasket = transactions ? Math.round(revenue / transactions) : 0;
 
-  // ── Daily series (every day in range, zero-filled) ──
-  const dayKey = (d: Date) => d.toISOString().slice(0, 10);
+  // ── Daily series (every local day in range, zero-filled) ──
   const dailyMap = new Map<string, { revenue: number; transactions: number }>();
   for (let i = 0; i < days; i++) {
-    const d = new Date(from); d.setDate(from.getDate() + i);
-    dailyMap.set(dayKey(d), { revenue: 0, transactions: 0 });
+    dailyMap.set(localDayKey(new Date(from.getTime() + i * DAY)), { revenue: 0, transactions: 0 });
   }
   // ── Hourly buckets (0–23) ──
   const hourly = Array.from({ length: 24 }, (_, h) => ({ hour: h, revenue: 0, transactions: 0 }));
@@ -70,11 +73,11 @@ export async function GET(req: NextRequest) {
   const soldIds = new Set<string>();
 
   for (const s of sales) {
-    const key = dayKey(new Date(s.createdAt));
+    const key = localDayKey(new Date(s.createdAt));
     const dbucket = dailyMap.get(key);
     if (dbucket) { dbucket.revenue += s.total; dbucket.transactions += 1; }
 
-    const h = new Date(s.createdAt).getHours();
+    const h = new Date(new Date(s.createdAt).getTime() + offMs).getUTCHours();
     hourly[h].revenue += s.total; hourly[h].transactions += 1;
 
     const pm = payMap.get(s.paymentMethod) ?? { revenue: 0, count: 0 };

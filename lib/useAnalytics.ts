@@ -27,8 +27,9 @@ export function useAnalytics(initialCustom?: CustomRange) {
   const load = useCallback(async () => {
     setLoading(true);
     try {
+      const tz = -new Date().getTimezoneOffset();   // minutes east of UTC (WIB = 420)
       const qs = custom ? `from=${custom.from}&to=${custom.to}` : `days=${days}`;
-      const res = await fetch(`/api/analytics?${qs}`);
+      const res = await fetch(`/api/analytics?${qs}&tz=${tz}`);
       if (res.ok) setData(await res.json());
     } finally {
       setLoading(false);

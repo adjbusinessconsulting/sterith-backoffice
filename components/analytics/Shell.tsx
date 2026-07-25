@@ -58,7 +58,7 @@ export default function Shell({ eyebrow, title, subtitle, children }: {
       <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 22, flexWrap: "wrap" }}>
         <div style={{ background: "#fff", border: "1px solid #e8e3d5", borderRadius: 10, padding: 3, display: "flex", gap: 2, flexWrap: "wrap" }}>
           {PERIODS.map(p => {
-            const on = periodId === p.id;
+            const on = !showCustom && periodId === p.id;
             return (
               <button key={p.id} onClick={() => pickPeriod(p)} style={{
                 height: 34, padding: "0 14px", borderRadius: 8,
@@ -69,13 +69,18 @@ export default function Shell({ eyebrow, title, subtitle, children }: {
               }}>{p.label}</button>
             );
           })}
-          <button onClick={() => setShowCustom(v => !v)} style={{
-            height: 34, padding: "0 14px", borderRadius: 8,
-            background: periodId === "custom" ? "#0D1117" : "transparent", border: "none",
-            color: periodId === "custom" ? "#f8f6ef" : "#8f897a",
-            fontSize: 12.5, fontWeight: periodId === "custom" ? 600 : 400,
-            cursor: "pointer", fontFamily: "var(--font-hanken)",
-          }}>Pilih tanggal</button>
+          {(() => {
+            const customActive = showCustom || periodId === "custom";
+            return (
+              <button onClick={() => setShowCustom(v => !v)} style={{
+                height: 34, padding: "0 14px", borderRadius: 8,
+                background: customActive ? "#0D1117" : "transparent", border: "none",
+                color: customActive ? "#f8f6ef" : "#8f897a",
+                fontSize: 12.5, fontWeight: customActive ? 600 : 400,
+                cursor: "pointer", fontFamily: "var(--font-hanken)",
+              }}>Pilih tanggal</button>
+            );
+          })()}
         </div>
         {loading && <span style={{ fontSize: 12, color: "#a49d8c" }}>Memuat…</span>}
       </div>
