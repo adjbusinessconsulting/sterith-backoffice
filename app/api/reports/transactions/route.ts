@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/prisma";
+import { dayWindow } from "@/lib/dayWindow";
 
 export async function GET(req: NextRequest) {
   const session = await getServerSession(authOptions);
@@ -9,17 +10,12 @@ export async function GET(req: NextRequest) {
 
   const { storeId } = session.user;
   const { searchParams } = new URL(req.url);
-  const dateParam = searchParams.get("date");
-
-  const dateStart = dateParam ? new Date(dateParam) : new Date();
-  dateStart.setHours(0, 0, 0, 0);
-  const dateEnd = new Date(dateStart);
-  dateEnd.setHours(23, 59, 59, 999);
+  const { from, to } = dayWindow(searchParams.get("date"), searchParams.get("tz"));
 
   const sales = await db.sale.findMany({
     where: {
       storeId,
-      createdAt: { gte: dateStart, lte: dateEnd },
+      createdAt: { gte: from, lte: to },
     },
     orderBy: { createdAt: "desc" },
     take: 100,

@@ -203,6 +203,38 @@ model CashDrawer {
   @@map("cash_drawers")
 }
 
+// The cash movements the POS actually writes (masuk / keluar / hutang_settle /
+// auto). The Laporan "uang kas" reads these — the CashDrawer model above is a
+// separate, unused table.
+model KasEntry {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  storeId     String   @map("store_id") @db.Uuid
+  cashierName String?  @map("cashier_name")
+  shift       Int?
+  type        String
+  amount      Int
+  label       String
+  description String?
+  photoUrl    String?  @map("photo_url")
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  @@map("kas_entries")
+}
+
+// The day's opening cash (modal awal), keyed per store per business date.
+model DayOpen {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  storeId      String   @map("store_id") @db.Uuid
+  businessDate DateTime @map("business_date") @db.Date
+  modalAwal    Int      @default(0) @map("modal_awal")
+  openedAt     DateTime @default(now()) @map("opened_at") @db.Timestamptz(6)
+  openedBy     String?  @map("opened_by")
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  @@unique([storeId, businessDate])
+  @@map("day_opens")
+}
+
 // Master Office activity timeline
 model ActivityLog {
   id        String   @id @default(cuid())

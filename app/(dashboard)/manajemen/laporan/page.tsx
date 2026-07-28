@@ -6,31 +6,27 @@ interface Transaction {
   items: { name: string; qty: number; price: number; subtotal: number }[];
 }
 
-const methodLabel = (m: string) => m?.toLowerCase() === "qris" ? "QRIS" : m?.toLowerCase() === "tunai" ? "Tunai" : (m || "—");
-
 interface CashEntry {
-  id: string; entryType: string; amount: number; note: string | null; createdAt: string;
-  byUser?: { name: string };
+  id: string; type: string; amount: number; label: string; description: string | null;
+  cashierName: string | null; hasPhoto: boolean; createdAt: string;
 }
 
 interface Summary {
-  totalOmzet: number; transaksi: number; tunai: number; qris: number; rataRata: number;
-  saldoLaci: number; kasukTotal: number; keluarTotal: number;
+  totalOmzet: number; transaksi: number; rataRata: number;
+  saldoLaci: number; modalAwal: number; autoTunai: number; kasMasuk: number; kasKeluar: number;
 }
+
+const methodLabel = (m: string) => m?.toLowerCase() === "qris" ? "QRIS" : m?.toLowerCase() === "tunai" ? "Tunai" : (m || "—");
+const pad = (n: number) => String(n).padStart(2, "0");
+const localToday = () => { const d = new Date(); return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`; };
 
 function fmtRp(n: number) {
   if (n >= 1000000) return `Rp ${(n / 1000000).toFixed(1).replace(".0", "")}jt`;
   if (n >= 1000) return `Rp ${Math.round(n / 1000)}k`;
   return `Rp ${n.toLocaleString("id-ID")}`;
 }
-
-function fmtRpFull(n: number) {
-  return "Rp " + n.toLocaleString("id-ID");
-}
-
-function fmtTime(dt: string) {
-  return new Date(dt).toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" });
-}
+function fmtRpFull(n: number) { return "Rp " + n.toLocaleString("id-ID"); }
+function fmtTime(dt: string) { return new Date(dt).toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" }); }
 
 export default function LaporanPage() {
   const [tab, setTab] = useState<"riwayat" | "kasir">("riwayat");
@@ -38,33 +34,63 @@ export default function LaporanPage() {
   const [cashEntries, setCashEntries] = useState<CashEntry[]>([]);
   const [summary, setSummary] = useState<Summary | null>(null);
   const [loading, setLoading] = useState(false);
+  const [date, setDate] = useState(localToday());
+  const [methodFilter, setMethodFilter] = useState<"semua" | "tunai" | "qris">("semua");
+  const [shiftFilter, setShiftFilter] = useState<"semua" | number>("semua");
 
   const loadData = useCallback(async () => {
     setLoading(true);
+    const tz = -new Date().getTimezoneOffset();          // store-local day (WIB = 420)
+    const qs = `date=${date}&tz=${tz}`;
     try {
-      const [trxRes, sumRes] = await Promise.all([
-        fetch("/api/reports/transactions"),
-        fetch("/api/reports/summary"),
+      const [trxRes, sumRes, cashRes] = await Promise.all([
+        fetch(`/api/reports/transactions?${qs}`),
+        fetch(`/api/reports/summary?${qs}`),
+        fetch(`/api/reports/cash?${qs}`),
       ]);
       const trx = await trxRes.json();
       const sum = await sumRes.json();
+      const cash = await cashRes.json();
       if (Array.isArray(trx)) setTransactions(trx);
       if (sum && typeof sum === "object") setSummary(sum);
-
-      if (tab === "kasir") {
-        const cashRes = await fetch("/api/reports/cash");
-        const cash = await cashRes.json();
-        if (Array.isArray(cash)) setCashEntries(cash);
-      }
+      if (Array.isArray(cash)) setCashEntries(cash);
     } catch {}
     setLoading(false);
-  }, [tab]);
+  }, [date]);
 
   useEffect(() => { loadData(); }, [loadData]);
 
-  const totalTrx = transactions.length;
-  const tunaiCount = transactions.filter(t => t.method?.toLowerCase() === "tunai").length;
-  const qrisCount = transactions.filter(t => t.method?.toLowerCase() === "qris").length;
+  // Filters (client-side): shift narrows the set; the payment pills sit on top of it.
+  const byShift = transactions.filter(t => shiftFilter === "semua" || t.shift === shiftFilter);
+  const totalTrx = byShift.length;
+  const tunaiCount = byShift.filter(t => t.method?.toLowerCase() === "tunai").length;
+  const qrisCount = byShift.filter(t => t.method?.toLowerCase() === "qris").length;
+  const filtered = byShift.filter(t => methodFilter === "semua" || t.method?.toLowerCase() === methodFilter);
+
+  const shiftOptions = Array.from(new Set(transactions.map(t => t.shift).filter((s): s is number => s != null))).sort((a, b) => a - b);
+  const activeShift = transactions.length ? transactions[0].shift : null;   // newest first → current shift
+  const isToday = date === localToday();
+
+  // Cash movements for the Kasir tab, mirroring the POS Kas screen: manual
+  // entries, then the auto cash-from-sales and modal-awal rows.
+  const moves = summary ? [
+    ...cashEntries.map(e => ({
+      id: e.id, label: e.label,
+      sub: [e.cashierName, e.type === "hutang_settle" ? "pelunasan hutang" : e.type].filter(Boolean).join(" · "),
+      amount: e.amount, time: fmtTime(e.createdAt),
+    })),
+    ...(summary.autoTunai > 0 ? [{ id: "auto", label: "Penjualan tunai", sub: "otomatis dari penjualan", amount: summary.autoTunai, time: "" }] : []),
+    ...(summary.modalAwal > 0 ? [{ id: "modal", label: "Modal awal shift", sub: "saat buka toko", amount: summary.modalAwal, time: "" }] : []),
+  ] : [];
+
+  const pillBtn = (active: boolean): React.CSSProperties => ({
+    height: 32, padding: "0 12px", borderRadius: 99,
+    background: active ? "#0D1117" : "#fff",
+    border: `1.5px solid ${active ? "#0D1117" : "#e8e3d5"}`,
+    color: active ? "#f8f6ef" : "#0D1117",
+    fontSize: 12, fontWeight: active ? 600 : 400,
+    cursor: "pointer", fontFamily: "var(--font-hanken)",
+  });
 
   return (
     <div style={{ padding: "32px 36px", maxWidth: 1100 }}>
@@ -100,46 +126,39 @@ export default function LaporanPage() {
           ))}
         </div>
 
-        {/* Date */}
-        <button style={{
-          height: 38, padding: "0 14px",
-          background: "#fff", border: "1.5px solid #e8e3d5",
-          borderRadius: 10, fontSize: 12.5, color: "#0D1117",
-          cursor: "pointer", display: "flex", alignItems: "center", gap: 7,
-          fontFamily: "var(--font-hanken)",
+        {/* Date picker */}
+        <label style={{
+          height: 38, padding: "0 14px", background: "#fff", border: "1.5px solid #e8e3d5",
+          borderRadius: 10, fontSize: 12.5, color: "#0D1117", cursor: "pointer",
+          display: "flex", alignItems: "center", gap: 7, fontFamily: "var(--font-hanken)",
         }}>
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#8f897a" strokeWidth="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-          Tanggal · Hari ini
-        </button>
+          <input type="date" value={date} max={localToday()} onChange={e => setDate(e.target.value || localToday())}
+            style={{ border: "none", outline: "none", background: "transparent", fontSize: 12.5, color: "#0D1117", fontFamily: "var(--font-hanken)", cursor: "pointer" }} />
+        </label>
 
-        {/* Shift */}
-        <button style={{
-          height: 38, padding: "0 14px",
-          background: "#fff", border: "1.5px solid #e8e3d5",
-          borderRadius: 10, fontSize: 12.5, color: "#0D1117",
-          cursor: "pointer", display: "flex", alignItems: "center", gap: 7,
-          fontFamily: "var(--font-hanken)",
-        }}>
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#8f897a" strokeWidth="1.8"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-          Shift · Semua
-        </button>
+        {/* Shift filter */}
+        {shiftOptions.length > 0 && (
+          <div style={{
+            height: 38, padding: "0 6px 0 12px", background: "#fff", border: "1.5px solid #e8e3d5",
+            borderRadius: 10, display: "flex", alignItems: "center", gap: 6, fontFamily: "var(--font-hanken)",
+          }}>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#8f897a" strokeWidth="1.8"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+            <select value={String(shiftFilter)} onChange={e => setShiftFilter(e.target.value === "semua" ? "semua" : Number(e.target.value))}
+              style={{ border: "none", outline: "none", background: "transparent", fontSize: 12.5, color: "#0D1117", fontFamily: "var(--font-hanken)", cursor: "pointer", height: 36 }}>
+              <option value="semua">Shift · Semua</option>
+              {shiftOptions.map(s => <option key={s} value={s}>Shift {s}</option>)}
+            </select>
+          </div>
+        )}
 
         <div style={{ flex: 1 }} />
 
-        {/* Payment filter */}
+        {/* Payment filter — now actually filters the table */}
         <div style={{ display: "flex", gap: 8 }}>
-          {[`Semua · ${totalTrx}`, `Tunai · ${tunaiCount}`, `QRIS · ${qrisCount}`].map(l => (
-            <button key={l} style={{
-              height: 32, padding: "0 12px", borderRadius: 99,
-              background: l.startsWith("Semua") ? "#0D1117" : "#fff",
-              border: `1.5px solid ${l.startsWith("Semua") ? "#0D1117" : "#e8e3d5"}`,
-              color: l.startsWith("Semua") ? "#f8f6ef" : "#0D1117",
-              fontSize: 12, fontWeight: l.startsWith("Semua") ? 600 : 400,
-              cursor: "pointer", fontFamily: "var(--font-hanken)",
-            }}>
-              {l}
-            </button>
-          ))}
+          <button onClick={() => setMethodFilter("semua")} style={pillBtn(methodFilter === "semua")}>Semua · {totalTrx}</button>
+          <button onClick={() => setMethodFilter("tunai")} style={pillBtn(methodFilter === "tunai")}>Tunai · {tunaiCount}</button>
+          <button onClick={() => setMethodFilter("qris")} style={pillBtn(methodFilter === "qris")}>QRIS · {qrisCount}</button>
         </div>
       </div>
 
@@ -153,10 +172,10 @@ export default function LaporanPage() {
               gap: 0, marginBottom: 24,
             }}>
               {[
-                { label: "TOTAL OMZET HARI INI", value: fmtRpFull(summary.totalOmzet) },
+                { label: isToday ? "TOTAL OMZET HARI INI" : "TOTAL OMZET", value: fmtRpFull(summary.totalOmzet) },
                 { label: "TRANSAKSI", value: String(summary.transaksi) },
                 { label: "RATA-RATA", value: fmtRp(summary.rataRata) },
-                { label: "SHIFT AKTIF", value: "Shift 2" },
+                { label: "SHIFT AKTIF", value: activeShift != null ? `Shift ${activeShift}` : "—" },
               ].map(({ label, value }) => (
                 <div key={label} style={{ padding: "0 20px", borderRight: "1px solid rgba(255,255,255,0.07)" }}>
                   <p style={{ fontSize: 9.5, letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(248,246,239,0.5)", fontWeight: 600, marginBottom: 8 }}>{label}</p>
@@ -188,10 +207,10 @@ export default function LaporanPage() {
                 {loading && (
                   <tr><td colSpan={6} style={{ padding: "40px 16px", textAlign: "center", color: "#8f897a", fontSize: 13 }}>Memuat...</td></tr>
                 )}
-                {!loading && transactions.length === 0 && (
-                  <tr><td colSpan={6} style={{ padding: "40px 16px", textAlign: "center", color: "#8f897a", fontSize: 13 }}>Belum ada transaksi hari ini</td></tr>
+                {!loading && filtered.length === 0 && (
+                  <tr><td colSpan={6} style={{ padding: "40px 16px", textAlign: "center", color: "#8f897a", fontSize: 13 }}>{isToday ? "Belum ada transaksi hari ini" : "Tidak ada transaksi pada tanggal ini"}</td></tr>
                 )}
-                {transactions.map(t => (
+                {filtered.map(t => (
                   <tr key={t.id} style={{ borderBottom: "1px solid #f8f5ef" }}>
                     <td style={{ padding: "13px 16px" }}>
                       <span style={{ fontFamily: "var(--font-garamond)", fontSize: 14, fontWeight: 500, color: "#0D1117" }}>{t.no}</span>
@@ -224,63 +243,65 @@ export default function LaporanPage() {
         </>
       )}
 
-      {/* === KASIR TAB === */}
+      {/* === KASIR TAB (uang kas) === */}
       {tab === "kasir" && summary && (
         <div className="bo-cols-2" style={{ gap: 20 }}>
           {/* Saldo laci card */}
           <div style={{ background: "#0D1117", borderRadius: 14, padding: "24px 28px" }}>
             <p style={{ fontSize: 9.5, letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(248,246,239,0.5)", fontWeight: 600, marginBottom: 12 }}>
-              SALDO LACI SAAT INI
+              SALDO LACI {isToday ? "SAAT INI" : ""}
             </p>
             <p style={{ fontFamily: "var(--font-garamond)", fontSize: 34, fontWeight: 500, color: "#f8f6ef", marginBottom: 8 }}>
               {fmtRpFull(summary.saldoLaci)}
             </p>
             <p style={{ fontSize: 12, color: "rgba(248,246,239,0.45)", marginBottom: 20 }}>
-              Modal awal + omzet tunai
+              Modal awal + penjualan tunai + kas masuk − kas keluar
             </p>
-            <div style={{ display: "flex", gap: 24 }}>
-              <div>
-                <p style={{ fontSize: 9.5, letterSpacing: "0.15em", textTransform: "uppercase", color: "#3f7d54", fontWeight: 600, marginBottom: 4 }}>MASUK</p>
-                <p style={{ fontFamily: "var(--font-garamond)", fontSize: 16, color: "#3f7d54" }}>+ {fmtRpFull(summary.kasukTotal)}</p>
-              </div>
-              <div>
-                <p style={{ fontSize: 9.5, letterSpacing: "0.15em", textTransform: "uppercase", color: "#b0492f", fontWeight: 600, marginBottom: 4 }}>KELUAR</p>
-                <p style={{ fontFamily: "var(--font-garamond)", fontSize: 16, color: "#b0492f" }}>– {fmtRpFull(summary.keluarTotal)}</p>
-              </div>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "14px 24px" }}>
+              {[
+                { label: "MODAL AWAL", value: summary.modalAwal, color: "#f8f6ef" },
+                { label: "PENJUALAN TUNAI", value: summary.autoTunai, color: "#3f7d54" },
+                { label: "KAS MASUK", value: summary.kasMasuk, color: "#3f7d54" },
+                { label: "KAS KELUAR", value: -summary.kasKeluar, color: "#d98a6a" },
+              ].map(({ label, value, color }) => (
+                <div key={label}>
+                  <p style={{ fontSize: 9, letterSpacing: "0.14em", textTransform: "uppercase", color: "rgba(248,246,239,0.45)", fontWeight: 600, marginBottom: 4 }}>{label}</p>
+                  <p style={{ fontFamily: "var(--font-garamond)", fontSize: 16, color }}>{value < 0 ? "– " : "+ "}{fmtRpFull(Math.abs(value))}</p>
+                </div>
+              ))}
             </div>
           </div>
 
           {/* Cash movements */}
           <div style={{ background: "#fff", border: "1px solid #e8e3d5", borderRadius: 14, padding: "20px 24px" }}>
             <p style={{ fontSize: 9.5, letterSpacing: "0.18em", textTransform: "uppercase", color: "#8f897a", fontWeight: 600, marginBottom: 16 }}>
-              PERGERAKAN HARI INI
+              PERGERAKAN {isToday ? "HARI INI" : "KAS"}
             </p>
-            {cashEntries.length === 0 && (
+            {moves.length === 0 && (
               <p style={{ fontSize: 13, color: "#8f897a" }}>Belum ada pergerakan</p>
             )}
-            {cashEntries.slice(0, 8).map(e => (
-              <div key={e.id} style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12 }}>
-                <div style={{
-                  width: 28, height: 28, borderRadius: "50%",
-                  background: e.entryType === "IN" || e.entryType === "OPEN" || e.entryType === "AUTO_SALES" ? "#e9f1ea" : "#f4e9e4",
-                  border: `1.5px solid ${e.entryType === "IN" || e.entryType === "AUTO_SALES" ? "#3f7d54" : "#b0492f"}`,
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                }}>
-                  <span style={{ fontSize: 14, color: e.entryType === "IN" || e.entryType === "AUTO_SALES" ? "#3f7d54" : "#b0492f" }}>
-                    {e.entryType === "OUT" ? "–" : "+"}
+            {moves.map(m => {
+              const out = m.amount < 0;
+              return (
+                <div key={m.id} style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12 }}>
+                  <div style={{
+                    width: 28, height: 28, borderRadius: "50%",
+                    background: out ? "#f4e9e4" : "#e9f1ea",
+                    border: `1.5px solid ${out ? "#b0492f" : "#3f7d54"}`,
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                  }}>
+                    <span style={{ fontSize: 14, color: out ? "#b0492f" : "#3f7d54" }}>{out ? "–" : "+"}</span>
+                  </div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <p style={{ fontSize: 12.5, fontWeight: 500, color: "#0D1117", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{m.label}</p>
+                    <p style={{ fontSize: 11, color: "#8f897a", marginTop: 1 }}>{[m.time, m.sub].filter(Boolean).join(" · ")}</p>
+                  </div>
+                  <span style={{ fontFamily: "var(--font-garamond)", fontSize: 13, fontWeight: 500, color: out ? "#b0492f" : "#0D1117", whiteSpace: "nowrap" }}>
+                    {out ? "–" : "+"} {fmtRpFull(Math.abs(m.amount))}
                   </span>
                 </div>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <p style={{ fontSize: 12.5, fontWeight: 500, color: "#0D1117", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{e.note ?? e.entryType}</p>
-                  <p style={{ fontSize: 11, color: "#8f897a", marginTop: 1 }}>
-                    {fmtTime(e.createdAt)} · {e.byUser?.name}
-                  </p>
-                </div>
-                <span style={{ fontFamily: "var(--font-garamond)", fontSize: 13, fontWeight: 500, color: e.entryType === "OUT" ? "#b0492f" : "#0D1117", whiteSpace: "nowrap" }}>
-                  {e.entryType === "OUT" ? "–" : "+"} {fmtRpFull(e.amount)}
-                </span>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       )}
