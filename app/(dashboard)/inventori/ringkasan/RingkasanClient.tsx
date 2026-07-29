@@ -1,4 +1,6 @@
 "use client";
+import { useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useUIStore } from "@/store/ui";
 
 interface Product {
@@ -67,6 +69,19 @@ function FlowArrow({ label, badge }: { label: string; badge: string }) {
 
 export default function RingkasanClient({ data }: Props) {
   const openModal = useUIStore(s => s.openModal);
+  const router = useRouter();
+  const sp = useSearchParams();
+
+  // Tell the server this device's timezone so "hari ini / bulan ini" use the
+  // store's local day (00:00 device clock), not the server's UTC day.
+  useEffect(() => {
+    const tz = String(-new Date().getTimezoneOffset());
+    if (sp.get("tz") !== tz) {
+      const params = new URLSearchParams(Array.from(sp.entries()));
+      params.set("tz", tz);
+      router.replace(`?${params.toString()}`);
+    }
+  }, [sp, router]);
 
   return (
     <div style={{ padding: "32px 36px", maxWidth: 1200 }}>
