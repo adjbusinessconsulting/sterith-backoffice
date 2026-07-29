@@ -16,6 +16,29 @@ interface Summary {
   saldoLaci: number; modalAwal: number; autoTunai: number; kasMasuk: number; kasKeluar: number;
 }
 
+interface HutangRow {
+  id: string; customerName: string; phone: string | null; amount: number; paidAmount: number;
+  status: string; cashierName: string | null; createdAt: string; settledAt: string | null;
+}
+interface LogRow { id: string; type: string; detail: string; actor: string; createdAt: string; }
+interface ShiftClose {
+  businessDate: string; openedAt: string | null; closedAt: string; cashierName: string | null;
+  omzet: number; trx: number; shiftCount: number; modalAwal: number; expected: number;
+  counted: number | null; selisih: number | null; reconciled: boolean; autoClosed: boolean;
+  breakdown: Record<string, number>;
+}
+
+type Tab = "riwayat" | "kasir" | "hutang" | "log" | "shift";
+const TABS: { id: Tab; label: string }[] = [
+  { id: "riwayat", label: "Riwayat" },
+  { id: "kasir", label: "Kasir" },
+  { id: "hutang", label: "Hutang" },
+  { id: "log", label: "Log" },
+  { id: "shift", label: "Tutup Shift" },
+];
+const hutangLabel = (s: string) => s === "lunas" ? "Lunas" : s === "partial" ? "Sebagian" : "Belum lunas";
+const hutangColor = (s: string) => s === "lunas" ? "#3f7d54" : s === "partial" ? "#96762f" : "#b0492f";
+
 const methodLabel = (m: string) => m?.toLowerCase() === "qris" ? "QRIS" : m?.toLowerCase() === "tunai" ? "Tunai" : (m || "—");
 const pad = (n: number) => String(n).padStart(2, "0");
 const localToday = () => { const d = new Date(); return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`; };
@@ -27,12 +50,19 @@ function fmtRp(n: number) {
 }
 function fmtRpFull(n: number) { return "Rp " + n.toLocaleString("id-ID"); }
 function fmtTime(dt: string) { return new Date(dt).toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" }); }
+function fmtDate(dt: string) { return new Date(dt).toLocaleDateString("id-ID", { day: "2-digit", month: "short" }); }
+const th: React.CSSProperties = { padding: "11px 16px", textAlign: "left", fontSize: 9.5, letterSpacing: "0.15em", textTransform: "uppercase", color: "#8f897a", fontWeight: 600 };
+const td: React.CSSProperties = { padding: "13px 16px" };
+const tdNum: React.CSSProperties = { padding: "13px 16px", textAlign: "right", fontFamily: "var(--font-garamond)", fontSize: 14, color: "#0D1117" };
 
 export default function LaporanPage() {
-  const [tab, setTab] = useState<"riwayat" | "kasir">("riwayat");
+  const [tab, setTab] = useState<Tab>("riwayat");
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [cashEntries, setCashEntries] = useState<CashEntry[]>([]);
   const [summary, setSummary] = useState<Summary | null>(null);
+  const [hutang, setHutang] = useState<HutangRow[]>([]);
+  const [logs, setLogs] = useState<LogRow[]>([]);
+  const [shiftClose, setShiftClose] = useState<ShiftClose | null>(null);
   const [loading, setLoading] = useState(false);
   const [date, setDate] = useState(localToday());
   const [methodFilter, setMethodFilter] = useState<"semua" | "tunai" | "qris">("semua");
@@ -43,17 +73,23 @@ export default function LaporanPage() {
     const tz = -new Date().getTimezoneOffset();          // store-local day (WIB = 420)
     const qs = `date=${date}&tz=${tz}`;
     try {
-      const [trxRes, sumRes, cashRes] = await Promise.all([
+      const [trxRes, sumRes, cashRes, hutRes, logRes, shiftRes] = await Promise.all([
         fetch(`/api/reports/transactions?${qs}`),
         fetch(`/api/reports/summary?${qs}`),
         fetch(`/api/reports/cash?${qs}`),
+        fetch(`/api/reports/hutang`),
+        fetch(`/api/reports/log?${qs}`),
+        fetch(`/api/reports/shift?${qs}`),
       ]);
-      const trx = await trxRes.json();
-      const sum = await sumRes.json();
-      const cash = await cashRes.json();
+      const [trx, sum, cash, hut, log, shift] = await Promise.all([
+        trxRes.json(), sumRes.json(), cashRes.json(), hutRes.json(), logRes.json(), shiftRes.json(),
+      ]);
       if (Array.isArray(trx)) setTransactions(trx);
       if (sum && typeof sum === "object") setSummary(sum);
       if (Array.isArray(cash)) setCashEntries(cash);
+      setHutang(Array.isArray(hut) ? hut : []);
+      setLogs(Array.isArray(log) ? log : []);
+      setShiftClose(shift && typeof shift === "object" ? shift : null);
     } catch {}
     setLoading(false);
   }, [date]);
@@ -103,30 +139,30 @@ export default function LaporanPage() {
           Performa toko
         </h1>
         <p style={{ fontSize: 13, color: "#8f897a" }}>
-          Tampilan sama seperti di POS — riwayat transaksi dan uang kas.
+          Tampilan sama seperti di POS — riwayat, kas, hutang, log &amp; tutup shift.
         </p>
       </div>
 
       {/* Tab + filters */}
       <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 18, flexWrap: "wrap" }}>
-        {/* Riwayat / Kasir tabs */}
-        <div style={{ background: "#fff", border: "1px solid #e8e3d5", borderRadius: 10, padding: 3, display: "flex", gap: 2 }}>
-          {(["riwayat", "kasir"] as const).map(t => (
-            <button key={t} onClick={() => setTab(t)} style={{
-              height: 34, padding: "0 18px", borderRadius: 8,
-              background: tab === t ? "#0D1117" : "transparent",
+        {/* Riwayat / Kasir / Hutang / Log / Tutup Shift tabs */}
+        <div style={{ background: "#fff", border: "1px solid #e8e3d5", borderRadius: 10, padding: 3, display: "flex", gap: 2, flexWrap: "wrap" }}>
+          {TABS.map(t => (
+            <button key={t.id} onClick={() => setTab(t.id)} style={{
+              height: 34, padding: "0 14px", borderRadius: 8,
+              background: tab === t.id ? "#0D1117" : "transparent",
               border: "none",
-              color: tab === t ? "#f8f6ef" : "#8f897a",
-              fontSize: 13, fontWeight: tab === t ? 600 : 400,
-              cursor: "pointer", fontFamily: "var(--font-hanken)",
-              textTransform: "capitalize",
+              color: tab === t.id ? "#f8f6ef" : "#8f897a",
+              fontSize: 13, fontWeight: tab === t.id ? 600 : 400,
+              cursor: "pointer", fontFamily: "var(--font-hanken)", whiteSpace: "nowrap",
             }}>
-              {t === "riwayat" ? "Riwayat" : "Kasir"}
+              {t.label}
             </button>
           ))}
         </div>
 
-        {/* Date picker */}
+        {/* Date picker — for the day-scoped tabs (Hutang is a running ledger) */}
+        {tab !== "hutang" && (
         <label style={{
           height: 38, padding: "0 14px", background: "#fff", border: "1.5px solid #e8e3d5",
           borderRadius: 10, fontSize: 12.5, color: "#0D1117", cursor: "pointer",
@@ -136,9 +172,10 @@ export default function LaporanPage() {
           <input type="date" value={date} max={localToday()} onChange={e => setDate(e.target.value || localToday())}
             style={{ border: "none", outline: "none", background: "transparent", fontSize: 12.5, color: "#0D1117", fontFamily: "var(--font-hanken)", cursor: "pointer" }} />
         </label>
+        )}
 
-        {/* Shift filter */}
-        {shiftOptions.length > 0 && (
+        {/* Shift filter — Riwayat only */}
+        {tab === "riwayat" && shiftOptions.length > 0 && (
           <div style={{
             height: 38, padding: "0 6px 0 12px", background: "#fff", border: "1.5px solid #e8e3d5",
             borderRadius: 10, display: "flex", alignItems: "center", gap: 6, fontFamily: "var(--font-hanken)",
@@ -154,12 +191,14 @@ export default function LaporanPage() {
 
         <div style={{ flex: 1 }} />
 
-        {/* Payment filter — now actually filters the table */}
+        {/* Payment filter — Riwayat only; now actually filters the table */}
+        {tab === "riwayat" && (
         <div style={{ display: "flex", gap: 8 }}>
           <button onClick={() => setMethodFilter("semua")} style={pillBtn(methodFilter === "semua")}>Semua · {totalTrx}</button>
           <button onClick={() => setMethodFilter("tunai")} style={pillBtn(methodFilter === "tunai")}>Tunai · {tunaiCount}</button>
           <button onClick={() => setMethodFilter("qris")} style={pillBtn(methodFilter === "qris")}>QRIS · {qrisCount}</button>
         </div>
+        )}
       </div>
 
       {/* === RIWAYAT TAB === */}
@@ -304,6 +343,104 @@ export default function LaporanPage() {
             })}
           </div>
         </div>
+      )}
+
+      {/* === HUTANG TAB === */}
+      {tab === "hutang" && (
+        <div className="bo-table-scroll" style={{ background: "#fff", border: "1px solid #e8e3d5", borderRadius: 12 }}>
+          <table style={{ width: "100%", borderCollapse: "collapse" }}>
+            <thead>
+              <tr style={{ borderBottom: "1px solid #f0ebe0" }}>
+                {["PELANGGAN", "TANGGAL", "KASIR", "JUMLAH", "DIBAYAR", "SISA", "STATUS"].map(h => (
+                  <th key={h} style={{ ...th, textAlign: ["JUMLAH", "DIBAYAR", "SISA"].includes(h) ? "right" : "left" }}>{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {loading && <tr><td colSpan={7} style={{ padding: "40px 16px", textAlign: "center", color: "#8f897a", fontSize: 13 }}>Memuat...</td></tr>}
+              {!loading && hutang.length === 0 && <tr><td colSpan={7} style={{ padding: "40px 16px", textAlign: "center", color: "#8f897a", fontSize: 13 }}>Belum ada catatan hutang</td></tr>}
+              {hutang.map(h => (
+                <tr key={h.id} style={{ borderBottom: "1px solid #f8f5ef" }}>
+                  <td style={td}><span style={{ fontSize: 13, color: "#0D1117" }}>{h.customerName}</span>{h.phone && <span style={{ fontSize: 11, color: "#a49d8c" }}> · {h.phone}</span>}</td>
+                  <td style={td}><span style={{ fontFamily: "var(--font-garamond)", fontSize: 14, color: "#0D1117" }}>{fmtDate(h.createdAt)}</span></td>
+                  <td style={td}><span style={{ fontSize: 12, color: "#8f897a" }}>{h.cashierName || "—"}</span></td>
+                  <td style={tdNum}>{fmtRpFull(h.amount)}</td>
+                  <td style={tdNum}>{fmtRpFull(h.paidAmount)}</td>
+                  <td style={{ ...tdNum, fontWeight: 500 }}>{fmtRpFull(Math.max(0, h.amount - h.paidAmount))}</td>
+                  <td style={td}>
+                    <span style={{ fontSize: 11, fontWeight: 600, color: hutangColor(h.status), background: `${hutangColor(h.status)}14`, border: `1px solid ${hutangColor(h.status)}40`, padding: "3px 8px", borderRadius: 6, whiteSpace: "nowrap" }}>{hutangLabel(h.status)}</span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {/* === LOG TAB === */}
+      {tab === "log" && (
+        <div style={{ background: "#fff", border: "1px solid #e8e3d5", borderRadius: 12, overflow: "hidden" }}>
+          {loading && <p style={{ padding: "40px", textAlign: "center", color: "#8f897a", fontSize: 13 }}>Memuat...</p>}
+          {!loading && logs.length === 0 && <p style={{ padding: "40px", textAlign: "center", color: "#8f897a", fontSize: 13 }}>{isToday ? "Belum ada aktivitas hari ini" : "Tidak ada aktivitas pada tanggal ini"}</p>}
+          {logs.map(l => (
+            <div key={l.id} style={{ display: "flex", alignItems: "baseline", gap: 12, padding: "11px 20px", borderBottom: "1px solid #f8f5ef" }}>
+              <span style={{ fontFamily: "var(--font-garamond)", fontSize: 13, color: "#8f897a", width: 42, flexShrink: 0 }}>{fmtTime(l.createdAt)}</span>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <p style={{ fontSize: 13, color: "#0D1117" }}>{l.detail || l.type}</p>
+                {(l.actor || l.type) && <p style={{ fontSize: 11, color: "#a49d8c", marginTop: 1 }}>{[l.actor, l.type].filter(Boolean).join(" · ")}</p>}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* === TUTUP SHIFT TAB === */}
+      {tab === "shift" && (
+        !shiftClose ? (
+          <div style={{ background: "#fff", border: "1px dashed #e0dac9", borderRadius: 12, padding: "48px 24px", textAlign: "center" }}>
+            <p style={{ fontFamily: "var(--font-garamond)", fontSize: 18, color: "#0D1117", marginBottom: 6 }}>Belum ada tutup shift</p>
+            <p style={{ fontSize: 13, color: "#8f897a" }}>Tidak ada nota tutup shift untuk tanggal ini.</p>
+          </div>
+        ) : (
+          <div className="bo-cols-2" style={{ gap: 20 }}>
+            {/* Nota */}
+            <div style={{ background: "#0D1117", borderRadius: 14, padding: "24px 28px" }}>
+              <p style={{ fontSize: 9.5, letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(248,246,239,0.5)", fontWeight: 600, marginBottom: 12 }}>NOTA TUTUP SHIFT</p>
+              <p style={{ fontFamily: "var(--font-garamond)", fontSize: 34, fontWeight: 500, color: "#f8f6ef", marginBottom: 6 }}>{fmtRpFull(shiftClose.omzet)}</p>
+              <p style={{ fontSize: 12, color: "rgba(248,246,239,0.45)", marginBottom: 20 }}>
+                {shiftClose.trx} transaksi · {shiftClose.shiftCount} shift · ditutup {fmtTime(shiftClose.closedAt)}{shiftClose.cashierName ? ` · ${shiftClose.cashierName}` : ""}
+              </p>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "14px 24px" }}>
+                {[
+                  { label: "MODAL AWAL", value: fmtRpFull(shiftClose.modalAwal), color: "#f8f6ef" },
+                  { label: "DRAWER SEHARUSNYA", value: fmtRpFull(shiftClose.expected), color: "#f8f6ef" },
+                  { label: "DIHITUNG", value: shiftClose.counted != null ? fmtRpFull(shiftClose.counted) : "—", color: "#f8f6ef" },
+                  { label: "SELISIH", value: shiftClose.selisih != null ? `${shiftClose.selisih >= 0 ? "+ " : "– "}${fmtRpFull(Math.abs(shiftClose.selisih))}` : "—", color: shiftClose.selisih == null ? "#f8f6ef" : shiftClose.selisih === 0 ? "#3f7d54" : shiftClose.selisih > 0 ? "#e7c987" : "#d98a6a" },
+                ].map(({ label, value, color }) => (
+                  <div key={label}>
+                    <p style={{ fontSize: 9, letterSpacing: "0.14em", textTransform: "uppercase", color: "rgba(248,246,239,0.45)", fontWeight: 600, marginBottom: 4 }}>{label}</p>
+                    <p style={{ fontFamily: "var(--font-garamond)", fontSize: 16, color }}>{value}</p>
+                  </div>
+                ))}
+              </div>
+              {shiftClose.autoClosed
+                ? <p style={{ fontSize: 11.5, color: "rgba(248,246,239,0.4)", marginTop: 16 }}>Ditutup otomatis — kas tidak dihitung.</p>
+                : !shiftClose.reconciled && <p style={{ fontSize: 11.5, color: "rgba(248,246,239,0.4)", marginTop: 16 }}>Ditutup tanpa hitung kas.</p>}
+            </div>
+
+            {/* Breakdown per method */}
+            <div style={{ background: "#fff", border: "1px solid #e8e3d5", borderRadius: 14, padding: "20px 24px" }}>
+              <p style={{ fontSize: 9.5, letterSpacing: "0.18em", textTransform: "uppercase", color: "#8f897a", fontWeight: 600, marginBottom: 12 }}>RINCIAN PER METODE</p>
+              {Object.entries(shiftClose.breakdown || {}).length === 0 && <p style={{ fontSize: 13, color: "#8f897a" }}>Tidak ada rincian</p>}
+              {Object.entries(shiftClose.breakdown || {}).map(([method, amt]) => (
+                <div key={method} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "9px 0", borderBottom: "1px solid #f8f5ef" }}>
+                  <span style={{ fontSize: 13, color: "#0D1117", textTransform: "capitalize" }}>{method}</span>
+                  <span style={{ fontFamily: "var(--font-garamond)", fontSize: 14, color: "#0D1117" }}>{fmtRpFull(Number(amt) || 0)}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )
       )}
     </div>
   );

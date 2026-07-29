@@ -221,6 +221,47 @@ model KasEntry {
   @@map("kas_entries")
 }
 
+// Credit sales (bon / hutang) the POS records — for the Laporan Hutang tab.
+model Hutang {
+  id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  storeId      String    @map("store_id") @db.Uuid
+  saleId       String?   @map("sale_id") @db.Uuid
+  customerName String    @map("customer_name")
+  phone        String?
+  amount       Int
+  paidAmount   Int       @default(0) @map("paid_amount")
+  status       String    @default("open")
+  cashierName  String?   @map("cashier_name")
+  createdAt    DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  settledAt    DateTime? @map("settled_at") @db.Timestamptz(6)
+
+  @@map("hutang")
+}
+
+// Shift-close notes (tutup shift) written by the POS — for the Laporan tab.
+model ShiftClosing {
+  id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  storeId      String    @map("store_id") @db.Uuid
+  businessDate DateTime  @map("business_date") @db.Date
+  openedAt     DateTime? @map("opened_at") @db.Timestamptz(6)
+  closedAt     DateTime  @default(now()) @map("closed_at") @db.Timestamptz(6)
+  cashierName  String?   @map("cashier_name")
+  omzet        Int       @default(0)
+  trx          Int       @default(0)
+  shiftCount   Int       @default(1) @map("shift_count")
+  modalAwal    Int       @default(0) @map("modal_awal")
+  expected     Int       @default(0)
+  counted      Int?
+  selisih      Int?
+  reconciled   Boolean   @default(false)
+  autoClosed   Boolean   @default(false) @map("auto_closed")
+  breakdown    Json      @default("{}")
+  createdAt    DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  @@unique([storeId, businessDate])
+  @@map("shift_closings")
+}
+
 // The day's opening cash (modal awal), keyed per store per business date.
 model DayOpen {
   id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
