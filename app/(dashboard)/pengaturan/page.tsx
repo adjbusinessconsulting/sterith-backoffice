@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect, useCallback } from "react";
-import { QrCode, CreditCard, CheckCircle2, AlertCircle, Eye, EyeOff, Upload, Trash2, Sparkles, Puzzle, KeyRound } from "lucide-react";
+import { QrCode, CreditCard, CheckCircle2, AlertCircle, Eye, EyeOff, Upload, Trash2, Sparkles, Puzzle, KeyRound, SlidersHorizontal } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { ADDON_KEYS, ADDON_LABEL, hasAddOn, type AddOnKey } from "@/lib/addons";
 
@@ -87,6 +87,82 @@ function SubscriptionSection() {
           );
         })}
       </div>
+    </Section>
+  );
+}
+
+function Switch({ on, onToggle, disabled }: { on: boolean; onToggle: () => void; disabled?: boolean }) {
+  return (
+    <button type="button" onClick={onToggle} disabled={disabled}
+      style={{ width: 42, height: 25, borderRadius: 999, border: "none", cursor: disabled ? "default" : "pointer", flexShrink: 0, opacity: disabled ? 0.6 : 1, background: on ? "#3f7d54" : "#d8d2c4", transition: "background 0.15s", position: "relative", padding: 0 }}>
+      <span style={{ position: "absolute", top: 3, left: on ? 20 : 3, width: 19, height: 19, borderRadius: 999, background: "white", transition: "left 0.15s", boxShadow: "0 1px 3px rgba(0,0,0,0.2)" }} />
+    </button>
+  );
+}
+
+const FEATURE_GROUPS: { title: string; items: { k: string; label: string; desc: string }[] }[] = [
+  { title: "Metode Pembayaran", items: [
+    { k: "pay_tunai", label: "Tunai", desc: "Terima pembayaran tunai." },
+    { k: "pay_qris", label: "QRIS", desc: "Tampilkan opsi QRIS saat bayar." },
+    { k: "pay_transfer", label: "Transfer Bank", desc: "Terima transfer bank." },
+    { k: "pay_debit", label: "Kartu Debit", desc: "Terima kartu debit (mesin EDC)." },
+    { k: "pay_ewallet", label: "E-Wallet", desc: "OVO, GoPay, Dana, dll." },
+  ] },
+  { title: "Fitur Transaksi", items: [
+    { k: "hutang", label: "Hutang / Bon", desc: "Opsi bon saat bayar. Buku Hutang tetap terlihat walau dimatikan." },
+    { k: "kas", label: "Uang Kas", desc: "Catat kas masuk/keluar. Riwayat kas tetap terlihat." },
+    { k: "rekonsiliasi", label: "Rekonsiliasi kas", desc: "Tombol hitung laci saat tutup toko." },
+    { k: "gantiShift", label: "Ganti / Pindah shift", desc: "Tombol serah-terima shift." },
+    { k: "fotoBuktiWajib", label: "Foto bukti kas wajib", desc: "Wajibkan foto tiap catat kas." },
+  ] },
+  { title: "Kasir & Struk", items: [
+    { k: "pinWajib", label: "PIN wajib per kasir", desc: "Minta PIN tiap kasir masuk." },
+    { k: "passwordConfirmPrice", label: "Konfirmasi kata sandi saat ubah harga", desc: "Minta kata sandi pemilik sebelum harga/produk diubah." },
+    { k: "receiptLogo", label: "Logo di struk", desc: "Tampilkan logo toko di struk." },
+    { k: "whatsappShare", label: "Bagikan via WhatsApp", desc: "Kirim struk & laporan lewat WhatsApp." },
+  ] },
+  { title: "Inventori", items: [
+    { k: "sellWhenHabis", label: "Izinkan jual barang stok habis", desc: "Kasir tetap bisa menjual barang yang stoknya 0 (Habis). Matikan untuk mencegah stok minus." },
+  ] },
+];
+
+function FeaturesSection() {
+  const [feat, setFeat] = useState<Record<string, boolean> | null>(null);
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    fetch("/api/store/features").then(r => r.json()).then(d => { if (d && typeof d === "object" && !d.error) setFeat(d); }).catch(() => {});
+  }, []);
+
+  async function toggle(k: string) {
+    if (!feat || saving) return;
+    const next = { ...feat, [k]: !feat[k] };
+    setFeat(next); setSaving(true);
+    try { await fetch("/api/store/features", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ [k]: next[k] }) }); }
+    catch { setFeat(feat); }   // revert on failure
+    finally { setSaving(false); }
+  }
+
+  return (
+    <Section title="Fitur Toko" subtitle="Nyalakan / matikan fitur POS. Data lama tidak hilang — hanya menyembunyikan pembuatan baru." icon={<SlidersHorizontal size={18} color="#96762f" />}>
+      {!feat ? (
+        <p style={{ fontSize: 13, color: "#8f897a" }}>Memuat…</p>
+      ) : (
+        FEATURE_GROUPS.map((g, gi) => (
+          <div key={g.title} style={{ marginTop: gi === 0 ? 0 : 20 }}>
+            <p style={{ fontSize: 9.5, letterSpacing: "0.18em", textTransform: "uppercase", color: "#96762f", fontWeight: 700, margin: "0 0 4px" }}>{g.title}</p>
+            {g.items.map(it => (
+              <div key={it.k} style={{ display: "flex", alignItems: "flex-start", gap: 12, padding: "12px 0", borderBottom: "1px solid #f2ede3" }}>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <p style={{ margin: 0, fontSize: 13.5, fontWeight: 600, color: "#0D1117" }}>{it.label}</p>
+                  <p style={{ margin: "2px 0 0", fontSize: 11.5, color: "#8f897a", lineHeight: 1.5 }}>{it.desc}</p>
+                </div>
+                <Switch on={!!feat[it.k]} onToggle={() => toggle(it.k)} disabled={saving} />
+              </div>
+            ))}
+          </div>
+        ))
+      )}
     </Section>
   );
 }
@@ -344,6 +420,9 @@ export default function PengaturanPage() {
 
       {/* Subscription & add-ons */}
       <SubscriptionSection />
+
+      {/* Store feature toggles (POS) */}
+      <FeaturesSection />
 
       {/* Static QRIS Section */}
       <Section
