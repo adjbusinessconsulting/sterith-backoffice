@@ -67,6 +67,7 @@ export default function LaporanPage() {
   const [date, setDate] = useState(localToday());
   const [methodFilter, setMethodFilter] = useState<"semua" | "tunai" | "qris">("semua");
   const [shiftFilter, setShiftFilter] = useState<"semua" | number>("semua");
+  const [hutangFilter, setHutangFilter] = useState<"semua" | "open" | "lunas">("semua");
 
   const loadData = useCallback(async () => {
     setLoading(true);
@@ -102,6 +103,11 @@ export default function LaporanPage() {
   const tunaiCount = byShift.filter(t => t.method?.toLowerCase() === "tunai").length;
   const qrisCount = byShift.filter(t => t.method?.toLowerCase() === "qris").length;
   const filtered = byShift.filter(t => methodFilter === "semua" || t.method?.toLowerCase() === methodFilter);
+
+  // Hutang status filter (its own controls — the day/shift filters don't apply to a ledger).
+  const hutangOutstanding = hutang.filter(h => h.status !== "lunas");
+  const hutangLunas = hutang.filter(h => h.status === "lunas");
+  const hutangFiltered = hutangFilter === "lunas" ? hutangLunas : hutangFilter === "open" ? hutangOutstanding : hutang;
 
   const shiftOptions = Array.from(new Set(transactions.map(t => t.shift).filter((s): s is number => s != null))).sort((a, b) => a - b);
   const activeShift = transactions.length ? transactions[0].shift : null;   // newest first → current shift
@@ -197,6 +203,15 @@ export default function LaporanPage() {
           <button onClick={() => setMethodFilter("semua")} style={pillBtn(methodFilter === "semua")}>Semua · {totalTrx}</button>
           <button onClick={() => setMethodFilter("tunai")} style={pillBtn(methodFilter === "tunai")}>Tunai · {tunaiCount}</button>
           <button onClick={() => setMethodFilter("qris")} style={pillBtn(methodFilter === "qris")}>QRIS · {qrisCount}</button>
+        </div>
+        )}
+
+        {/* Status filter — Hutang tab (replaces the day/shift filters, which a ledger has no use for) */}
+        {tab === "hutang" && (
+        <div style={{ display: "flex", gap: 8 }}>
+          <button onClick={() => setHutangFilter("semua")} style={pillBtn(hutangFilter === "semua")}>Semua · {hutang.length}</button>
+          <button onClick={() => setHutangFilter("open")} style={pillBtn(hutangFilter === "open")}>Belum lunas · {hutangOutstanding.length}</button>
+          <button onClick={() => setHutangFilter("lunas")} style={pillBtn(hutangFilter === "lunas")}>Lunas · {hutangLunas.length}</button>
         </div>
         )}
       </div>
@@ -358,8 +373,8 @@ export default function LaporanPage() {
             </thead>
             <tbody>
               {loading && <tr><td colSpan={7} style={{ padding: "40px 16px", textAlign: "center", color: "#8f897a", fontSize: 13 }}>Memuat...</td></tr>}
-              {!loading && hutang.length === 0 && <tr><td colSpan={7} style={{ padding: "40px 16px", textAlign: "center", color: "#8f897a", fontSize: 13 }}>Belum ada catatan hutang</td></tr>}
-              {hutang.map(h => (
+              {!loading && hutangFiltered.length === 0 && <tr><td colSpan={7} style={{ padding: "40px 16px", textAlign: "center", color: "#8f897a", fontSize: 13 }}>{hutang.length === 0 ? "Belum ada catatan hutang" : "Tidak ada pada filter ini"}</td></tr>}
+              {hutangFiltered.map(h => (
                 <tr key={h.id} style={{ borderBottom: "1px solid #f8f5ef" }}>
                   <td style={td}><span style={{ fontSize: 13, color: "#0D1117" }}>{h.customerName}</span>{h.phone && <span style={{ fontSize: 11, color: "#a49d8c" }}> · {h.phone}</span>}</td>
                   <td style={td}><span style={{ fontFamily: "var(--font-garamond)", fontSize: 14, color: "#0D1117" }}>{fmtDate(h.createdAt)}</span></td>
