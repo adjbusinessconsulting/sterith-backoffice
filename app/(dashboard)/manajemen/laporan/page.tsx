@@ -102,6 +102,8 @@ export default function LaporanPage() {
   // Voided sales still show (with a badge) but don't count toward the pill numbers.
   const byShift = transactions.filter(t => shiftFilter === "semua" || t.shift === shiftFilter);
   const active = byShift.filter(t => !t.voided);
+  const voidedTx = byShift.filter(t => t.voided);
+  const voidedTotal = voidedTx.reduce((s, t) => s + t.total, 0);
   const totalTrx = active.length;
   const tunaiCount = active.filter(t => t.method?.toLowerCase() === "tunai").length;
   const qrisCount = active.filter(t => t.method?.toLowerCase() === "qris").length;
@@ -241,6 +243,12 @@ export default function LaporanPage() {
                   </p>
                 </div>
               ))}
+            </div>
+          )}
+          {voidedTx.length > 0 && (
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, background: "#fff", border: "1px solid #eaddd6", borderRadius: 12, padding: "12px 18px", marginTop: -12, marginBottom: 24 }}>
+              <span style={{ fontSize: 12.5, color: "#b0492f", fontWeight: 500 }}>Dibatalkan · {voidedTx.length} transaksi <span style={{ color: "#a49d8c", fontWeight: 400 }}>(tidak dihitung dalam omzet)</span></span>
+              <span style={{ fontFamily: "var(--font-garamond)", fontSize: 16, color: "#b0492f", textDecoration: "line-through" }}>{fmtRpFull(voidedTotal)}</span>
             </div>
           )}
 
