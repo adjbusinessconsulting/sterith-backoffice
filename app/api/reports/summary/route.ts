@@ -14,7 +14,7 @@ export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const { from, to, ymd } = dayWindow(searchParams.get("date"), searchParams.get("tz"));
 
-  const sales = await db.sale.findMany({ where: { storeId, createdAt: { gte: from, lte: to } }, select: { total: true, paymentMethod: true } });
+  const sales = await db.sale.findMany({ where: { storeId, voided: false, createdAt: { gte: from, lte: to } }, select: { total: true, paymentMethod: true } });
   // kas_entries / day_opens may not be migrated on every store's DB — degrade to
   // zeros rather than 500 the whole page if a table is missing.
   let kas: { type: string; amount: number }[] = [];

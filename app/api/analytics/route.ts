@@ -41,7 +41,7 @@ export async function GET(req: NextRequest) {
 
   const [sales, products] = await Promise.all([
     db.sale.findMany({
-      where: { storeId, createdAt: { gte: from, lte: to } },
+      where: { storeId, voided: false, createdAt: { gte: from, lte: to } },
       include: { items: true },
       orderBy: { createdAt: "asc" },
     }),

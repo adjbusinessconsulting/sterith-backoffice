@@ -89,9 +89,11 @@ model Sale {
   shift         Int?
   total         Int
   paymentMethod String   @map("payment_method")
-  cashReceived  Int?     @map("cash_received")
-  changeAmount  Int?     @map("change_amount")
-  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  cashReceived  Int?      @map("cash_received")
+  changeAmount  Int?      @map("change_amount")
+  voided        Boolean   @default(false)
+  voidedAt      DateTime? @map("voided_at") @db.Timestamptz(6)
+  createdAt     DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
 
   items SaleItem[]
 

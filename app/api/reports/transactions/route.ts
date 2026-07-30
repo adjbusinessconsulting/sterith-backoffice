@@ -33,6 +33,7 @@ export async function GET(req: NextRequest) {
     method: s.paymentMethod,                      // "tunai" | "qris"
     shift: s.shift,
     total: s.total,
+    voided: s.voided,
     items: s.items.map((i) => ({ name: i.productName, qty: i.qty, price: i.price, subtotal: i.subtotal })),
   }));
 

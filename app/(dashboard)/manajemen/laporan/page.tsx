@@ -3,6 +3,7 @@ import { useState, useEffect, useCallback } from "react";
 
 interface Transaction {
   id: string; no: string; cashierName: string; method: string; total: number; createdAt: string; shift: number | null;
+  voided?: boolean;
   items: { name: string; qty: number; price: number; subtotal: number }[];
 }
 
@@ -98,10 +99,12 @@ export default function LaporanPage() {
   useEffect(() => { loadData(); }, [loadData]);
 
   // Filters (client-side): shift narrows the set; the payment pills sit on top of it.
+  // Voided sales still show (with a badge) but don't count toward the pill numbers.
   const byShift = transactions.filter(t => shiftFilter === "semua" || t.shift === shiftFilter);
-  const totalTrx = byShift.length;
-  const tunaiCount = byShift.filter(t => t.method?.toLowerCase() === "tunai").length;
-  const qrisCount = byShift.filter(t => t.method?.toLowerCase() === "qris").length;
+  const active = byShift.filter(t => !t.voided);
+  const totalTrx = active.length;
+  const tunaiCount = active.filter(t => t.method?.toLowerCase() === "tunai").length;
+  const qrisCount = active.filter(t => t.method?.toLowerCase() === "qris").length;
   const filtered = byShift.filter(t => methodFilter === "semua" || t.method?.toLowerCase() === methodFilter);
 
   // Hutang status filter (its own controls — the day/shift filters don't apply to a ledger).
@@ -265,7 +268,7 @@ export default function LaporanPage() {
                   <tr><td colSpan={6} style={{ padding: "40px 16px", textAlign: "center", color: "#8f897a", fontSize: 13 }}>{isToday ? "Belum ada transaksi hari ini" : "Tidak ada transaksi pada tanggal ini"}</td></tr>
                 )}
                 {filtered.map(t => (
-                  <tr key={t.id} style={{ borderBottom: "1px solid #f8f5ef" }}>
+                  <tr key={t.id} style={{ borderBottom: "1px solid #f8f5ef", opacity: t.voided ? 0.55 : 1 }}>
                     <td style={{ padding: "13px 16px" }}>
                       <span style={{ fontFamily: "var(--font-garamond)", fontSize: 14, fontWeight: 500, color: "#0D1117" }}>{t.no}</span>
                     </td>
@@ -285,9 +288,10 @@ export default function LaporanPage() {
                     </td>
                     <td style={{ padding: "13px 16px" }}>
                       <span style={{ fontSize: 12, color: "#0D1117" }}>{methodLabel(t.method)}</span>
+                      {t.voided && <span style={{ marginLeft: 6, fontSize: 9, fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase", color: "#b0492f", background: "rgba(176,73,47,0.1)", padding: "2px 6px", borderRadius: 4 }}>Dibatalkan</span>}
                     </td>
                     <td style={{ padding: "13px 16px", textAlign: "right" }}>
-                      <span style={{ fontFamily: "var(--font-garamond)", fontSize: 14, fontWeight: 500, color: "#0D1117" }}>Rp {t.total.toLocaleString("id-ID")}</span>
+                      <span style={{ fontFamily: "var(--font-garamond)", fontSize: 14, fontWeight: 500, color: "#0D1117", textDecoration: t.voided ? "line-through" : "none" }}>Rp {t.total.toLocaleString("id-ID")}</span>
                     </td>
                   </tr>
                 ))}
