@@ -235,6 +235,7 @@ model Hutang {
   paidAmount   Int       @default(0) @map("paid_amount")
   status       String    @default("open")
   cashierName  String?   @map("cashier_name")
+  voided       Boolean   @default(false)
   createdAt    DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
   settledAt    DateTime? @map("settled_at") @db.Timestamptz(6)
 

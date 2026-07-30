@@ -12,7 +12,7 @@ export async function GET() {
   const { storeId } = session.user;
   try {
     const rows = await db.hutang.findMany({
-      where: { storeId },
+      where: { storeId, voided: false },   // cancelled (voided) bons don't appear
       orderBy: [{ status: "asc" }, { createdAt: "desc" }],   // open/partial before lunas
       take: 100,
     });
