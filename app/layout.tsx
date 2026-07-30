@@ -20,7 +20,7 @@ const hanken = Hanken_Grotesk({
 });
 
 export const metadata: Metadata = {
-  title: "Sterith Backoffice",
+  title: "Sterith Back Office",
   description: "Inventori & manajemen toko",
   manifest: "/manifest.webmanifest",
   icons: {
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
   },
   appleWebApp: {
     capable: true,
-    title: "Back Office",
+    title: "Sterith Back Office",
     statusBarStyle: "black-translucent",
   },
 };
