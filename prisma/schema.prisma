@@ -91,6 +91,7 @@ model Sale {
   paymentMethod String   @map("payment_method")
   cashReceived  Int?      @map("cash_received")
   changeAmount  Int?      @map("change_amount")
+  customerName  String?   @map("customer_name")
   voided        Boolean   @default(false)
   voidedAt      DateTime? @map("voided_at") @db.Timestamptz(6)
   createdAt     DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)

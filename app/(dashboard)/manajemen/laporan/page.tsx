@@ -3,7 +3,7 @@ import { useState, useEffect, useCallback } from "react";
 
 interface Transaction {
   id: string; no: string; cashierName: string; method: string; total: number; createdAt: string; shift: number | null;
-  voided?: boolean;
+  voided?: boolean; customerName?: string | null;
   items: { name: string; qty: number; price: number; subtotal: number }[];
 }
 
@@ -277,6 +277,7 @@ export default function LaporanPage() {
                     </td>
                     <td style={{ padding: "13px 16px" }}>
                       <span style={{ fontSize: 13, color: "#0D1117" }}>{t.cashierName || "—"}</span>
+                      {t.customerName && <div style={{ fontSize: 11, color: "#96762f" }}>a.n. {t.customerName}</div>}
                     </td>
                     <td style={{ padding: "13px 16px" }}>
                       <span style={{ fontSize: 12, color: "#8f897a", maxWidth: 220, display: "block", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}
