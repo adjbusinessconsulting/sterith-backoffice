@@ -41,24 +41,31 @@ declare module "next-auth/jwt" {
 // tier, add-ons). Premium-gated; returns null if not eligible. Shared by both
 // the password provider and the token (SSO) provider.
 async function resolveOwner(userId: string, email: string) {
-  const store = await db.store.findFirst({ where: { ownerId: userId } });
-  if (!store) return null;
-  if (store.status !== "active") return null;
+  // An owner can have SEVERAL stores on different tiers (e.g. a Free shop and a
+  // Premium one). Back Office is Premium-only, so pick the owner's Premium store
+  // rather than whichever row happens to come back first — otherwise a paying
+  // Premium owner is locked out just because a Free store sorted ahead of it.
+  const rows = await db.$queryRaw<Array<{ id: string; status: string; tier: string; add_ons: string[] }>>`
+    SELECT id::text          AS id,
+           COALESCE(status, 'active') AS status,
+           COALESCE(tier, 'free')     AS tier,
+           COALESCE(add_ons, '{}')    AS add_ons
+    FROM stores
+    WHERE owner_id = ${userId}::uuid`;
+  if (!rows.length) return null;
 
-  const tierRows = await db.$queryRaw<Array<{ tier: string }>>`
-    SELECT COALESCE(tier, 'free') AS tier FROM stores WHERE id = ${store.id}::uuid`;
-  const tier = tierRows[0]?.tier ?? 'free';
+  const eligible = rows.find(r => r.status === "active" && isAtLeast(r.tier, "premium"));
+  if (!eligible) return null;   // no active Premium store → NOT_ELIGIBLE
 
-  let addOns: string[] = [];
-  try {
-    const addonRows = await db.$queryRaw<Array<{ add_ons: string[] }>>`
-      SELECT COALESCE(add_ons, '{}') AS add_ons FROM stores WHERE id = ${store.id}::uuid`;
-    addOns = addonRows[0]?.add_ons ?? [];
-  } catch { addOns = []; }
-
-  if (!isAtLeast(tier, 'premium')) return null;
-
-  return { id: userId, name: email.split("@")[0], email, role: "OWNER", storeId: store.id, tier, addOns };
+  return {
+    id: userId,
+    name: email.split("@")[0],
+    email,
+    role: "OWNER",
+    storeId: eligible.id,
+    tier: eligible.tier,
+    addOns: eligible.add_ons ?? [],
+  };
 }
 
 export const authOptions: NextAuthOptions = {
