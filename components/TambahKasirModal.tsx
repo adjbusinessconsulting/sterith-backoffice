@@ -19,6 +19,9 @@ export default function TambahKasirModal() {
   async function handleSave() {
     if (!name.trim()) { setError("Nama wajib diisi."); return; }
     if (pin.length !== 6) { setError("PIN harus 6 digit."); return; }
+    // Managers always need a password too: PIN logs them in, and the password is
+    // available for approval whichever method the owner picks (PIN or Kata sandi).
+    if (role === "MANAJER" && password.trim().length < 4) { setError("Kata sandi manajer minimal 4 karakter."); return; }
     setSubmitting(true); setError("");
     const res = await fetch("/api/staff", {
       method: "POST",
@@ -118,11 +121,11 @@ export default function TambahKasirModal() {
 
           {role === "MANAJER" && (
             <div style={{ marginBottom: 18 }}>
-              <label style={{ display: "block", fontSize: 10, letterSpacing: "0.16em", textTransform: "uppercase", color: "#8f897a", fontWeight: 600, marginBottom: 7 }}>Kata sandi manajer <span style={{ textTransform: "none", letterSpacing: 0, color: "#b3ac9a", fontWeight: 400 }}>(opsional)</span></label>
+              <label style={{ display: "block", fontSize: 10, letterSpacing: "0.16em", textTransform: "uppercase", color: "#8f897a", fontWeight: 600, marginBottom: 7 }}>Kata sandi manajer <span style={{ textTransform: "none", letterSpacing: 0, color: "#b0492f", fontWeight: 400 }}>(wajib)</span></label>
               <input type="text" value={password} onChange={e => setPassword(e.target.value)}
-                placeholder="Untuk persetujuan di POS"
+                placeholder="Min. 4 karakter"
                 style={{ width: "100%", height: 46, border: "1.5px solid #e8e3d5", borderRadius: 10, padding: "0 14px", fontSize: 14, color: "#0D1117", fontFamily: "var(--font-hanken)", background: "#fff" }} />
-              <p style={{ fontSize: 11, color: "#8f897a", marginTop: 6, lineHeight: 1.5 }}>Dipakai kalau metode persetujuan di POS memakai Kata Sandi. Kosongkan untuk pakai PIN.</p>
+              <p style={{ fontSize: 11, color: "#8f897a", marginTop: 6, lineHeight: 1.5 }}>Manajer pakai PIN untuk login. Kata sandi ini dipakai untuk persetujuan di POS bila metodenya Kata Sandi.</p>
             </div>
           )}
 
