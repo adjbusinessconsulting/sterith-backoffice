@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { MO_BASE } from "@/lib/masteroffice";
 import CheckUpdate from "@/components/CheckUpdate";
 
 export default function LoginPage() {
@@ -13,7 +14,7 @@ export default function LoginPage() {
   // (read-only) — matching the POS "buat kata sandi" screen.
   useEffect(() => {
     if (!setupToken) return;
-    fetch(`https://masteroffice.sterith.com/api/app-auth/setup?token=${encodeURIComponent(setupToken)}`)
+    fetch(`${MO_BASE}/api/app-auth/setup?token=${encodeURIComponent(setupToken)}`)
       .then(r => r.json())
       .then(j => { if (j?.email) setEmail(j.email); })
       .catch(() => {});
@@ -54,7 +55,7 @@ export default function LoginPage() {
     if (password !== confirm) { setError("Kata sandi tidak cocok."); return; }
     setLoading(true); setError("");
     try {
-      const res = await fetch("https://masteroffice.sterith.com/api/app-auth/setup", {
+      const res = await fetch(`${MO_BASE}/api/app-auth/setup`, {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ token: setupToken, password }),
       });
@@ -72,7 +73,7 @@ export default function LoginPage() {
     setLoading(true);
     setError("");
     // Issue a fresh Back Office setup link (resets the Back Office password specifically).
-    try { await fetch("https://masteroffice.sterith.com/api/app-auth/forgot", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email, app: "backoffice" }) }); } catch { /* ignore */ }
+    try { await fetch(`${MO_BASE}/api/app-auth/forgot`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email, app: "backoffice" }) }); } catch { /* ignore */ }
     setLoading(false);
     setSent(true);
   }

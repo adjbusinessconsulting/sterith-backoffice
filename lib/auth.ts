@@ -2,6 +2,7 @@ import type { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { db } from "@/lib/prisma";
+import { MO_BASE } from "@/lib/masteroffice";
 import { isAtLeast } from "@/lib/tier";
 import { verifyAppPassword } from "@/lib/app-cred";
 
@@ -86,7 +87,7 @@ export const authOptions: NextAuthOptions = {
         let moRejected = false;
         let moBlocked = false;
         try {
-          const vres = await fetch("https://masteroffice.sterith.com/api/app-auth/verify", {
+          const vres = await fetch(`${MO_BASE}/api/app-auth/verify`, {
             method: "POST", headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email, app: "backoffice", password: credentials.password }),
           });

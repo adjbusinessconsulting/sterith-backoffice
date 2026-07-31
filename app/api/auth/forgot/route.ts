@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/prisma";
+import { MO_BASE } from "@/lib/masteroffice";
 
 // Back Office "Lupa password?" — resets the shared account password by email and
 // clears any SEPARATE Back Office password, so recovery always restores access
@@ -18,7 +19,7 @@ export async function POST(req: NextRequest) {
 
   // Send the shared-account reset email via the existing Master Office flow.
   try {
-    await fetch("https://masteroffice.sterith.com/api/auth/forgot-password", {
+    await fetch(`${MO_BASE}/api/auth/forgot-password`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email }),
