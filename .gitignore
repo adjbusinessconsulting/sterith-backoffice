@@ -13,10 +13,9 @@ prisma/migrations/
 *.db
 *.db-journal
 
-# env files — NEVER commit secrets
-.env
-.env.local
-.env.*.local
+# env files — NEVER commit secrets (covers .env.dev, .env.production, …)
+.env*
+!.env.example
 
 # debug
 npm-debug.log*
