@@ -1,6 +1,7 @@
 "use client";
 import Shell, { KpiCard, Panel } from "@/components/analytics/Shell";
 import { fmtRp, fmtRpFull, fmtNum } from "@/lib/useAnalytics";
+import BarChart from "@/components/analytics/BarChart";
 
 const PAY_COLORS: Record<string, string> = {
   TUNAI: "#b8934a", QRIS: "#2a5f78", TRANSFER: "#5c8a6f", DEBIT: "#8a6f9e", "E-WALLET": "#c97b5f",
@@ -10,10 +11,9 @@ export default function SalesDashboardPage() {
   return (
     <Shell eyebrow="Analitik" title="Dashboard Penjualan" subtitle="Tren omzet, jam tersibuk, dan metode pembayaran dari data transaksi Anda.">
       {(d) => {
-        const maxDay = Math.max(...d.daily.map(x => x.revenue), 1);
-        const maxHour = Math.max(...d.hourly.map(x => x.revenue), 1);
         const peakHour = d.hourly.reduce((a, b) => (b.revenue > a.revenue ? b : a), d.hourly[0]);
         const totalPay = d.paymentMix.reduce((s, p) => s + p.revenue, 0) || 1;
+        const fmtFullDay = (iso: string) => new Date(iso).toLocaleDateString("id-ID", { weekday: "short", day: "numeric", month: "short" });
         const fmtDay = (iso: string) => new Date(iso).toLocaleDateString("id-ID", { day: "numeric", month: "short" });
 
         return (
@@ -28,31 +28,44 @@ export default function SalesDashboardPage() {
 
             {/* Revenue over time */}
             <Panel title="Omzet dari waktu ke waktu" hint={`${fmtDay(d.range.from)} – ${fmtDay(d.range.to)}`}>
-              <div style={{ display: "flex", alignItems: "flex-end", gap: d.daily.length > 45 ? 1 : 3, height: 150 }}>
-                {d.daily.map((x) => (
-                  <div key={x.date} title={`${fmtDay(x.date)} · ${fmtRpFull(x.revenue)} · ${x.transactions} trx`}
-                    style={{ flex: 1, minWidth: 2, height: `${Math.max((x.revenue / maxDay) * 100, x.revenue > 0 ? 3 : 0.5)}%`,
-                      background: x.revenue > 0 ? "linear-gradient(180deg,#e7c987,#b8934a)" : "#ece8dc", borderRadius: "3px 3px 1px 1px" }} />
-                ))}
-              </div>
-              <div style={{ display: "flex", justifyContent: "space-between", marginTop: 8, fontSize: 10.5, color: "#a49d8c" }}>
-                <span>{fmtDay(d.range.from)}</span><span>{fmtDay(d.range.to)}</span>
-              </div>
+              <BarChart
+                height={150}
+                gap={d.daily.length > 45 ? 1 : 3}
+                bars={d.daily.map((x) => ({
+                  key: x.date,
+                  label: fmtFullDay(x.date),
+                  value: x.revenue,
+                  valueText: fmtRpFull(x.revenue),
+                  meta: `${fmtNum(x.transactions)} transaksi`,
+                }))}
+                footer={
+                  <div style={{ display: "flex", justifyContent: "space-between", marginTop: 8, fontSize: 10.5, color: "#a49d8c" }}>
+                    <span>{fmtDay(d.range.from)}</span><span>{fmtDay(d.range.to)}</span>
+                  </div>
+                }
+              />
             </Panel>
 
             <div className="bo-cols-chart" style={{ gap: 16 }}>
               {/* Busiest hours */}
               <Panel title="Jam tersibuk" hint="omzet per jam">
-                <div style={{ display: "flex", alignItems: "flex-end", gap: 2, height: 130 }}>
-                  {d.hourly.map((x) => (
-                    <div key={x.hour} title={`${String(x.hour).padStart(2, "0")}.00 · ${fmtRpFull(x.revenue)} · ${x.transactions} trx`}
-                      style={{ flex: 1, height: `${Math.max((x.revenue / maxHour) * 100, x.revenue > 0 ? 4 : 1)}%`,
-                        background: x.hour === peakHour.hour ? "#0D1117" : x.revenue > 0 ? "#d9bd7e" : "#ece8dc", borderRadius: "2px 2px 0 0" }} />
-                  ))}
-                </div>
-                <div style={{ display: "flex", justifyContent: "space-between", marginTop: 8, fontSize: 10, color: "#a49d8c" }}>
-                  <span>00</span><span>06</span><span>12</span><span>18</span><span>23</span>
-                </div>
+                <BarChart
+                  height={130}
+                  gap={2}
+                  bars={d.hourly.map((x) => ({
+                    key: String(x.hour),
+                    label: `${String(x.hour).padStart(2, "0")}.00`,
+                    value: x.revenue,
+                    valueText: fmtRpFull(x.revenue),
+                    meta: `${fmtNum(x.transactions)} transaksi`,
+                    emphasis: x.hour === peakHour.hour,
+                  }))}
+                  footer={
+                    <div style={{ display: "flex", justifyContent: "space-between", marginTop: 8, fontSize: 10, color: "#a49d8c" }}>
+                      <span>00</span><span>06</span><span>12</span><span>18</span><span>23</span>
+                    </div>
+                  }
+                />
               </Panel>
 
               {/* Payment mix */}
