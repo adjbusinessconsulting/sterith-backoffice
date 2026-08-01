@@ -81,18 +81,52 @@ function NavSection({ label, items, pathname, userTier, addOns }: {
   userTier: string;
   addOns: string[];
 }) {
+  // Twenty-one rows at once is a wall. Sections stay shut until asked for, and
+  // the one you're actually inside opens itself so you never lose your place.
+  const holdsCurrent = items.some(i => pathname === i.href || (i.href !== "/dashboard" && pathname.startsWith(i.href)));
+  const [open, setOpen] = useState(holdsCurrent);
+  const [hover, setHover] = useState(false);
+  useEffect(() => { if (holdsCurrent) setOpen(true); }, [holdsCurrent]);
+
+  // Sections of one (Dashboard, Pengaturan) have no heading to click, so they
+  // are always shown rather than hidden behind a toggle.
+  const collapsible = !!label;
+  const shown = !collapsible || open;
+
   return (
     <div style={{ marginBottom: 6 }}>
       {label && (
-        <p style={{
-          fontSize: 9, letterSpacing: "0.2em", textTransform: "uppercase",
-          color: "#8f897a", fontWeight: 600, padding: "10px 14px 4px",
-          fontFamily: "var(--font-hanken)",
-        }}>
-          {label}
-        </p>
+        <button
+          type="button"
+          onClick={() => setOpen(o => !o)}
+          onMouseEnter={() => setHover(true)}
+          onMouseLeave={() => setHover(false)}
+          aria-expanded={open}
+          style={{
+            display: "flex", alignItems: "center", gap: 6, width: "100%",
+            background: "none", border: "none", cursor: "pointer",
+            padding: "10px 14px 4px", textAlign: "left",
+            fontSize: 9, letterSpacing: "0.2em", textTransform: "uppercase",
+            color: open || hover ? "#0D1117" : "#8f897a", fontWeight: 600,
+            fontFamily: "var(--font-hanken)",
+            transition: "color .12s",
+          }}
+        >
+          <span style={{ flex: 1 }}>{label}</span>
+          {/* A closed section still shows a dot when the page you're on lives
+              inside it, so the sidebar never hides where you are. */}
+          {!open && holdsCurrent && (
+            <span style={{ width: 5, height: 5, borderRadius: 99, background: "#b8934a" }} />
+          )}
+          <ChevronDown
+            size={12}
+            strokeWidth={2}
+            color={open || hover ? "#0D1117" : "#a49d8c"}
+            style={{ transform: open ? "rotate(180deg)" : "none", transition: "transform .15s ease" }}
+          />
+        </button>
       )}
-      {items.map(({ href, label: itemLabel, Icon, lockTier, requiresAddOn }) => {
+      {shown && items.map(({ href, label: itemLabel, Icon, lockTier, requiresAddOn }) => {
         // Tier locks are hard (non-clickable). Add-on items stay CLICKABLE even when
         // not owned, so Premium can open and preview what the add-on does.
         const tierLocked = lockTier ? !isAtLeast(userTier, lockTier) : false;
