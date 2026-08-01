@@ -189,7 +189,7 @@ export default function RingkasanClient({ data }: Props) {
                 <p style={{ fontSize: 11.5, color: "#8f897a" }}>{p.category}</p>
               </div>
               <div style={{ textAlign: "right" }}>
-                <p style={{ fontFamily: "var(--font-garamond)", fontSize: 18, fontWeight: 500, color: "#a5772a" }}>{p.warehouseQty + p.storeQty}</p>
+                <p style={{ fontFamily: "var(--font-hanken)", fontVariantNumeric: "tabular-nums lining-nums", fontSize: 18, fontWeight: 500, color: "#a5772a" }}>{p.warehouseQty + p.storeQty}</p>
                 <p style={{ fontSize: 10.5, color: "#8f897a" }}>min {p.threshold}</p>
               </div>
             </div>

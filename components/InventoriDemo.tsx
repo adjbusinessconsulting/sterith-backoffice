@@ -100,7 +100,7 @@ export default function InventoriDemo({ section }: { section: Section }) {
                       </td>
                       <td style={{ padding: "13px 16px", fontSize: 12, color: "#8f897a" }}>{p.sku}</td>
                       <td style={{ padding: "13px 16px" }}>
-                        <span style={{ fontFamily: "var(--font-garamond)", fontSize: 19, fontWeight: 500, color: "#0D1117" }}>{qty}</span>
+                        <span style={{ fontFamily: "var(--font-hanken)", fontVariantNumeric: "tabular-nums lining-nums", fontSize: 19, fontWeight: 500, color: "#0D1117" }}>{qty}</span>
                         <span style={{ fontSize: 11, color: "#8f897a", marginLeft: 6 }}>{section === "gudang" ? `di toko ${p.storeQty}` : `di gudang ${p.warehouseQty}`}</span>
                       </td>
                       <td style={{ padding: "13px 16px" }}><span style={{ fontSize: 11.5, fontWeight: 600, color: st.color, background: st.bg, padding: "3px 10px", borderRadius: 99 }}>{st.label}</span></td>

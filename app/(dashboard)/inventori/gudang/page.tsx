@@ -188,7 +188,7 @@ export default function GudangPage() {
                     <span style={{ fontSize: 12.5, color: "#8f897a", fontFamily: "var(--font-hanken)" }}>{p.sku}</span>
                   </td>
                   <td style={{ padding: "14px 16px" }}>
-                    <p style={{ fontFamily: "var(--font-garamond)", fontSize: 20, fontWeight: 500, color: "#0D1117", fontFeatureSettings: '"onum"' }}>{p.warehouseQty}</p>
+                    <p style={{ fontFamily: "var(--font-hanken)", fontVariantNumeric: "tabular-nums lining-nums", fontSize: 20, fontWeight: 500, color: "#0D1117", fontFeatureSettings: '"onum"' }}>{p.warehouseQty}</p>
                     <p style={{ fontSize: 11.5, color: "#8f897a", marginTop: 1 }}>di toko {p.storeQty}</p>
                   </td>
                   <td style={{ padding: "14px 16px" }}>

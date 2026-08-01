@@ -75,7 +75,7 @@ export default function DropsPage() {
                     <p style={{ fontSize: 11, color: "#8f897a" }}>size {w.size}</p>
                   </div>
                   <div style={{ textAlign: "right", flexShrink: 0 }}>
-                    <p style={{ fontFamily: "var(--font-garamond)", fontSize: 18, fontWeight: 600, color: "#a5772a", lineHeight: 1 }}>{w.count}</p>
+                    <p style={{ fontFamily: "var(--font-hanken)", fontVariantNumeric: "tabular-nums lining-nums", fontSize: 18, fontWeight: 600, color: "#a5772a", lineHeight: 1 }}>{w.count}</p>
                     <p style={{ fontSize: 9.5, color: "#8f897a" }}>menunggu</p>
                   </div>
                 </div>

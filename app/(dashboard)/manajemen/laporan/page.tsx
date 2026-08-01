@@ -54,7 +54,7 @@ function fmtTime(dt: string) { return new Date(dt).toLocaleTimeString("id-ID", {
 function fmtDate(dt: string) { return new Date(dt).toLocaleDateString("id-ID", { day: "2-digit", month: "short" }); }
 const th: React.CSSProperties = { padding: "11px 16px", textAlign: "left", fontSize: 9.5, letterSpacing: "0.15em", textTransform: "uppercase", color: "#8f897a", fontWeight: 600 };
 const td: React.CSSProperties = { padding: "13px 16px" };
-const tdNum: React.CSSProperties = { padding: "13px 16px", textAlign: "right", fontFamily: "var(--font-garamond)", fontSize: 14, color: "#0D1117" };
+const tdNum: React.CSSProperties = { padding: "13px 16px", textAlign: "right", fontFamily: "var(--font-hanken)", fontVariantNumeric: "tabular-nums lining-nums", fontWeight: 600, fontSize: 14, color: "#0D1117" };
 
 export default function LaporanPage() {
   const [tab, setTab] = useState<Tab>("riwayat");
@@ -238,7 +238,7 @@ export default function LaporanPage() {
               ].map(({ label, value }) => (
                 <div key={label} style={{ padding: "0 20px", borderRight: "1px solid rgba(255,255,255,0.07)" }}>
                   <p style={{ fontSize: 9.5, letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(248,246,239,0.5)", fontWeight: 600, marginBottom: 8 }}>{label}</p>
-                  <p style={{ fontFamily: "var(--font-garamond)", fontSize: 26, fontWeight: 500, color: label === "TRANSAKSI" ? "#e7c987" : "#f8f6ef", fontFeatureSettings: '"onum"' }}>
+                  <p style={{ fontFamily: "var(--font-hanken)", fontVariantNumeric: "tabular-nums lining-nums", fontSize: 26, fontWeight: 700, color: label === "TRANSAKSI" ? "#e7c987" : "#f8f6ef" }}>
                     {value}
                   </p>
                 </div>
@@ -248,7 +248,7 @@ export default function LaporanPage() {
           {voidedTx.length > 0 && (
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, background: "#fff", border: "1px solid #eaddd6", borderRadius: 12, padding: "12px 18px", marginTop: -12, marginBottom: 24 }}>
               <span style={{ fontSize: 12.5, color: "#b0492f", fontWeight: 500 }}>Dibatalkan · {voidedTx.length} transaksi <span style={{ color: "#a49d8c", fontWeight: 400 }}>(tidak dihitung dalam omzet)</span></span>
-              <span style={{ fontFamily: "var(--font-garamond)", fontSize: 16, color: "#b0492f", textDecoration: "line-through" }}>{fmtRpFull(voidedTotal)}</span>
+              <span style={{ fontFamily: "var(--font-hanken)", fontVariantNumeric: "tabular-nums lining-nums", fontWeight: 600, fontSize: 16, color: "#b0492f", textDecoration: "line-through" }}>{fmtRpFull(voidedTotal)}</span>
             </div>
           )}
 
@@ -278,10 +278,10 @@ export default function LaporanPage() {
                 {filtered.map(t => (
                   <tr key={t.id} style={{ borderBottom: "1px solid #f8f5ef", opacity: t.voided ? 0.55 : 1 }}>
                     <td style={{ padding: "13px 16px" }}>
-                      <span style={{ fontFamily: "var(--font-garamond)", fontSize: 14, fontWeight: 500, color: "#0D1117" }}>{t.no}</span>
+                      <span style={{ fontFamily: "var(--font-hanken)", fontVariantNumeric: "tabular-nums lining-nums", fontSize: 14, fontWeight: 600, color: "#0D1117" }}>{t.no}</span>
                     </td>
                     <td style={{ padding: "13px 16px" }}>
-                      <span style={{ fontFamily: "var(--font-garamond)", fontSize: 14, color: "#0D1117" }}>{fmtTime(t.createdAt)}</span>
+                      <span style={{ fontFamily: "var(--font-hanken)", fontVariantNumeric: "tabular-nums lining-nums", fontWeight: 600, fontSize: 14, color: "#0D1117" }}>{fmtTime(t.createdAt)}</span>
                     </td>
                     <td style={{ padding: "13px 16px" }}>
                       <span style={{ fontSize: 13, color: "#0D1117" }}>{t.cashierName || "—"}</span>
@@ -300,7 +300,7 @@ export default function LaporanPage() {
                       {t.voided && <span style={{ marginLeft: 6, fontSize: 9, fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase", color: "#b0492f", background: "rgba(176,73,47,0.1)", padding: "2px 6px", borderRadius: 4 }}>Dibatalkan</span>}
                     </td>
                     <td style={{ padding: "13px 16px", textAlign: "right" }}>
-                      <span style={{ fontFamily: "var(--font-garamond)", fontSize: 14, fontWeight: 500, color: "#0D1117", textDecoration: t.voided ? "line-through" : "none" }}>Rp {t.total.toLocaleString("id-ID")}</span>
+                      <span style={{ fontFamily: "var(--font-hanken)", fontVariantNumeric: "tabular-nums lining-nums", fontSize: 14, fontWeight: 600, color: "#0D1117", textDecoration: t.voided ? "line-through" : "none" }}>Rp {t.total.toLocaleString("id-ID")}</span>
                     </td>
                   </tr>
                 ))}
@@ -318,7 +318,7 @@ export default function LaporanPage() {
             <p style={{ fontSize: 9.5, letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(248,246,239,0.5)", fontWeight: 600, marginBottom: 12 }}>
               SALDO LACI {isToday ? "SAAT INI" : ""}
             </p>
-            <p style={{ fontFamily: "var(--font-garamond)", fontSize: 34, fontWeight: 500, color: "#f8f6ef", marginBottom: 8 }}>
+            <p style={{ fontFamily: "var(--font-hanken)", fontVariantNumeric: "tabular-nums lining-nums", fontSize: 34, fontWeight: 700, color: "#f8f6ef", marginBottom: 8 }}>
               {fmtRpFull(summary.saldoLaci)}
             </p>
             <p style={{ fontSize: 12, color: "rgba(248,246,239,0.45)", marginBottom: 20 }}>
@@ -333,7 +333,7 @@ export default function LaporanPage() {
               ].map(({ label, value, color }) => (
                 <div key={label}>
                   <p style={{ fontSize: 9, letterSpacing: "0.14em", textTransform: "uppercase", color: "rgba(248,246,239,0.45)", fontWeight: 600, marginBottom: 4 }}>{label}</p>
-                  <p style={{ fontFamily: "var(--font-garamond)", fontSize: 16, color }}>{value < 0 ? "– " : "+ "}{fmtRpFull(Math.abs(value))}</p>
+                  <p style={{ fontFamily: "var(--font-hanken)", fontVariantNumeric: "tabular-nums lining-nums", fontWeight: 600, fontSize: 16, color }}>{value < 0 ? "– " : "+ "}{fmtRpFull(Math.abs(value))}</p>
                 </div>
               ))}
             </div>
@@ -363,7 +363,7 @@ export default function LaporanPage() {
                     <p style={{ fontSize: 12.5, fontWeight: 500, color: "#0D1117", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{m.label}</p>
                     <p style={{ fontSize: 11, color: "#8f897a", marginTop: 1 }}>{[m.time, m.sub].filter(Boolean).join(" · ")}</p>
                   </div>
-                  <span style={{ fontFamily: "var(--font-garamond)", fontSize: 13, fontWeight: 500, color: out ? "#b0492f" : "#0D1117", whiteSpace: "nowrap" }}>
+                  <span style={{ fontFamily: "var(--font-hanken)", fontVariantNumeric: "tabular-nums lining-nums", fontSize: 13, fontWeight: 600, color: out ? "#b0492f" : "#0D1117", whiteSpace: "nowrap" }}>
                     {out ? "–" : "+"} {fmtRpFull(Math.abs(m.amount))}
                   </span>
                 </div>
@@ -390,7 +390,7 @@ export default function LaporanPage() {
               {hutangFiltered.map(h => (
                 <tr key={h.id} style={{ borderBottom: "1px solid #f8f5ef" }}>
                   <td style={td}><span style={{ fontSize: 13, color: "#0D1117" }}>{h.customerName}</span>{h.phone && <span style={{ fontSize: 11, color: "#a49d8c" }}> · {h.phone}</span>}</td>
-                  <td style={td}><span style={{ fontFamily: "var(--font-garamond)", fontSize: 14, color: "#0D1117" }}>{fmtDate(h.createdAt)}</span></td>
+                  <td style={td}><span style={{ fontFamily: "var(--font-hanken)", fontVariantNumeric: "tabular-nums lining-nums", fontWeight: 600, fontSize: 14, color: "#0D1117" }}>{fmtDate(h.createdAt)}</span></td>
                   <td style={td}><span style={{ fontSize: 12, color: "#8f897a" }}>{h.cashierName || "—"}</span></td>
                   <td style={tdNum}>{fmtRpFull(h.amount)}</td>
                   <td style={tdNum}>{fmtRpFull(h.paidAmount)}</td>
@@ -412,7 +412,7 @@ export default function LaporanPage() {
           {!loading && logs.length === 0 && <p style={{ padding: "40px", textAlign: "center", color: "#8f897a", fontSize: 13 }}>{isToday ? "Belum ada aktivitas hari ini" : "Tidak ada aktivitas pada tanggal ini"}</p>}
           {logs.map(l => (
             <div key={l.id} style={{ display: "flex", alignItems: "baseline", gap: 12, padding: "11px 20px", borderBottom: "1px solid #f8f5ef" }}>
-              <span style={{ fontFamily: "var(--font-garamond)", fontSize: 13, color: "#8f897a", width: 42, flexShrink: 0 }}>{fmtTime(l.createdAt)}</span>
+              <span style={{ fontFamily: "var(--font-hanken)", fontVariantNumeric: "tabular-nums lining-nums", fontWeight: 600, fontSize: 13, color: "#8f897a", width: 42, flexShrink: 0 }}>{fmtTime(l.createdAt)}</span>
               <div style={{ flex: 1, minWidth: 0 }}>
                 <p style={{ fontSize: 13, color: "#0D1117" }}>{l.detail || l.type}</p>
                 {(l.actor || l.type) && <p style={{ fontSize: 11, color: "#a49d8c", marginTop: 1 }}>{[l.actor, l.type].filter(Boolean).join(" · ")}</p>}
@@ -434,7 +434,7 @@ export default function LaporanPage() {
             {/* Nota */}
             <div style={{ background: "#0D1117", borderRadius: 14, padding: "24px 28px" }}>
               <p style={{ fontSize: 9.5, letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(248,246,239,0.5)", fontWeight: 600, marginBottom: 12 }}>NOTA TUTUP SHIFT</p>
-              <p style={{ fontFamily: "var(--font-garamond)", fontSize: 34, fontWeight: 500, color: "#f8f6ef", marginBottom: 6 }}>{fmtRpFull(shiftClose.omzet)}</p>
+              <p style={{ fontFamily: "var(--font-hanken)", fontVariantNumeric: "tabular-nums lining-nums", fontSize: 34, fontWeight: 700, color: "#f8f6ef", marginBottom: 6 }}>{fmtRpFull(shiftClose.omzet)}</p>
               <p style={{ fontSize: 12, color: "rgba(248,246,239,0.45)", marginBottom: 20 }}>
                 {shiftClose.trx} transaksi · {shiftClose.shiftCount} shift · ditutup {fmtTime(shiftClose.closedAt)}{shiftClose.cashierName ? ` · ${shiftClose.cashierName}` : ""}
               </p>
@@ -447,7 +447,7 @@ export default function LaporanPage() {
                 ].map(({ label, value, color }) => (
                   <div key={label}>
                     <p style={{ fontSize: 9, letterSpacing: "0.14em", textTransform: "uppercase", color: "rgba(248,246,239,0.45)", fontWeight: 600, marginBottom: 4 }}>{label}</p>
-                    <p style={{ fontFamily: "var(--font-garamond)", fontSize: 16, color }}>{value}</p>
+                    <p style={{ fontFamily: "var(--font-hanken)", fontVariantNumeric: "tabular-nums lining-nums", fontWeight: 600, fontSize: 16, color }}>{value}</p>
                   </div>
                 ))}
               </div>
@@ -463,7 +463,7 @@ export default function LaporanPage() {
               {Object.entries(shiftClose.breakdown || {}).map(([method, amt]) => (
                 <div key={method} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "9px 0", borderBottom: "1px solid #f8f5ef" }}>
                   <span style={{ fontSize: 13, color: "#0D1117", textTransform: "capitalize" }}>{method}</span>
-                  <span style={{ fontFamily: "var(--font-garamond)", fontSize: 14, color: "#0D1117" }}>{fmtRpFull(Number(amt) || 0)}</span>
+                  <span style={{ fontFamily: "var(--font-hanken)", fontVariantNumeric: "tabular-nums lining-nums", fontWeight: 600, fontSize: 14, color: "#0D1117" }}>{fmtRpFull(Number(amt) || 0)}</span>
                 </div>
               ))}
             </div>

@@ -39,7 +39,7 @@ export default function ShopperPhone({ product }: { product: DemoProduct }) {
           <div style={{ padding: "13px 16px 0" }}>
             <span style={{ fontSize: 9, letterSpacing: "0.1em", textTransform: "uppercase", color: "#96762f", fontWeight: 700 }}>{product.brand}</span>
             <p style={{ fontSize: 15, fontWeight: 700, color: "#0D1117", marginTop: 2, lineHeight: 1.25 }}>{product.name}</p>
-            <p style={{ fontFamily: "var(--font-garamond)", fontSize: 19, fontWeight: 600, color: "#0D1117", marginTop: 3 }}>{rupiah(product.price)}</p>
+            <p style={{ fontFamily: "var(--font-hanken)", fontVariantNumeric: "tabular-nums lining-nums", fontSize: 19, fontWeight: 600, color: "#0D1117", marginTop: 3 }}>{rupiah(product.price)}</p>
 
             {/* Size selector — live stock */}
             <p style={{ fontSize: 9.5, letterSpacing: "0.08em", textTransform: "uppercase", color: "#8f897a", fontWeight: 600, margin: "12px 0 6px" }}>Pilih ukuran</p>

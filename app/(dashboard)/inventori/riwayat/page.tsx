@@ -146,7 +146,7 @@ export default function RiwayatPage() {
                     <p style={{ fontSize: 11.5, color: "#8f897a", marginTop: 1 }}>{m.product?.sku}</p>
                   </td>
                   <td style={{ padding: "14px 16px" }}>
-                    <span style={{ fontFamily: "var(--font-garamond)", fontSize: 18, fontWeight: 500, color: qtySign === "-" ? "#b0492f" : "#0D1117" }}>
+                    <span style={{ fontFamily: "var(--font-hanken)", fontVariantNumeric: "tabular-nums lining-nums", fontSize: 18, fontWeight: 500, color: qtySign === "-" ? "#b0492f" : "#0D1117" }}>
                       {qtySign}{Math.abs(m.qty)}
                     </span>
                   </td>

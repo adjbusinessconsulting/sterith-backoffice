@@ -85,7 +85,7 @@ function Browse({ products, onOpen, featuredIds }: { products: DemoProduct[]; on
                 </div>
                 <div style={{ padding: "7px 8px 9px" }}>
                   <p style={{ fontSize: 10.5, fontWeight: 600, color: "#0D1117", lineHeight: 1.25, overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" }}>{p.name}</p>
-                  <p style={{ fontFamily: "var(--font-garamond)", fontSize: 13, fontWeight: 600, color: "#0D1117", marginTop: 2 }}>{rupiah(p.price)}</p>
+                  <p style={{ fontFamily: "var(--font-hanken)", fontVariantNumeric: "tabular-nums lining-nums", fontSize: 13, fontWeight: 600, color: "#0D1117", marginTop: 2 }}>{rupiah(p.price)}</p>
                 </div>
               </button>
             );
@@ -112,7 +112,7 @@ function Detail({ p, hidden }: { p: DemoProduct; hidden: boolean }) {
       <div style={{ padding: "13px 16px 20px" }}>
         <span style={{ fontSize: 9, letterSpacing: "0.1em", textTransform: "uppercase", color: "#96762f", fontWeight: 700 }}>{p.brand}</span>
         <p style={{ fontSize: 15, fontWeight: 700, color: "#0D1117", marginTop: 2, lineHeight: 1.25 }}>{p.name}</p>
-        <p style={{ fontFamily: "var(--font-garamond)", fontSize: 19, fontWeight: 600, color: "#0D1117", marginTop: 3 }}>{rupiah(p.price)}</p>
+        <p style={{ fontFamily: "var(--font-hanken)", fontVariantNumeric: "tabular-nums lining-nums", fontSize: 19, fontWeight: 600, color: "#0D1117", marginTop: 3 }}>{rupiah(p.price)}</p>
         <p style={{ fontSize: 9.5, letterSpacing: "0.08em", textTransform: "uppercase", color: "#8f897a", fontWeight: 600, margin: "13px 0 6px" }}>Pilih ukuran</p>
         <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
           {p.sizes.map((s) => {

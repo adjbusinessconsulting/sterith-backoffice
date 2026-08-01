@@ -103,7 +103,7 @@ export default function TransferModal() {
                     </div>
                   </td>
                   <td style={{ padding: "12px 16px", textAlign: "right" }}>
-                    <span style={{ fontFamily: "var(--font-garamond)", fontSize: 18, fontWeight: 500, color: "#0D1117" }}>{p.warehouseQty}</span>
+                    <span style={{ fontFamily: "var(--font-hanken)", fontVariantNumeric: "tabular-nums lining-nums", fontSize: 18, fontWeight: 500, color: "#0D1117" }}>{p.warehouseQty}</span>
                   </td>
                   <td style={{ padding: "10px 18px", textAlign: "right" }}>
                     <input

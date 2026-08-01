@@ -202,7 +202,7 @@ export default function TokoPage() {
                     <span style={{ fontSize: 12.5, color: "#8f897a" }}>{p.sku}</span>
                   </td>
                   <td style={{ padding: "14px 16px" }}>
-                    <p style={{ fontFamily: "var(--font-garamond)", fontSize: 20, fontWeight: 500, color: "#0D1117" }}>{p.storeQty}</p>
+                    <p style={{ fontFamily: "var(--font-hanken)", fontVariantNumeric: "tabular-nums lining-nums", fontSize: 20, fontWeight: 500, color: "#0D1117" }}>{p.storeQty}</p>
                     <p style={{ fontSize: 11.5, color: "#8f897a", marginTop: 1 }}>terjual {p.soldToday}</p>
                   </td>
                   <td style={{ padding: "14px 16px" }}>

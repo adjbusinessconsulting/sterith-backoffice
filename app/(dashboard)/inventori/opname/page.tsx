@@ -163,7 +163,7 @@ export default function OpnamePage() {
                     </div>
                   </td>
                   <td style={{ padding: "14px 16px" }}>
-                    <span style={{ fontFamily: "var(--font-garamond)", fontSize: 20, fontWeight: 500, color: "#0D1117" }}>{l.systemQty}</span>
+                    <span style={{ fontFamily: "var(--font-hanken)", fontVariantNumeric: "tabular-nums lining-nums", fontSize: 20, fontWeight: 500, color: "#0D1117" }}>{l.systemQty}</span>
                   </td>
                   <td style={{ padding: "10px 16px" }}>
                     <input

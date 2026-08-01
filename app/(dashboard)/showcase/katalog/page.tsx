@@ -150,7 +150,7 @@ function Card({ p, selected, hidden, featured, onPreview, onEdit, onDelete, onTo
             <input autoFocus value={val} onChange={(e) => setVal(e.target.value)} onBlur={commit} onKeyDown={(e) => e.key === "Enter" && commit()} inputMode="numeric" style={{ flex: 1, border: "none", outline: "none", fontSize: 14, fontWeight: 600, color: "#0D1117", background: "transparent", width: 70 }} />
           </div>
         ) : (
-          <button onClick={(e) => { e.stopPropagation(); setVal(String(p.price)); setPe(true); }} title="Ubah harga" style={{ background: "none", border: "none", padding: 0, cursor: "pointer", textAlign: "left", fontFamily: "var(--font-garamond)", fontSize: 17, fontWeight: 600, color: "#0D1117" }}>{rupiah(p.price)}</button>
+          <button onClick={(e) => { e.stopPropagation(); setVal(String(p.price)); setPe(true); }} title="Ubah harga" style={{ background: "none", border: "none", padding: 0, cursor: "pointer", textAlign: "left", fontFamily: "var(--font-hanken)", fontVariantNumeric: "tabular-nums lining-nums", fontSize: 17, fontWeight: 600, color: "#0D1117" }}>{rupiah(p.price)}</button>
         )}
         <div style={{ display: "flex", flexWrap: "wrap", gap: 5, marginTop: "auto" }} onClick={(e) => selected && e.stopPropagation()}>
           {p.sizes.map((s) => {

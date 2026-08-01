@@ -150,7 +150,7 @@ export default function ProdukPage() {
                 {p.name}
               </p>
               <p style={{ fontSize: 11, color: "#8f897a", marginBottom: 4 }}>{p.category}</p>
-              <p style={{ fontFamily: "var(--font-garamond)", fontSize: 14, color: "#0D1117", fontWeight: 500 }}>{fmtPrice(p.price)}</p>
+              <p style={{ fontFamily: "var(--font-hanken)", fontVariantNumeric: "tabular-nums lining-nums", fontSize: 14, color: "#0D1117", fontWeight: 500 }}>{fmtPrice(p.price)}</p>
             </div>
           </button>
         ))}

@@ -272,7 +272,7 @@ export default function StokMasukModal() {
                           />
                         </td>
                         <td style={{ padding: "12px 14px" }}>
-                          <span style={{ fontFamily: "var(--font-garamond)", fontSize: 14, color: "#0D1117" }}>Rp {(l.qty * l.unitPrice).toLocaleString("id-ID")}</span>
+                          <span style={{ fontFamily: "var(--font-hanken)", fontVariantNumeric: "tabular-nums lining-nums", fontSize: 14, color: "#0D1117" }}>Rp {(l.qty * l.unitPrice).toLocaleString("id-ID")}</span>
                         </td>
                         <td style={{ padding: "12px 14px" }}>
                           <span style={{ fontSize: 11.5, fontWeight: 600, padding: "3px 10px", borderRadius: 99, color: l.isNew ? "#2a5f78" : "#3f7d54", background: l.isNew ? "#e4f0f5" : "#e9f1ea" }}>
@@ -324,11 +324,11 @@ export default function StokMasukModal() {
                         </td>
                         <td style={{ padding: "10px 10px" }}>
                           <input type="number" value={l.qty} onChange={e => setManualLines(prev => prev.map((x, j) => j === i ? { ...x, qty: e.target.value } : x))}
-                            placeholder="0" style={{ width: 64, border: "1.5px solid #e8e3d5", borderRadius: 8, height: 36, padding: "0 8px", textAlign: "center", fontSize: 14, fontFamily: "var(--font-garamond)", color: "#0D1117", background: "#fff" }} />
+                            placeholder="0" style={{ width: 64, border: "1.5px solid #e8e3d5", borderRadius: 8, height: 36, padding: "0 8px", textAlign: "center", fontSize: 14, fontFamily: "var(--font-hanken)", fontVariantNumeric: "tabular-nums lining-nums", color: "#0D1117", background: "#fff" }} />
                         </td>
                         <td style={{ padding: "10px 10px" }}>
                           <input type="number" value={l.price} onChange={e => setManualLines(prev => prev.map((x, j) => j === i ? { ...x, price: e.target.value } : x))}
-                            placeholder="0" style={{ width: 100, border: "1.5px solid #e8e3d5", borderRadius: 8, height: 36, padding: "0 8px", textAlign: "right", fontSize: 14, fontFamily: "var(--font-garamond)", color: "#0D1117", background: "#fff" }} />
+                            placeholder="0" style={{ width: 100, border: "1.5px solid #e8e3d5", borderRadius: 8, height: 36, padding: "0 8px", textAlign: "right", fontSize: 14, fontFamily: "var(--font-hanken)", fontVariantNumeric: "tabular-nums lining-nums", color: "#0D1117", background: "#fff" }} />
                         </td>
                         <td style={{ padding: "10px 8px", width: 32 }}>
                           {manualLines.length > 1 && (
