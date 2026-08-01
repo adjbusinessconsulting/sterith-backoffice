@@ -19,17 +19,23 @@ const hanken = Hanken_Grotesk({
   display: "swap",
 });
 
+// Preview (dev) builds get the muted icon and a plain name, so an installed dev
+// copy is distinguishable from production on the home screen and in the tab bar.
+const isDev = process.env.VERCEL_ENV === "preview";
+const appTitle = isDev ? "Backoffice (Dev)" : "Sterith Back Office";
+const appIcon = isDev ? "/icon-dev-512.png" : "/icon-512.png";
+
 export const metadata: Metadata = {
-  title: "Sterith Back Office",
+  title: appTitle,
   description: "Inventori & manajemen toko",
   manifest: "/manifest.webmanifest",
   icons: {
-    icon: "/icon-512.png",
-    apple: "/icon-512.png",
+    icon: appIcon,
+    apple: appIcon,
   },
   appleWebApp: {
     capable: true,
-    title: "Sterith Back Office",
+    title: isDev ? "Backoffice" : "Sterith Back Office",
     statusBarStyle: "black-translucent",
   },
 };
