@@ -7,7 +7,7 @@ import {
   LayoutDashboard, TrendingUp, Package, Store,
   ArrowLeftRight, ClipboardCheck, History,
   Users, Grid2X2, BarChart2, Wallet, LogOut, ChevronDown, Settings2,
-  LineChart, UserRound, Boxes,
+  LineChart, UserRound, Boxes, PieChart, UserCog, ScrollText,
   Heart, Images, Megaphone, Bookmark, SlidersHorizontal,
   MessageSquare,
 } from "lucide-react";
@@ -27,7 +27,7 @@ const UTAMA: NavItem[] = [
 const ANALITIK: NavItem[] = [
   { href: "/analitik/penjualan", label: "Dashboard Penjualan", Icon: LineChart,  lockTier: null },
   { href: "/analitik/kasir",     label: "Performa Kasir",      Icon: UserRound,  lockTier: null },
-  { href: "/analitik/produk",    label: "Performa Produk",     Icon: Boxes,      lockTier: null },
+  { href: "/analitik/produk",    label: "Performa Produk",     Icon: PieChart,   lockTier: null },
 ];
 
 // Full Inventori is a paid add-on ("inventori"); Stok Harian (Basic) stays bundled.
@@ -51,14 +51,14 @@ const SHOWCASE: NavItem[] = [
   { href: "/showcase/katalog",    label: "Katalog",     Icon: Images,           requiresAddOn: "showcase" },
   { href: "/showcase/drops",      label: "Drops",       Icon: Megaphone,        requiresAddOn: "showcase" },
   { href: "/showcase/reservasi",  label: "Reservasi",   Icon: Bookmark,         requiresAddOn: "showcase" },
-  { href: "/showcase/pengaturan", label: "Pengaturan",  Icon: SlidersHorizontal, requiresAddOn: "showcase" },
+  { href: "/showcase/pengaturan", label: "Pengaturan Showcase", Icon: SlidersHorizontal, requiresAddOn: "showcase" },
 ];
 
 const MANAJEMEN: NavItem[] = [
-  { href: "/manajemen/staf",     label: "Staf & Akses", Icon: Users,    lockTier: null },
+  { href: "/manajemen/staf",     label: "Staf & Akses", Icon: UserCog,  lockTier: null },
   { href: "/manajemen/produk",   label: "Produk",       Icon: Grid2X2,  lockTier: null },
   { href: "/manajemen/laporan",  label: "Laporan",      Icon: BarChart2, lockTier: null },
-  { href: "/manajemen/log",      label: "Log Aktivitas", Icon: History,  lockTier: null },
+  { href: "/manajemen/log",      label: "Log Aktivitas", Icon: ScrollText, lockTier: null },
   { href: "/manajemen/keuangan", label: "Keuangan",     Icon: Wallet,   lockTier: null },
 ];
 
@@ -73,15 +73,9 @@ const BADGE_STYLE: React.CSSProperties = {
   padding: "1px 5px", borderRadius: 3, textTransform: "uppercase",
   whiteSpace: "nowrap",
 };
-// Muted "Add-on" tag for items the store already owns — still noted as an add-on.
-const BADGE_ADDON_OWNED: React.CSSProperties = {
-  ...BADGE_STYLE,
-  background: "rgba(143,137,122,0.14)", color: "#8f897a",
-  border: "1px solid rgba(143,137,122,0.28)",
-};
 
 function NavSection({ label, items, pathname, userTier, addOns }: {
-  label: string;
+  label?: string | null;
   items: NavItem[];
   pathname: string;
   userTier: string;
@@ -89,13 +83,15 @@ function NavSection({ label, items, pathname, userTier, addOns }: {
 }) {
   return (
     <div style={{ marginBottom: 6 }}>
-      <p style={{
-        fontSize: 9, letterSpacing: "0.2em", textTransform: "uppercase",
-        color: "#8f897a", fontWeight: 600, padding: "10px 14px 4px",
-        fontFamily: "var(--font-hanken)",
-      }}>
-        {label}
-      </p>
+      {label && (
+        <p style={{
+          fontSize: 9, letterSpacing: "0.2em", textTransform: "uppercase",
+          color: "#8f897a", fontWeight: 600, padding: "10px 14px 4px",
+          fontFamily: "var(--font-hanken)",
+        }}>
+          {label}
+        </p>
+      )}
       {items.map(({ href, label: itemLabel, Icon, lockTier, requiresAddOn }) => {
         // Tier locks are hard (non-clickable). Add-on items stay CLICKABLE even when
         // not owned, so Premium can open and preview what the add-on does.
@@ -122,8 +118,8 @@ function NavSection({ label, items, pathname, userTier, addOns }: {
             }}>
               {itemLabel}
             </span>
-            {requiresAddOn ? (
-              <span style={addOnMissing ? BADGE_STYLE : BADGE_ADDON_OWNED}>Add-on</span>
+            {requiresAddOn && addOnMissing ? (
+              <span style={BADGE_STYLE}>Add-on</span>
             ) : tierLocked && lockTier ? (
               <span style={BADGE_STYLE}>{tierLabel(lockTier)}</span>
             ) : null}
@@ -226,7 +222,7 @@ export default function Sidebar() {
 
       {/* Nav (scrollable) — clicking any link closes the mobile drawer */}
       <div style={{ flex: 1, overflowY: "auto", paddingBottom: 8 }} onClick={closeSidebar}>
-        <NavSection label="UTAMA" items={UTAMA} pathname={pathname} userTier={userTier} addOns={addOns} />
+        <NavSection items={UTAMA} pathname={pathname} userTier={userTier} addOns={addOns} />
 
         <NavSection label="ANALITIK" items={ANALITIK} pathname={pathname} userTier={userTier} addOns={addOns} />
 
@@ -259,7 +255,7 @@ export default function Sidebar() {
 
         <NavSection label="SHOWCASE" items={SHOWCASE} pathname={pathname} userTier={userTier} addOns={addOns} />
 
-        <NavSection label="SISTEM" items={PENGATURAN} pathname={pathname} userTier={userTier} addOns={addOns} />
+        <NavSection items={PENGATURAN} pathname={pathname} userTier={userTier} addOns={addOns} />
       </div>
 
       {/* Kritik & Saran */}
