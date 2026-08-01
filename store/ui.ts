@@ -1,7 +1,7 @@
 "use client";
 import { create } from "zustand";
 
-type Modal = "none" | "stokMasuk" | "transfer" | "produk" | "tambahKasir" | "tambahShift";
+export type Modal = "none" | "stokMasuk" | "transfer" | "produk" | "tambahKasir" | "tambahShift";
 
 interface UIStore {
   modal: Modal;

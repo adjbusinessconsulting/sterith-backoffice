@@ -11,14 +11,14 @@ import {
   Heart, Images, Megaphone, Bookmark, SlidersHorizontal,
   MessageSquare,
 } from "lucide-react";
-import { useUIStore } from "@/store/ui";
+import { useUIStore, type Modal } from "@/store/ui";
 import FeedbackDrawer from "./FeedbackDrawer";
 import CheckUpdate from "./CheckUpdate";
 import { boDeviceId } from "@/lib/boDevice";
 import { isAtLeast, tierLabel } from "@/lib/tier";
 import { hasAddOn, type AddOnKey } from "@/lib/addons";
 
-type NavItem = { href: string; label: string; Icon: React.ElementType; lockTier?: string | null; requiresAddOn?: AddOnKey | null };
+type NavItem = { href?: string; modal?: Modal; label: string; Icon: React.ElementType; lockTier?: string | null; requiresAddOn?: AddOnKey | null };
 
 const UTAMA: NavItem[] = [
   { href: "/dashboard",           label: "Dashboard",    Icon: LayoutDashboard, lockTier: null },
@@ -36,6 +36,7 @@ const INVENTORI: NavItem[] = [
   { href: "/inventori/ringkasan", label: "Ringkasan",    Icon: TrendingUp,     requiresAddOn: "inventori" },
   { href: "/inventori/gudang",    label: "Gudang",       Icon: Package,        requiresAddOn: "inventori" },
   { href: "/inventori/toko",      label: "Toko",         Icon: Store,          requiresAddOn: "inventori" },
+  { modal: "transfer",            label: "Transfer",     Icon: ArrowLeftRight, requiresAddOn: "inventori" },
   { href: "/inventori/opname",    label: "Stok Opname",  Icon: ClipboardCheck, requiresAddOn: "inventori" },
   { href: "/inventori/riwayat",   label: "Riwayat Stok", Icon: History,        requiresAddOn: "inventori" },
 ];
@@ -83,7 +84,8 @@ function NavSection({ label, items, pathname, userTier, addOns }: {
 }) {
   // Twenty-one rows at once is a wall. Sections stay shut until asked for, and
   // the one you're actually inside opens itself so you never lose your place.
-  const holdsCurrent = items.some(i => pathname === i.href || (i.href !== "/dashboard" && pathname.startsWith(i.href)));
+  const openModal = useUIStore(st => st.openModal);
+  const holdsCurrent = items.some(i => !!i.href && (pathname === i.href || (i.href !== "/dashboard" && pathname.startsWith(i.href))));
   const [open, setOpen] = useState(holdsCurrent);
   const [hover, setHover] = useState(false);
   useEffect(() => { if (holdsCurrent) setOpen(true); }, [holdsCurrent]);
@@ -126,13 +128,13 @@ function NavSection({ label, items, pathname, userTier, addOns }: {
           />
         </button>
       )}
-      {shown && items.map(({ href, label: itemLabel, Icon, lockTier, requiresAddOn }) => {
+      {shown && items.map(({ href, modal, label: itemLabel, Icon, lockTier, requiresAddOn }) => {
         // Tier locks are hard (non-clickable). Add-on items stay CLICKABLE even when
         // not owned, so Premium can open and preview what the add-on does.
         const tierLocked = lockTier ? !isAtLeast(userTier, lockTier) : false;
         const addOnMissing = requiresAddOn ? !hasAddOn(addOns, requiresAddOn) : false;
         const clickable = !tierLocked;
-        const isActive = clickable && (pathname === href || (href !== "/dashboard" && pathname.startsWith(href)));
+        const isActive = clickable && !!href && (pathname === href || (href !== "/dashboard" && pathname.startsWith(href)));
 
         const inner = (
           <div style={{
@@ -160,8 +162,21 @@ function NavSection({ label, items, pathname, userTier, addOns }: {
           </div>
         );
 
+        // Transfer opens a modal rather than a page; everything else navigates.
+        if (modal) {
+          const usable = !addOnMissing;
+          return (
+            <button key={modal} type="button" onClick={() => usable && openModal(modal)}
+              disabled={!usable}
+              style={{ width: "100%", background: "none", border: "none", padding: "2px 8px",
+                       textAlign: "left", cursor: usable ? "pointer" : "not-allowed" }}>
+              {inner}
+            </button>
+          );
+        }
+
         return clickable ? (
-          <Link key={href} href={href} style={{ textDecoration: "none", display: "block", padding: "2px 8px" }}>
+          <Link key={href} href={href!} style={{ textDecoration: "none", display: "block", padding: "2px 8px" }}>
             {inner}
           </Link>
         ) : (
@@ -193,7 +208,6 @@ export default function Sidebar() {
   const addOns = session?.user?.addOns ?? [];
   const initials = name.split(" ").slice(0, 2).map((w: string) => w[0]).join("").toUpperCase();
   const roleLabel = role === "OWNER" ? "Owner · akses penuh" : "Manajer";
-  const canTransfer = hasAddOn(addOns, "inventori");
 
   return (
     <>
@@ -263,25 +277,6 @@ export default function Sidebar() {
         <NavSection label="INVENTORI" items={INVENTORI} pathname={pathname} userTier={userTier} addOns={addOns} />
 
         {/* Transfer — modal button, Business-locked */}
-        <div style={{ padding: "2px 8px" }}>
-          <button
-            onClick={() => canTransfer && openModal("transfer")}
-            style={{
-              width: "100%", display: "flex", alignItems: "center", gap: 10,
-              padding: "8px 10px", borderRadius: 10,
-              background: "transparent", border: "none",
-              cursor: canTransfer ? "pointer" : "not-allowed",
-              opacity: canTransfer ? 1 : 0.5,
-              textAlign: "left",
-            }}
-          >
-            <ArrowLeftRight size={15} strokeWidth={1.6} color="#8f897a" />
-            <span style={{ fontSize: 13, fontWeight: 400, color: "#0D1117", fontFamily: "var(--font-hanken)", flex: 1 }}>
-              Transfer
-            </span>
-            {!canTransfer && <span style={BADGE_STYLE}>Add-on</span>}
-          </button>
-        </div>
 
         <NavSection label="MANAJEMEN" items={MANAJEMEN} pathname={pathname} userTier={userTier} addOns={addOns} />
 
