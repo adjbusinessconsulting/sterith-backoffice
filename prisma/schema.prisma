@@ -98,6 +98,7 @@ model Sale {
 
   items SaleItem[]
 
+  @@index([storeId, createdAt(sort: Desc)])
   @@map("sales")
 }
 
@@ -112,6 +113,7 @@ model SaleItem {
   qty         Int
   subtotal    Int
 
+  @@index([saleId])
   @@map("sale_items")
 }
 
