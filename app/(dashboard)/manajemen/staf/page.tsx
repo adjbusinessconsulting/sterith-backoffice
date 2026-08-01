@@ -8,7 +8,7 @@ import LockedSection from "@/components/LockedSection";
 import ManagerAccessPanel from "@/components/ManagerAccessPanel";
 
 interface StaffMember {
-  id: string; name: string; role: string; createdAt: string;
+  id: string; name: string; role: string; createdAt: string; hasPassword?: boolean;
 }
 interface Shift {
   id: string; name: string; startTime: string; endTime: string; assignedId: string | null;
@@ -62,6 +62,27 @@ export default function StafPage() {
 
   if (!isAtLeast(userTier, 'premium')) return <LockedSection requiredTier="business" />;
 
+  // A manager approves POS actions with this password, so the owner needs to be
+  // able to set one on an account that already exists — not only at creation.
+  async function setPassword(s: StaffMember) {
+    const pw = window.prompt(
+      s.hasPassword
+        ? `Ubah kata sandi manajer untuk ${s.name}.
+Kosongkan lalu OK untuk menghapus.`
+        : `Kata sandi manajer untuk ${s.name} (min. 4 karakter).`,
+      "",
+    );
+    if (pw === null) return;                       // cancelled
+    if (pw.trim() && pw.trim().length < 4) { alert("Kata sandi minimal 4 karakter."); return; }
+    const res = await fetch(`/api/staff/${s.id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ password: pw.trim() }),
+    });
+    if (!res.ok) { alert((await res.json().catch(() => ({}))).error ?? "Gagal menyimpan."); return; }
+    load();
+  }
+
   async function deleteStaff(id: string) {
     if (!confirm("Hapus akun ini?")) return;
     await fetch(`/api/staff/${id}`, { method: "DELETE" });
@@ -110,7 +131,7 @@ export default function StafPage() {
         <table style={{ width: "100%", borderCollapse: "collapse" }}>
           <thead>
             <tr style={{ borderBottom: "1px solid #f0ebe0" }}>
-              {["NAMA", "PERAN", "PIN", "IZIN UTAMA", ""].map(h => (
+              {["NAMA", "PERAN", "PIN", "KATA SANDI", "IZIN UTAMA", ""].map(h => (
                 <th key={h} style={{
                   padding: "10px 16px", textAlign: "left",
                   fontSize: 9.5, letterSpacing: "0.15em", textTransform: "uppercase",
@@ -148,6 +169,16 @@ export default function StafPage() {
                   </td>
                   <td style={{ padding: "14px 16px" }}>
                     <span style={{ letterSpacing: "0.2em", fontSize: 14, color: "#8f897a" }}>• • • •</span>
+                  </td>
+                  <td style={{ padding: "14px 16px" }}>
+                    {s.role?.toUpperCase() === "MANAJER" ? (
+                      <button onClick={() => setPassword(s)} title={s.hasPassword ? "Ubah kata sandi manajer" : "Atur kata sandi manajer"}
+                        style={{ background: "none", border: "none", padding: 0, cursor: "pointer", fontFamily: "var(--font-hanken)", fontSize: 12.5, color: s.hasPassword ? "#0D1117" : "#b8934a", fontWeight: s.hasPassword ? 400 : 600 }}>
+                        {s.hasPassword ? "• • • •  Ubah" : "Atur kata sandi"}
+                      </button>
+                    ) : (
+                      <span style={{ fontSize: 12.5, color: "#b3ada0" }}>—</span>
+                    )}
                   </td>
                   <td style={{ padding: "14px 16px" }}>
                     {s.role?.toUpperCase() === "MANAJER" ? (

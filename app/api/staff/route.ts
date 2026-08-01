@@ -9,11 +9,14 @@ export async function GET() {
 
   const cashiers = await db.cashier.findMany({
     where: { storeId: session.user.storeId, active: true },
-    select: { id: true, name: true, initials: true, role: true, createdAt: true },
+    select: { id: true, name: true, initials: true, role: true, createdAt: true, password: true },
     orderBy: { createdAt: "asc" },
   });
 
-  return NextResponse.json(cashiers);
+  // Report only whether a password is set — never send the value to the browser.
+  const safe = cashiers.map(({ password, ...c }) => ({ ...c, hasPassword: !!password }));
+
+  return NextResponse.json(safe);
 }
 
 export async function POST(req: NextRequest) {
