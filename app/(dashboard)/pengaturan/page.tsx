@@ -566,7 +566,7 @@ export default function PengaturanPage() {
       {/* Webhook info */}
       <div style={{ padding: "16px 20px", background: "#f6f3ea", border: "1px dashed #d4c99a", borderRadius: 12, fontSize: 12, color: "#7c6430", lineHeight: 1.7 }}>
         <strong>Webhook URL untuk Midtrans:</strong><br />
-        <code style={{ background: "rgba(0,0,0,0.06)", padding: "2px 8px", borderRadius: 5, fontSize: 11.5, fontFamily: "monospace" }}>
+        <code style={{ background: "rgba(0,0,0,0.06)", padding: "2px 8px", borderRadius: 5, fontSize: 11.5, letterSpacing: "0.02em", wordBreak: "break-all" }}>
           {typeof window !== "undefined" ? `${window.location.origin}/api/qris/webhook` : "https://backoffice.sterith.com/api/qris/webhook"}
         </code>
         <br />

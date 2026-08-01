@@ -33,6 +33,15 @@ body {
   font-variant-numeric: tabular-nums lining-nums;
 }
 
+
+/* The UA stylesheet sets these to monospace, which would be a third family.
+   The design system allows exactly two: EB Garamond for titles, Hanken for
+   everything else (design system §3). */
+code, pre, kbd, samp {
+  font-family: var(--font-hanken);
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
 /* Gold selection highlight (design system global reset). */
 ::selection {
   background: #e7c987;
