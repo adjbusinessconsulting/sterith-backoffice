@@ -30,7 +30,7 @@ export default function CashierPerformancePage() {
                   const shiftTotal = Object.values(c.shifts).reduce((s, v) => s + v, 0) || 1;
                   return (
                     <div key={c.cashierId} style={{ display: "flex", alignItems: "flex-start", gap: 12 }}>
-                      <div style={{ width: 26, textAlign: "center", fontFamily: "var(--font-garamond)", fontSize: 16, fontWeight: 600, color: i === 0 ? "#b8934a" : "#c4bda8", flexShrink: 0, paddingTop: 6 }}>{i + 1}</div>
+                      <div style={{ width: 26, textAlign: "center", fontFamily: "var(--font-hanken)", fontVariantNumeric: "tabular-nums lining-nums", fontSize: 16, fontWeight: 600, color: i === 0 ? "#b8934a" : "#c4bda8", flexShrink: 0, paddingTop: 6 }}>{i + 1}</div>
                       <div style={{ width: 36, height: 36, borderRadius: "50%", background: "#f0ebe1", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 700, color: "#8f897a", flexShrink: 0 }}>{initials(c.cashierName)}</div>
                       <div style={{ flex: 1, minWidth: 0 }}>
                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 6 }}>

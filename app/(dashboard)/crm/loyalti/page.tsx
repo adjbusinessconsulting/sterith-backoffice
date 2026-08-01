@@ -84,7 +84,7 @@ export default function LoyaltiPage() {
           <div style={{ background: "#fff", border: "1px solid #e8e3d5", borderRadius: 12, overflow: "hidden" }}>
             {top.map((c, i) => (
               <div key={c.id} style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 14px", borderBottom: i < top.length - 1 ? "1px solid #f4f1ea" : "none" }}>
-                <span style={{ fontFamily: "var(--font-garamond)", fontSize: 15, fontWeight: 600, color: "#b8934a", width: 18, textAlign: "center" }}>{i + 1}</span>
+                <span style={{ fontFamily: "var(--font-hanken)", fontVariantNumeric: "tabular-nums lining-nums", fontSize: 15, fontWeight: 600, color: "#b8934a", width: 18, textAlign: "center" }}>{i + 1}</span>
                 <div style={{ width: 32, height: 32, borderRadius: 99, background: "#f1e7cd", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
                   <span style={{ fontFamily: "var(--font-garamond)", fontSize: 11.5, fontWeight: 600, color: "#b8934a" }}>{initials(c.name)}</span>
                 </div>

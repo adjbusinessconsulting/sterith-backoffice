@@ -48,7 +48,7 @@ export default function FeaturePreview({
         {caps.map((c, i) => (
           <div key={c.title} style={{ background: "#fff", border: "1px solid #e8e3d5", borderRadius: 12, padding: "16px 16px", opacity: owned ? 1 : 0.96 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 9, marginBottom: 7 }}>
-              <span style={{ width: 22, height: 22, borderRadius: 6, background: "#f1e7cd", color: "#96762f", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 700, fontFamily: "var(--font-garamond)", flexShrink: 0 }}>{i + 1}</span>
+              <span style={{ width: 22, height: 22, borderRadius: 6, background: "#f1e7cd", color: "#96762f", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 700, fontFamily: "var(--font-hanken)", fontVariantNumeric: "tabular-nums lining-nums", flexShrink: 0 }}>{i + 1}</span>
               <p style={{ fontSize: 13.5, fontWeight: 600, color: "#0D1117", fontFamily: "var(--font-hanken)" }}>{c.title}</p>
             </div>
             <p style={{ fontSize: 12, color: "#8f897a", lineHeight: 1.6, margin: 0 }}>{c.desc}</p>

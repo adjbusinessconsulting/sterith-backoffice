@@ -125,7 +125,7 @@ export function KpiCard({ label, value, sub }: { label: string; value: string; s
   return (
     <div style={{ background: "#fff", border: "1px solid #e8e3d5", borderRadius: 12, padding: "16px 18px", flex: 1, minWidth: 150 }}>
       <p style={{ fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: "#8f897a", fontWeight: 600, marginBottom: 8 }}>{label}</p>
-      <p style={{ fontFamily: "var(--font-garamond)", fontSize: 26, fontWeight: 600, color: "#0D1117", lineHeight: 1, fontVariantNumeric: "tabular-nums" }}>{value}</p>
+      <p style={{ fontFamily: "var(--font-hanken)", fontVariantNumeric: "tabular-nums lining-nums", fontSize: 26, fontWeight: 600, color: "#0D1117", lineHeight: 1 }}>{value}</p>
       {sub && <p style={{ fontSize: 11.5, color: "#a49d8c", marginTop: 6 }}>{sub}</p>}
     </div>
   );

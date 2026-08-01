@@ -21,7 +21,7 @@ export default function ProductPerformancePage() {
               <div style={{ display: "flex", flexDirection: "column", gap: 13 }}>
                 {top.map((p, i) => (
                   <div key={p.productId} style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                    <div style={{ width: 22, textAlign: "center", fontFamily: "var(--font-garamond)", fontSize: 15, fontWeight: 600, color: i === 0 ? "#b8934a" : "#c4bda8", flexShrink: 0 }}>{i + 1}</div>
+                    <div style={{ width: 22, textAlign: "center", fontFamily: "var(--font-hanken)", fontVariantNumeric: "tabular-nums lining-nums", fontSize: 15, fontWeight: 600, color: i === 0 ? "#b8934a" : "#c4bda8", flexShrink: 0 }}>{i + 1}</div>
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 5 }}>
                         <span style={{ fontSize: 13.5, fontWeight: 500, color: "#0D1117", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", maxWidth: "60%" }}>{p.productName}</span>
