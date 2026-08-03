@@ -7,7 +7,10 @@ const isDev = process.env.VERCEL_ENV === "preview";
 
 export default function manifest(): MetadataRoute.Manifest {
   const name = isDev ? "Backoffice" : "Sterith Back Office";
-  const icon = isDev ? "/icon-dev-512.png" : "/icon-512.png";
+  const icon = isDev ? "/icon-dev-512.png" : "/icon-v2-512.png";
+  // Maskable must be FULL-BLEED: the OS applies its own mask and assumes the art
+  // reaches the edges, so a pre-rounded badge gets cropped inside its own corners.
+  const maskIcon = isDev ? "/icon-dev-512.png" : "/icon-v2-maskable-512.png";
 
   return {
     name,
@@ -21,7 +24,7 @@ export default function manifest(): MetadataRoute.Manifest {
     icons: [
       { src: icon, sizes: "192x192", type: "image/png", purpose: "any" },
       { src: icon, sizes: "512x512", type: "image/png", purpose: "any" },
-      { src: icon, sizes: "512x512", type: "image/png", purpose: "maskable" },
+      { src: maskIcon, sizes: "512x512", type: "image/png", purpose: "maskable" },
     ],
   };
 }
