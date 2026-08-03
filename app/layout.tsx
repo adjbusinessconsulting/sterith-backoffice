@@ -23,7 +23,7 @@ const hanken = Hanken_Grotesk({
 // copy is distinguishable from production on the home screen and in the tab bar.
 const isDev = process.env.VERCEL_ENV === "preview";
 const appTitle = isDev ? "Backoffice (Dev)" : "Sterith Back Office";
-const appIcon = isDev ? "/icon-dev-512.png" : "/icon-v2-512.png";
+const appIcon = isDev ? "/icon-dev-v2-512.png" : "/icon-v2-512.png";
 
 export const metadata: Metadata = {
   title: appTitle,

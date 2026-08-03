@@ -7,10 +7,11 @@ const isDev = process.env.VERCEL_ENV === "preview";
 
 export default function manifest(): MetadataRoute.Manifest {
   const name = isDev ? "Backoffice" : "Sterith Back Office";
-  const icon = isDev ? "/icon-dev-512.png" : "/icon-v2-512.png";
+  // Same 2.0 monitor mark either way — slate on dev, gold on production.
+  const icon = isDev ? "/icon-dev-v2-512.png" : "/icon-v2-512.png";
   // Maskable must be FULL-BLEED: the OS applies its own mask and assumes the art
   // reaches the edges, so a pre-rounded badge gets cropped inside its own corners.
-  const maskIcon = isDev ? "/icon-dev-512.png" : "/icon-v2-maskable-512.png";
+  const maskIcon = isDev ? "/icon-dev-v2-maskable-512.png" : "/icon-v2-maskable-512.png";
 
   return {
     name,
