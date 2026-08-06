@@ -69,7 +69,14 @@ export default function ManagerAccessModal({ open, onClose, onSaved }: { open: b
           <div>
             <p style={{ fontSize: 10, letterSpacing: "0.18em", textTransform: "uppercase", color: "#b8934a", fontWeight: 600 }}>MANAJEMEN · IZIN MANAJER</p>
             <p style={{ fontSize: 20, fontWeight: 700, color: "#0D1117", marginTop: 3 }}>Akses manajer</p>
-            <p style={{ fontSize: 11.5, color: "#8f897a", marginTop: 4, lineHeight: 1.5 }}>Berlaku untuk semua manajer. Butuh PIN/kata sandi manajer saat dijalankan di POS.</p>
+            {/* These are GRANTS. The old copy ("Butuh PIN/kata sandi manajer saat
+                dijalankan di POS") read as though switching one ON imposed a
+                password, so an owner wanting less friction turned things OFF and
+                got more of it. */}
+            <p style={{ fontSize: 11.5, color: "#8f897a", marginTop: 4, lineHeight: 1.5 }}>
+              Berlaku untuk semua manajer. <b>Aktif</b> = manajer boleh melakukannya sendiri di POS.
+              <b> Nonaktif</b> = harus minta persetujuan pemilik. Kasir biasa selalu minta persetujuan.
+            </p>
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
             {savedRecently && <span style={{ fontSize: 11.5, color: "#3f7d54", fontWeight: 500 }}>✓ Tersimpan</span>}
@@ -91,7 +98,7 @@ export default function ManagerAccessModal({ open, onClose, onSaved }: { open: b
           <div style={{ padding: "14px 22px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 14, flexWrap: "wrap" }}>
             <div style={{ minWidth: 0 }}>
               <p style={{ fontSize: 13.5, fontWeight: 500, color: "#0D1117" }}>Metode persetujuan</p>
-              <p style={{ fontSize: 11.5, color: "#8f897a", marginTop: 2 }}>Cara manajer menyetujui tindakan di POS.</p>
+              <p style={{ fontSize: 11.5, color: "#8f897a", marginTop: 2 }}>Cara persetujuan diminta di POS untuk tindakan yang nonaktif di atas.</p>
             </div>
             <div style={{ display: "flex", gap: 6 }}>
               {(["pin", "password"] as const).map(m => {
