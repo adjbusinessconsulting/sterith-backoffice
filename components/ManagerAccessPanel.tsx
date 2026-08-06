@@ -12,7 +12,24 @@ const PERM_ROWS: { key: string; label: string; desc: string }[] = [
   { key: "reports",    label: "Lihat laporan",             desc: "Melihat ringkasan penjualan di POS." },
 ];
 
-export interface MgrSettings { managerPerms: Record<string, boolean>; approvalMethod: string; }
+export interface MgrSettings {
+  managerPerms: Record<string, boolean>;
+  openPerms?: Record<string, boolean>;
+  approvalMethod: string;
+}
+
+// Three levels, stored as two booleans so an older POS build that has never heard
+// of openPerms keeps asking for approval rather than silently letting everyone
+// through. Derived here so the UI can show one choice per row.
+type Level = "all" | "manager" | "owner";
+const levelOf = (m: MgrSettings | null, k: string): Level =>
+  m?.openPerms?.[k] ? "all" : m?.managerPerms[k] ? "manager" : "owner";
+
+const LEVELS: { v: Level; label: string; hint: string }[] = [
+  { v: "all",     label: "Semua",   hint: "Kasir & manajer, tanpa persetujuan" },
+  { v: "manager", label: "Manajer", hint: "Manajer sendiri; kasir minta persetujuan" },
+  { v: "owner",   label: "Pemilik", hint: "Semua harus minta persetujuan" },
+];
 
 function Switch({ on, onClick, disabled }: { on: boolean; onClick: () => void; disabled?: boolean }) {
   return (
@@ -41,9 +58,13 @@ export default function ManagerAccessModal({ open, onClose, onSaved }: { open: b
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
-  async function patch(next: { managerPerms?: Record<string, boolean>; approvalMethod?: string }) {
+  async function patch(next: { managerPerms?: Record<string, boolean>; openPerms?: Record<string, boolean>; approvalMethod?: string }) {
     if (!mgr) return;
-    const optimistic = { ...mgr, ...next, managerPerms: { ...mgr.managerPerms, ...(next.managerPerms ?? {}) } };
+    const optimistic = {
+      ...mgr, ...next,
+      managerPerms: { ...mgr.managerPerms, ...(next.managerPerms ?? {}) },
+      openPerms: { ...(mgr.openPerms ?? {}), ...(next.openPerms ?? {}) },
+    };
     setMgr(optimistic); onSaved?.(optimistic);
     try {
       const r = await fetch("/api/manager-settings", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify(next) });
@@ -74,8 +95,9 @@ export default function ManagerAccessModal({ open, onClose, onSaved }: { open: b
                 password, so an owner wanting less friction turned things OFF and
                 got more of it. */}
             <p style={{ fontSize: 11.5, color: "#8f897a", marginTop: 4, lineHeight: 1.5 }}>
-              Berlaku untuk semua manajer. <b>Aktif</b> = manajer boleh melakukannya sendiri di POS.
-              <b> Nonaktif</b> = harus minta persetujuan pemilik. Kasir biasa selalu minta persetujuan.
+              Siapa boleh melakukan tindakan ini di POS tanpa minta persetujuan.
+              <b> Semua</b> = tanpa kata sandi sama sekali · <b>Manajer</b> = manajer sendiri, kasir minta izin ·
+              <b> Pemilik</b> = semua minta izin.
             </p>
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
@@ -91,7 +113,26 @@ export default function ManagerAccessModal({ open, onClose, onSaved }: { open: b
                 <p style={{ fontSize: 13.5, fontWeight: 500, color: "#0D1117" }}>{row.label}</p>
                 <p style={{ fontSize: 11.5, color: "#8f897a", marginTop: 2 }}>{row.desc}</p>
               </div>
-              <Switch on={!!mgr?.managerPerms[row.key]} onClick={() => patch({ managerPerms: { [row.key]: !mgr?.managerPerms[row.key] } })} disabled={!mgr} />
+              <div style={{ display: "flex", gap: 4, flexShrink: 0, background: "#f8f5ef", borderRadius: 9, padding: 3 }}>
+                {LEVELS.map(l => {
+                  const active = levelOf(mgr, row.key) === l.v;
+                  return (
+                    <button key={l.v} type="button" disabled={!mgr} title={l.hint}
+                      onClick={() => patch({
+                        managerPerms: { [row.key]: l.v !== "owner" },
+                        openPerms: { [row.key]: l.v === "all" },
+                      })}
+                      style={{
+                        border: "none", borderRadius: 7, padding: "5px 10px", fontSize: 11.5, fontWeight: 600,
+                        cursor: mgr ? "pointer" : "default", whiteSpace: "nowrap",
+                        background: active ? "#0D1117" : "transparent",
+                        color: active ? "#F2EDE3" : "#8f897a",
+                      }}>
+                      {l.label}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           ))}
 
