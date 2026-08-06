@@ -287,6 +287,29 @@ export default function LoginPage() {
           </button>}
         </form>
 
+        {/* Try without an account — mirrors the POS login's "COBA DEMO →".
+            Opens the standalone demo (public/demo.html) with a way back here. */}
+        {mode === "login" && (
+          <div style={{
+            marginTop: 12, padding: "8px 12px",
+            background: "rgba(184,147,74,0.07)",
+            border: "1px dashed rgba(184,147,74,0.4)", borderRadius: 8,
+            display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10,
+          }}>
+            <span style={{ fontSize: 11, color: "#8f897a" }}>Coba tanpa akun?</span>
+            <a
+              href="/demo.html?exit=/login"
+              style={{
+                fontSize: 9.5, color: "#b8934a", letterSpacing: "0.14em",
+                fontWeight: 700, textTransform: "uppercase", textDecoration: "none",
+                whiteSpace: "nowrap",
+              }}
+            >
+              COBA DEMO →
+            </a>
+          </div>
+        )}
+
         {/* Manual update check */}
         <div style={{ display: "flex", justifyContent: "center", marginTop: 10 }}>
           <CheckUpdate />
