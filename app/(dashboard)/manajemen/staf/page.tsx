@@ -126,6 +126,21 @@ Kosongkan lalu OK untuk menghapus.`
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2"><path d="M12 5v14M5 12h14"/></svg>
               Tambah kasir
             </button>
+            {/* The only way in used to be the IZIN cell of a row whose role is
+                MANAJER — so a store with no manager could not open this at all,
+                even though the settings also govern what a plain kasir may do. */}
+            <button
+              onClick={() => setMgrOpen(true)}
+              style={{
+                padding: "8px 14px", background: "#fff", border: "1.5px solid #e8e3d5",
+                borderRadius: 8, fontSize: 12, fontWeight: 500,
+                color: "#0D1117", cursor: "pointer", display: "flex", alignItems: "center", gap: 6,
+                fontFamily: "var(--font-hanken)", flexShrink: 0,
+              }}
+            >
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              Izin &amp; persetujuan
+            </button>
           </div>
         </div>
         <table style={{ width: "100%", borderCollapse: "collapse" }}>
