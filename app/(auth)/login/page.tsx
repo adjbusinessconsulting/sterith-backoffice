@@ -1,4 +1,5 @@
 "use client";
+import { DEMO_URL } from "@/lib/pos";
 import { useState, useEffect } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
@@ -287,8 +288,9 @@ export default function LoginPage() {
           </button>}
         </form>
 
-        {/* Try without an account — mirrors the POS login's "COBA DEMO →".
-            Opens the standalone demo (public/demo.html) with a way back here. */}
+        {/* Try without an account. Opens the Back Office half of the POS demo
+            rather than a separate copy: that demo ships with the POS build, so it
+            can never fall behind the real app the way public/demo.html did. */}
         {mode === "login" && (
           <div style={{
             marginTop: 12, padding: "8px 12px",
@@ -298,7 +300,8 @@ export default function LoginPage() {
           }}>
             <span style={{ fontSize: 11, color: "#8f897a" }}>Coba tanpa akun?</span>
             <a
-              href="/demo.html?exit=/login"
+              href={DEMO_URL}
+              target="_blank" rel="noopener"
               style={{
                 fontSize: 9.5, color: "#b8934a", letterSpacing: "0.14em",
                 fontWeight: 700, textTransform: "uppercase", textDecoration: "none",
