@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect, useCallback } from "react";
-import { Trash2 } from "lucide-react";
+import { Trash2, Pencil } from "lucide-react";
 import { useUIStore } from "@/store/ui";
 import { useSession } from "next-auth/react";
 import { isAtLeast } from "@/lib/tier";
@@ -45,6 +45,10 @@ export default function StafPage() {
   const [shifts, setShifts] = useState<Shift[]>([]);
   const [mgr, setMgr] = useState<{ managerPerms: Record<string, boolean>; approvalMethod: string } | null>(null);
   const [mgrOpen, setMgrOpen] = useState(false);
+  const [editing, setEditing] = useState<StaffMember | null>(null);
+  const [form, setForm] = useState({ name: "", pin: "", role: "kasir", password: "" });
+  const [saving, setSaving] = useState(false);
+  const [formErr, setFormErr] = useState("");
 
   const userTier = session?.user?.tier ?? 'premium';
 
@@ -80,6 +84,45 @@ Kosongkan lalu OK untuk menghapus.`
       body: JSON.stringify({ password: pw.trim() }),
     });
     if (!res.ok) { alert((await res.json().catch(() => ({}))).error ?? "Gagal menyimpan."); return; }
+    load();
+  }
+
+  function openEdit(s: StaffMember) {
+    // PIN and password are deliberately blank. The API never sends them to the
+    // browser, and PATCH leaves any field it is not given untouched — so an empty
+    // box means "keep what is there" rather than "erase it".
+    setForm({ name: s.name, pin: "", role: s.role.toLowerCase() === "manajer" ? "MANAJER" : "kasir", password: "" });
+    setFormErr("");
+    setEditing(s);
+  }
+
+  async function saveEdit() {
+    if (!editing) return;
+    const body: Record<string, unknown> = {};
+    if (form.name.trim() && form.name.trim() !== editing.name) body.name = form.name.trim();
+    if (form.pin.trim()) {
+      if (!/^\d{6}$/.test(form.pin.trim())) { setFormErr("PIN harus 6 digit angka."); return; }
+      body.pin = form.pin.trim();
+    }
+    const nextRole = form.role === "MANAJER" ? "MANAJER" : "kasir";
+    if (nextRole.toLowerCase() !== editing.role.toLowerCase()) body.role = nextRole;
+    if (form.password.trim()) {
+      if (form.password.trim().length < 4) { setFormErr("Kata sandi minimal 4 karakter."); return; }
+      body.password = form.password.trim();
+    }
+    // Demoting a manager clears their approval password. A kasir never uses one,
+    // and leaving it behind means a promotion later silently restores a password
+    // the owner has long forgotten setting.
+    if (nextRole === "kasir" && editing.hasPassword) body.password = "";
+    if (!Object.keys(body).length) { setEditing(null); return; }
+
+    setSaving(true); setFormErr("");
+    const res = await fetch(`/api/staff/${editing.id}`, {
+      method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body),
+    });
+    setSaving(false);
+    if (!res.ok) { setFormErr((await res.json().catch(() => ({}))).error ?? "Gagal menyimpan."); return; }
+    setEditing(null);
     load();
   }
 
@@ -207,12 +250,21 @@ Kosongkan lalu OK untuk menghapus.`
                   </td>
                   <td style={{ padding: "14px 10px", width: 40 }}>
                     {s.role !== "OWNER" && (
+                      <div style={{ display: "flex", gap: 2 }}>
+                      <button
+                        onClick={() => openEdit(s)}
+                        title="Ubah akun"
+                        style={{ background: "transparent", border: "none", cursor: "pointer", padding: 6, color: "#8f897a", borderRadius: 6 }}
+                      >
+                        <Pencil size={14} />
+                      </button>
                       <button
                         onClick={() => deleteStaff(s.id)}
                         style={{ background: "transparent", border: "none", cursor: "pointer", padding: 6, color: "#8f897a", borderRadius: 6 }}
                       >
                         <Trash2 size={14} />
                       </button>
+                      </div>
                     )}
                   </td>
                 </tr>
@@ -263,6 +315,77 @@ Kosongkan lalu OK untuk menghapus.`
           )}
         </div>
       </div>
+
+      {/* Edit an existing account. Before this the only way to correct a typo in a
+          name, rotate a PIN or promote a kasir was to delete the account and make a
+          new one — which loses the account and everything attached to it. */}
+      {editing && (
+        <>
+          <div onClick={() => setEditing(null)} style={{ position: "fixed", inset: 0, background: "rgba(13,17,23,0.45)", zIndex: 1000 }} />
+          <div style={{
+            position: "fixed", top: "50%", left: "50%", transform: "translate(-50%,-50%)",
+            width: 400, maxWidth: "95vw", background: "#fff", borderRadius: 16, zIndex: 1001,
+            boxShadow: "0 20px 80px rgba(13,17,23,0.22)", overflow: "hidden",
+          }}>
+            <div style={{ padding: "18px 22px", borderBottom: "1px solid #f0ebe0" }}>
+              <p style={{ fontSize: 10, letterSpacing: "0.18em", textTransform: "uppercase", color: "#b8934a", fontWeight: 600 }}>MANAJEMEN · STAF</p>
+              <p style={{ fontSize: 20, fontWeight: 700, color: "#0D1117", marginTop: 3 }}>Ubah akun</p>
+              <p style={{ fontSize: 11.5, color: "#8f897a", marginTop: 4 }}>Kosongkan PIN atau kata sandi jika tidak ingin diubah.</p>
+            </div>
+
+            <div style={{ padding: "18px 22px", display: "flex", flexDirection: "column", gap: 14 }}>
+              <label style={{ display: "block" }}>
+                <span style={{ fontSize: 11.5, fontWeight: 600, color: "#0D1117" }}>Nama</span>
+                <input value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
+                  style={{ width: "100%", marginTop: 5, padding: "10px 12px", border: "1.5px solid #e8e3d5", borderRadius: 9, fontSize: 13.5, fontFamily: "var(--font-hanken)", color: "#0D1117" }} />
+              </label>
+
+              <label style={{ display: "block" }}>
+                <span style={{ fontSize: 11.5, fontWeight: 600, color: "#0D1117" }}>PIN baru (6 digit)</span>
+                <input value={form.pin} inputMode="numeric" maxLength={6} placeholder="Kosongkan jika tetap"
+                  onChange={e => setForm(f => ({ ...f, pin: e.target.value.replace(/\D/g, "") }))}
+                  style={{ width: "100%", marginTop: 5, padding: "10px 12px", border: "1.5px solid #e8e3d5", borderRadius: 9, fontSize: 13.5, fontFamily: "var(--font-hanken)", letterSpacing: "0.3em", color: "#0D1117" }} />
+              </label>
+
+              <div>
+                <span style={{ fontSize: 11.5, fontWeight: 600, color: "#0D1117" }}>Peran</span>
+                <div style={{ display: "flex", gap: 6, marginTop: 5 }}>
+                  {[["kasir", "Kasir"], ["MANAJER", "Manajer"]].map(([v, l]) => (
+                    <button key={v} type="button" onClick={() => setForm(f => ({ ...f, role: v }))}
+                      style={{
+                        flex: 1, padding: "9px 12px", borderRadius: 9, fontSize: 12.5, fontWeight: 600, cursor: "pointer",
+                        border: form.role === v ? "1.5px solid #0D1117" : "1.5px solid #e8e3d5",
+                        background: form.role === v ? "#0D1117" : "#fff",
+                        color: form.role === v ? "#F2EDE3" : "#0D1117", fontFamily: "var(--font-hanken)",
+                      }}>{l}</button>
+                  ))}
+                </div>
+              </div>
+
+              {form.role === "MANAJER" && (
+                <label style={{ display: "block" }}>
+                  <span style={{ fontSize: 11.5, fontWeight: 600, color: "#0D1117" }}>Kata sandi manajer</span>
+                  <input value={form.password} type="password" placeholder={editing.hasPassword ? "Kosongkan jika tetap" : "Belum diatur"}
+                    onChange={e => setForm(f => ({ ...f, password: e.target.value }))}
+                    style={{ width: "100%", marginTop: 5, padding: "10px 12px", border: "1.5px solid #e8e3d5", borderRadius: 9, fontSize: 13.5, fontFamily: "var(--font-hanken)", color: "#0D1117" }} />
+                  <span style={{ fontSize: 11, color: "#8f897a", marginTop: 4, display: "block" }}>Dipakai untuk menyetujui tindakan di POS.</span>
+                </label>
+              )}
+
+              {formErr && <p style={{ fontSize: 12, color: "#C0392B", margin: 0 }}>{formErr}</p>}
+            </div>
+
+            <div style={{ padding: "0 22px 20px", display: "flex", gap: 8 }}>
+              <button onClick={() => setEditing(null)} disabled={saving}
+                style={{ flex: 1, padding: "11px", borderRadius: 9, border: "1.5px solid #e8e3d5", background: "#fff", fontSize: 13, fontWeight: 600, cursor: "pointer", fontFamily: "var(--font-hanken)", color: "#0D1117" }}>Batal</button>
+              <button onClick={saveEdit} disabled={saving}
+                style={{ flex: 1, padding: "11px", borderRadius: 9, border: "none", background: "#0D1117", color: "#F2EDE3", fontSize: 13, fontWeight: 600, cursor: saving ? "default" : "pointer", fontFamily: "var(--font-hanken)", opacity: saving ? 0.6 : 1 }}>
+                {saving ? "Menyimpan…" : "Simpan"}
+              </button>
+            </div>
+          </div>
+        </>
+      )}
 
       <ManagerAccessPanel open={mgrOpen} onClose={() => setMgrOpen(false)} onSaved={setMgr} />
     </div>
